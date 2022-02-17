@@ -11,6 +11,9 @@
                 <field name="task_id"/>
                 <field name="lead_time"/>
             </xpath>
+            <xpath expr="//field[@name='depend_on_ids']" position="attributes">
+                    <attribute name="domain">[('project_id', '=', project_id)]</attribute>
+            </xpath>
         </field>
     </record>
 
