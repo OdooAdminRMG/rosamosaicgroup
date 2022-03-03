@@ -34,12 +34,15 @@ class SaleOrder(models.Model):
         :param end_date: task end date
         :return: working hour start date, end date, all week records
         """
-        user_timezone = timezone(self.env.user.tz)
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
-        attendance_ids = resource_id.calendar_id.attendance_ids.filtered(lambda at: start_date.astimezone(user_timezone).weekday() == int(at.dayofweek)).sorted('id')
-        hour_from, hour_to = float_to_time(attendance_ids[0].hour_from), float_to_time(attendance_ids[1].hour_to)
-        working_start_date, working_end_date = user_timezone.localize(datetime.combine(start_date.astimezone(timezone(self.env.user.tz)).date(), time(hour_from.hour, 0, 0))).astimezone(UTC), \
-                                               user_timezone.localize(datetime.combine(end_date.astimezone(timezone(self.env.user.tz)).date(), time(hour=hour_to.hour))).astimezone(UTC)
+        working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
+        working_end_date = datetime.combine(end_date.date(), time.max).replace(tzinfo=UTC)
+        work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date, resources=resource_id)
+        work_intervals = [(start, stop) for start, stop, dummy in work_intervals_batch.get(resource_id.id, False)]
+        if work_intervals:
+            working_start_date = work_intervals[0][0].astimezone(UTC)
+            working_end_date = work_intervals[-1][-1].astimezone(UTC)
+
         return working_start_date, working_end_date, resource_id.calendar_id.attendance_ids
 
     def adjust_dates_in_user_working_time(self, start_date, end_date):
@@ -51,21 +54,17 @@ class SaleOrder(models.Model):
         """
         start_date = start_date.replace(tzinfo=UTC)
         end_date = end_date.replace(tzinfo=UTC)
-        user_timezone = timezone(self.env.user.tz)
-        resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
-        attendance_ids = resource_id.calendar_id.attendance_ids.filtered(lambda at: start_date.astimezone(user_timezone).weekday() == int(at.dayofweek)).sorted('id')
         working_start_date, working_end_date, all_attendance_ids = self.get_working_start_end_date(start_date, end_date)
-        if attendance_ids:
-            # Custom logic to adjust start date and end date in working time
-            if start_date < working_start_date:
-                start_date = get_next_or_last_working_days_count(working_end_date, all_attendance_ids) - (working_start_date - start_date)
-                if end_date < working_start_date:
-                    end_date = working_start_date + (working_start_date - end_date)
+        # Custom logic to adjust start date and end date in working time
+        if start_date < working_start_date:
+            start_date = get_next_or_last_working_days_count(working_end_date, all_attendance_ids) - (working_start_date - start_date)
+            if end_date < working_start_date:
+                end_date = working_start_date + (working_start_date - end_date)
 
-            if end_date > working_end_date:
-                end_date = get_next_or_last_working_days_count(working_start_date, all_attendance_ids, back_step=False) + (end_date - working_end_date)
-                if start_date < working_end_date:
-                    start_date = working_end_date - (working_end_date - start_date)
+        if end_date > working_end_date:
+            end_date = get_next_or_last_working_days_count(working_start_date, all_attendance_ids, back_step=False) + (end_date - working_end_date)
+            if start_date < working_end_date:
+                start_date = working_end_date - (working_end_date - start_date)
 
         return start_date.astimezone(UTC).replace(tzinfo=None), end_date.astimezone(UTC).replace(tzinfo=None)
 
