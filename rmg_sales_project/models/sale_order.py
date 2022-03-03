@@ -27,7 +27,23 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    def get_working_start_end_date(self, start_date, end_date):
+    def get_attendances(self, start_date):
+        resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
+        attendances = resource_id.calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == str(start_date.weekday()))
+        return resource_id, attendances
+
+    def get_start_date(self, start_date, hours, recursive=False):
+        resource_id, attendances = self.get_attendances(start_date)
+        hours_per_day = resource_id.calendar_id._compute_hours_per_day(attendances)
+        if hours > hours_per_day:
+            hours -= hours_per_day
+            return self.get_start_date(get_next_or_last_working_days_count(start_date, attendances), hours, recursive=True)
+        if hours != 0:
+            start_date = self.adjust_dates_in_user_working_time(start_date - relativedelta(hours=hours), hours=hours)
+        print(start_date, hours)
+        return start_date.replace(tzinfo=None)
+
+    def get_working_start_end_date(self, start_date):
         """
 
         :param start_date: task start date
@@ -36,16 +52,15 @@ class SaleOrder(models.Model):
         """
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
-        working_end_date = datetime.combine(end_date.date(), time.max).replace(tzinfo=UTC)
+        working_end_date = datetime.combine(start_date.date(), time.max).replace(tzinfo=UTC)
         work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date, resources=resource_id)
         work_intervals = [(start, stop) for start, stop, dummy in work_intervals_batch.get(resource_id.id, False)]
         if work_intervals:
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
+        return working_start_date, working_end_date
 
-        return working_start_date, working_end_date, resource_id.calendar_id.attendance_ids
-
-    def adjust_dates_in_user_working_time(self, start_date, end_date):
+    def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
             This method will get the resource calendar and calculate working time and adjust dates accordingly
             :param start_date: Task start date
@@ -53,20 +68,16 @@ class SaleOrder(models.Model):
             :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
-        end_date = end_date.replace(tzinfo=UTC)
-        working_start_date, working_end_date, all_attendance_ids = self.get_working_start_end_date(start_date, end_date)
+        working_start_date, working_end_date = self.get_working_start_end_date(start_date)
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
-            start_date = get_next_or_last_working_days_count(working_end_date, all_attendance_ids) - (working_start_date - start_date)
-            if end_date < working_start_date:
-                end_date = working_start_date + (working_start_date - end_date)
+            resource_id, attendances = self.get_attendances(start_date)
+            last_day_start_date = get_next_or_last_working_days_count(start_date, attendances)
+            hours -= (working_start_date - start_date).seconds / 3600
+            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
+            start_date = working_end_date - relativedelta(hours=hours)
 
-        if end_date > working_end_date:
-            end_date = get_next_or_last_working_days_count(working_start_date, all_attendance_ids, back_step=False) + (end_date - working_end_date)
-            if start_date < working_end_date:
-                start_date = working_end_date - (working_end_date - start_date)
-
-        return start_date.astimezone(UTC).replace(tzinfo=None), end_date.astimezone(UTC).replace(tzinfo=None)
+        return start_date.replace(tzinfo=None)
 
     def calculate_planned_dates(self, commitment_date):
         """
@@ -75,9 +86,9 @@ class SaleOrder(models.Model):
         :return: None
         """
         # Adjust the commitment date as per the working hours
-        commitment_date, commitment_date = self.adjust_dates_in_user_working_time(commitment_date, commitment_date)
+        commitment_date = self.adjust_dates_in_user_working_time(commitment_date)
 
-        def get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, previous_task):
+        def get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, first_task):
             """
             Recursion method to update all child tasks
             :param final_task: Task in which start and end date should be placed
@@ -88,15 +99,14 @@ class SaleOrder(models.Model):
             """
             index = [final_task]
             if final_task and final_task in task_depend_on_dict:
-                planned_date_begin_without_offset = commitment_date - relativedelta(hours=final_task.lead_time)
-                planned_date_begin = planned_date_begin_without_offset - relativedelta(hours=previous_task.offset_hours or 0)
                 # Check again start and end date because it may be possible that after subtracting start date may go beyond working time so setting as per the working hours
-                date_begin, date_end = self.adjust_dates_in_user_working_time(planned_date_begin, commitment_date - relativedelta(hours=previous_task.offset_hours or 0))
+                date_end = self.get_start_date(commitment_date, final_task.offset_hours)
+                date_begin = self.get_start_date((commitment_date - relativedelta(hours=final_task.offset_hours)) if not first_task else commitment_date, final_task.lead_time)
                 if not final_task.planned_date_begin or final_task.planned_date_begin > commitment_date:
                     final_task.planned_date_begin = date_begin
-                    final_task.planned_date_end = date_end
+                    final_task.planned_date_end = commitment_date if first_task else date_end
                 for inner_elem in task_depend_on_dict.get(final_task):
-                    index.extend(get_depend_on_task_list(inner_elem, task_depend_on_dict, date_begin, previous_task=final_task))
+                    index.extend(get_depend_on_task_list(inner_elem, task_depend_on_dict, date_begin, first_task=False))
             return index
 
         if commitment_date:
@@ -107,8 +117,9 @@ class SaleOrder(models.Model):
                 task_depend_on_dict = {task: task.depend_on_ids for task in project.tasks}
                 # Manage final task by which doesn't set as depended_task
                 final_task_ids = set(project.tasks) - set(depended_task_ids)
-                for final_task in sorted(final_task_ids, key=lambda x: x.sequence):
-                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, previous_task=self.env['project.task'])
+                print(">>>>>>>>>>>>>", sorted(final_task_ids, key=lambda x: x.sequence)[0].name)
+                for index, final_task in enumerate(sorted(final_task_ids, key=lambda x: x.sequence)):
+                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, first_task=True)
                     all_task_list.extend(final_task_depends_list)
 
     def write(self, vals):
