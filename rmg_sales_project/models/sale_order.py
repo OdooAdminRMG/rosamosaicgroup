@@ -4,14 +4,13 @@ from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 from pytz import timezone, UTC
-from odoo.addons.resource.models.resource import float_to_time
 
 
 import logging
 _logger = logging.getLogger(__name__)
 
 
-def get_next_or_last_working_days_count(date, attendance_ids, back_step=True):
+def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, recursive=False):
     """
 
     :param date: Date which we need to check If it's holiday than step back or up and get new date which is in working hours
@@ -20,8 +19,10 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True):
     :return: Date which is in working hours
     """
     if date.weekday() not in list(map(int, attendance_ids.mapped('dayofweek'))):
-        return get_next_or_last_working_days_count((date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids)
-    return (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1))
+        return get_next_or_last_working_days_count((date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids, recursive=True)
+    if not recursive:
+        date = (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1))
+    return date
 
 
 class SaleOrder(models.Model):
@@ -30,16 +31,15 @@ class SaleOrder(models.Model):
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == str(start_date.weekday()))
-        return resource_id, attendances
+        return resource_id, attendances, resource_id.calendar_id.attendance_ids
 
     def get_start_date(self, start_date, hours):
-        resource_id, attendances = self.get_attendances(start_date)
+        resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
         hours_per_day = resource_id.calendar_id._compute_hours_per_day(attendances)
         if hours >= hours_per_day:
             hours -= hours_per_day
-            return self.get_start_date(get_next_or_last_working_days_count(start_date, attendances), hours)
-        if hours != 0:
-            start_date = self.adjust_dates_in_user_working_time(start_date - relativedelta(hours=hours), hours=hours)
+            return self.get_start_date(get_next_or_last_working_days_count(start_date, all_attendance_ids), hours)
+        start_date = self.adjust_dates_in_user_working_time(start_date - relativedelta(hours=hours), hours=hours)
         return start_date.replace(tzinfo=None)
 
     def get_working_start_end_date(self, start_date):
@@ -67,11 +67,17 @@ class SaleOrder(models.Model):
             :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
-        working_start_date, working_end_date = self.get_working_start_end_date(start_date)
+        working_start_date, working_end_date = self.get_working_start_end_date(start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
-            resource_id, attendances = self.get_attendances(start_date)
-            last_day_start_date = get_next_or_last_working_days_count(start_date, attendances)
+            resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
+            if start_date.date() == working_start_date.date():
+                last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
+            else:
+                if start_date.weekday() not in list(map(int, all_attendance_ids.mapped('dayofweek'))):
+                    last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
+                else:
+                    last_day_start_date = start_date
             hours = (working_start_date - start_date).seconds / 3600
             working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
             start_date = working_end_date - relativedelta(hours=hours)
@@ -129,6 +135,10 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).write(vals)
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
+            # Clear all dates on Project task
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
         return res
 
