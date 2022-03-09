@@ -14,7 +14,9 @@
     'license': 'AGPL-3',
     'version': '15.0.1.0.0',
     'depends': [
-        'sale_project'
+        'sale_project',
+        'sale_timesheet',
+        'resource'
     ],
     'data': [
         'data/ir_sequence_data.xml',
