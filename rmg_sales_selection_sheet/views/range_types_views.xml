@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="range_types_tree_view" model="ir.ui.view">
+        <field name="name">Range Types Tree View</field>
+        <field name="model">range.types</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="range_types_form_view" model="ir.ui.view">
+        <field name="name">Range Types Form View</field>
+        <field name="model">range.types</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_range_types" model="ir.actions.act_window">
+        <field name="name">Range Types</field>
+        <field name="res_model">range.types</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="range_types_config" action="rmg_sales_selection_sheet.action_range_types"
+              parent="rmg_sales_selection_sheet.selection_config_main"
+              sequence="2"/>
+</odoo>
