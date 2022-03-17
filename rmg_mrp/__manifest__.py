@@ -10,6 +10,8 @@
     'website': "https://www.sfour.io/",
     "depends": ["stock", "sale_management"],
     "data": [
+        'views/product_view.xml',
+        'views/stock_picking_type.xml'
     ],
     "application": True,
     "installable": True,
