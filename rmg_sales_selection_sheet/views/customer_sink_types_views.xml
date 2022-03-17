@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="customer_sink_types_tree_view" model="ir.ui.view">
+        <field name="name">Customer Sink Types Tree View</field>
+        <field name="model">customer.sink.types</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="customer_sink_types_form_view" model="ir.ui.view">
+        <field name="name">Customer Sink Types Form View</field>
+        <field name="model">customer.sink.types</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_customer_sink_types" model="ir.actions.act_window">
+        <field name="name">Customer Sink Types</field>
+        <field name="res_model">customer.sink.types</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="customer_sink_types_config" action="rmg_sales_selection_sheet.action_customer_sink_types"
+              parent="rmg_sales_selection_sheet.selection_config_main"
+              sequence="2"/>
+</odoo>

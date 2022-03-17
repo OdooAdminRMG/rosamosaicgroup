@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+        <!--  Data Leads -->
+        <record id="customer_sink_types_data_1" model="customer.sink.types">
+            <field name="name">Farm sink by customer on site</field>
+        </record>
+        <record id="customer_sink_types_data_2" model="customer.sink.types">
+            <field name="name">Undermount by customer on site</field>
+        </record>
+        <record id="customer_sink_types_data_3" model="customer.sink.types">
+            <field name="name">Undermount by customer shipped to Bella</field>
+        </record>
+        <record id="customer_sink_types_data_4" model="customer.sink.types">
+            <field name="name">Vessel by customer on site</field>
+        </record>
+        <record id="customer_sink_types_data_5" model="customer.sink.types">
+            <field name="name">Vessel by customer shipped to Bella</field>
+        </record>
+    </data>
+</odoo>

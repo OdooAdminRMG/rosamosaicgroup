@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+        <!--  Data Leads -->
+        <record id="corner_treatments_data_1" model="corner.treatments">
+            <field name="name">Square</field>
+        </record>
+        <record id="corner_treatments_data_2" model="corner.treatments">
+            <field name="name">3” at dining overhang</field>
+        </record>
+        <record id="corner_treatments_data_3" model="corner.treatments">
+            <field name="name">¾” everywhere</field>
+        </record>
+        <record id="corner_treatments_data_4" model="corner.treatments">
+            <field name="name">3” at dining and ¾” everywhere else</field>
+        </record>
+    </data>
+</odoo>
