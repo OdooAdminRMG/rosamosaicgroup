@@ -46,29 +46,29 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="order_id"/>
+                                <field name="order_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
-                                <field name="order_line_id"/>
+                                <field name="order_line_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
-                                <field name="edge_profiles_id" options="{'no_create': True,}"/>
-                                <field name="slab_tagged_id"/>
-                                <field name="sink_by_bella_id" options="{'no_create': True,}"/>
-                                <field name="templated_by_id" options="{'no_create': True,}"/>
-                                <field name="corner_treatments_id" options="{'no_create': True,}"/>
-                                <field name="square_footage_estimate"/>
+                                <field name="edge_profiles_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="slab_tagged_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="sink_by_bella_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="templated_by_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="corner_treatments_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="square_footage_estimate" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
-                                <field name="faucets_id"/>
+                                <field name="faucets_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="faucet_model"
-                                       attrs="{'invisible': [('faucets_id',  '=', False)]}"/>
-                                <field name="customer_sink_types_id"/>
+                                       attrs="{'invisible': [('faucets_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="customer_sink_types_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="customer_sink_model_number"
-                                       attrs="{'invisible': [('customer_sink_types_id',  '=', False)]}"/>
-                                <field name="range_types_id" options="{'no_create': True,}"/>
+                                       attrs="{'invisible': [('customer_sink_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="range_types_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="range_model"
-                                       attrs="{'invisible': [('range_types_id',  '=', False)]}"/>
+                                       attrs="{'invisible': [('range_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
                             </group>
                         </group>
                         <notebook>
@@ -81,11 +81,11 @@
                             </page>
                             <page string="Notes" name="notes">
                                 <group>
-                                    <field name="slab_notes"/>
-                                    <field name="corner_treatment_notes"/>
-                                    <field name="shop_notes"/>
-                                    <field name="installation_notes"/>
-                                    <field name="additional_holes"/>
+                                    <field name="slab_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="corner_treatment_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="shop_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="installation_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="additional_holes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 </group>
                             </page>
                         </notebook>
