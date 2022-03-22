@@ -40,6 +40,7 @@ class SaleOrder(models.Model):
         return
 
     def action_confirm(self):
+        rmg_order_line = []
         for rec in self.order_line:
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
@@ -55,11 +56,19 @@ class SaleOrder(models.Model):
                                       "Selection Sheet data per Sales Order section, the system cannot identify which "
                                       "Manufacturing Order is relevant for the Selection Sheet data. Please specify only "
                                       "a single Sales Order Line whose product has these two routes set on its product template.") % (rec.name))
-                rmg_order_line = lst.mapped('rmg_sale_id')
-                if rmg_order_line:
-                    rmg_order_line.update({'status' : 'released'})
-        return super(SaleOrder, self).action_confirm()
+                rmg_order_line.append(lst.mapped('rmg_sale_id'))
+        res = super(SaleOrder, self).action_confirm()
+        if rmg_order_line:
+            for rec in rmg_order_line:
+                rec.update({'status' : 'released'})
+        return res
 
+    def action_draft(self):
+        res = super(SaleOrder, self).action_draft()
+        rmg_sales = self.order_line.mapped('rmg_sale_id')
+        if rmg_sales:
+            rmg_sales.update({'status' : 'pre_release'})
+        return res
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
