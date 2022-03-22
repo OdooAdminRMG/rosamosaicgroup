@@ -105,6 +105,9 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     res_model: 'rmg.sale',
                     views: [[false, 'form']],
                     target: 'new',
+                    context: {
+                        active_id: rmgIds[0],
+                    },
                     res_id: rmgIds[0],
                     flags: {'action_buttons': true},
                 });
@@ -120,6 +123,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     context: {
                         default_order_id: self.__parentedParent.res_id,
                         default_order_line_id: parseInt(myArray),
+                        active_id: rmgIds[0],
                     },
                     flags: {'action_buttons': true},
                 });

@@ -1,4 +1,4 @@
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from dateutil.relativedelta import relativedelta
 from ast import literal_eval
 
@@ -18,6 +18,15 @@ class MrpProduction(models.Model):
     installation_notes = fields.Text(related="rmg_id.installation_notes", string=_("Installation Notes"))
     square_footage_estimate = fields.Float(related="rmg_id.square_footage_estimate", string=_("Square Footage Estimate"))
     templated_by_id = fields.Many2one("hr.employee", related="rmg_id.templated_by_id", string=_("Templated by"))
+
+
+    def _get_move_raw_values(self, product_id, product_uom_qty, product_uom, operation_id=False, bom_line=False):
+        data = super()._get_move_raw_values(product_id, product_uom_qty, product_uom, operation_id=False, bom_line=False)
+        data.update({
+            'product_uom_qty': self.square_footage_estimate if self.rmg_id and self.square_footage_estimate else product_uom_qty ,
+        })
+        return data
+
 
 class StockRule(models.Model):
     _inherit = 'stock.rule'
