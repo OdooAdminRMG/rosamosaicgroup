@@ -10,7 +10,7 @@
                     <field name="name" attrs="{'readonly': [('job_name', '!=', False)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="job_name" readonly="0"/>
+                    <field name="job_name" invisible="1"/>
                 </xpath>
             </field>
         </record>
