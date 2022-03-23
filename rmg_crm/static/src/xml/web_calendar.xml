@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="calendar-box">
+        <t t-jquery=".o_event_title" t-operation="after">
+            <div t-if="record.job_name" t-esc="record.job_name"/>
+        </t>
+    </t>
+</templates>

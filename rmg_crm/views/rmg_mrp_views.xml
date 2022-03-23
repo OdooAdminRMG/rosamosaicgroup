@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mrp_production_form_view_inherit" model="ir.ui.view">
+            <field name="name">mrp.production.form</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="job_name" readonly="0"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="mrp_production_calendar_view_inherit" model="ir.ui.view">
+            <field name="name">mrp.production.calendar</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.view_production_calendar"/>
+            <field name="arch" type="xml">
+                <xpath expr="//calendar" position="replace">
+                    <calendar date_start="date_planned_start" date_stop="date_planned_finished"
+                              color="job_name"
+                              string="Manufacturing Orders" event_limit="5" quick_add="False">
+                        <field name="user_id" avatar_field="avatar_128"/>
+                        <field name="product_id"/>
+                        <field name="product_qty"/>
+                        <field name="job_name"/>
+                    </calendar>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
