@@ -20,14 +20,14 @@ class ProjectTask(models.Model):
         'mrp.production', 'project_task_id', string='MOs')
     mrp_production_count = fields.Integer(
         compute='_compute_total_mrp_production', string='Total MOs')
-    stock_picking_id = fields.One2many(
+    stock_picking_ids = fields.One2many(
         'stock.picking', 'project_task_id',
         string="Associated Delivery Order")
     picking_count = fields.Integer(string='Total Pickings',
                                    compute="_compute_picking_count")
 
     def _compute_picking_count(self):
-        self.picking_count = len(self.stock_picking_id)
+        self.picking_count = len(self.stock_picking_ids)
 
     def get_tasks_for_associated(self, field, label):
         task_id = self.search([
@@ -67,7 +67,7 @@ class ProjectTask(models.Model):
 
         """
         action = self.env.ref('stock.action_picking_tree_all').read()[0]
-        action['domain'] = [['id', 'in', self.picking_ids.ids]]
+        action['domain'] = [['id', 'in', self.stock_picking_ids.ids]]
         return action
 
     # show tree and form view based on production
