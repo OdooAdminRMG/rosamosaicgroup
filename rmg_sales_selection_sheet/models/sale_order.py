@@ -45,9 +45,9 @@ class SaleOrder(models.Model):
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
                                   and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
-                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
-                                  and x.rmg_sale_id.status != 'released')
-                if len(lst) == 0:
+                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids)
+                if len(l) == 0:
+
                     raise UserError(_("In %s section have at least one product with MTO option in route") % (rec.name))
                 if len(lst) > 1:
                     raise UserError(_("More than one product in the section %s has both its Replenish to Order (MTO) "
