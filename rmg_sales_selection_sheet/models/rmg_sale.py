@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 from ast import literal_eval
-
+from odoo.exceptions import UserError
 from odoo import _, api, fields, models
-
+from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
@@ -110,7 +110,6 @@ class RmgSale(models.Model):
         if vals:
             vals['status']='pre_release'
         return super().create(vals)
-
 
 
     def rec_child(self, ele):
