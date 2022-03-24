@@ -12,39 +12,70 @@ class ProjectTask(models.Model):
     """
     _inherit = 'project.task'
 
-    peg_to_manufacturing_order = fields.Boolean(string="Pag To Manufacturing")
+    peg_to_manufacturing_order = fields.Boolean(
+        string="Pag To Manufacturing")
+    peg_to_delivery_order = fields.Boolean(
+        string="Peg to Delivery Order")
     production_ids = fields.One2many(
         'mrp.production', 'project_task_id', string='MOs')
     mrp_production_count = fields.Integer(
         compute='_compute_total_mrp_production', string='Total MOs')
+    stock_picking_id = fields.One2many(
+        'stock.picking', 'project_task_id',
+        string="Associated Delivery Order")
+    picking_count = fields.Integer(string='Total Pickings',
+                                   compute="_compute_picking_count")
+
+    def _compute_picking_count(self):
+        self.picking_count = len(self.stock_picking_id)
+
+    def get_tasks_for_associated(self, field, label):
+        task_id = self.search([
+            ('project_id', '=', self.project_id.id),
+            (field, '=', True),
+            ('id', '!=', self._origin.id)
+        ])
+        if len(task_id) > 1:
+            raise ValidationError(_(
+                "Task '%s' is already set as the %s Peg for "
+                "this Project.\nYou must first un-check its Peg to "
+                "%s checkbox before attempting to set it on this task."
+            ) % task_id.name, label, label)
 
     @api.onchange('peg_to_manufacturing_order')
     def _onchange_peg_to_manufacturing_order(self):
         """Onchange: _onchange_peg_to_manufacturing_order
 
         """
-        task_id = self.search([
-            ('project_id', '=', self.project_id.id),
-            ('peg_to_manufacturing_order', '=', True),
-            ('id', '!=', self._origin.id)
-        ])
-        if task_id:
-            raise ValidationError(_(
-                "Task '%s' is already set as the Manufacturing Order Peg for "
-                "this Project.\nYou must first un-check its Peg to "
-                "Manufacturing Order checkbox before attempting to set it on "
-                "this task."
-            ) % task_id.name)
+        self.get_tasks_for_associated(
+            field='peg_to_manufacturing_order',
+            label='Manufacturing Order'
+        )
 
+    @api.onchange('peg_to_delivery_order')
+    def _onchange_peg_to_delivery_order(self):
+        """Onchange: _onchange_peg_to_delivery_order
+
+        """
+        self.get_tasks_for_associated(
+            field='peg_to_delivery_order',
+            label='Delivery Order'
+        )
+
+    def action_open_associated_pickings(self):
+        """
+
+        """
+        action = self.env.ref('stock.action_picking_tree_all').read()[0]
+        action['domain'] = [['id', 'in', self.picking_ids.ids]]
+        return action
 
     # show tree and form view based on production
     def action_open_associated_mos(self):
         """
 
         """
-        action = self.env.ref(
-                'mrp.mrp_production_action'
-            ).read()[0]
+        action = self.env.ref('mrp.mrp_production_action').read()[0]
         action['domain'] = [['id', 'in', self.production_ids.ids]]
         return action
 

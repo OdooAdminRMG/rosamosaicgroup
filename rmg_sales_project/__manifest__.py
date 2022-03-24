@@ -10,7 +10,7 @@
 #       - Isufi Kapasi
 
 {
-    'name': "RMG Sales Projects",
+    'name': 'RMG Sales Projects',
     'summary': """
         RMG Sales Project
     """,
@@ -18,8 +18,8 @@
         RMG Sales Project module helps user to set Lead time on Task and calculated Planned Start date and 
         Planned End date for the Task
     """,
-    'author': "S4 Solutions, LLC",
-    'website': "https://www.sfour.io/",
+    'author': 'S4 Solutions, LLC',
+    'website': 'https://www.sfour.io/',
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
@@ -29,6 +29,7 @@
         'sale_timesheet',
         'resource',
         'mrp',
+        'stock',
     ],
     'data': [
         'views/project_task_views.xml',

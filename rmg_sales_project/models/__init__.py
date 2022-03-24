@@ -5,3 +5,4 @@
 from . import mrp
 from . import project_task
 from . import sale
+from . import stock_picking
