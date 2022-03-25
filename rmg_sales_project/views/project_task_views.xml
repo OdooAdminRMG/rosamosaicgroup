@@ -33,7 +33,7 @@
                               attrs="{'invisible': [('mrp_production_count', '=', 0)]}">
                             <field name="picking_count"/>
                         </span>
-                            <span class="o_stat_text">Delivery</span>
+                        <span class="o_stat_text">Delivery</span>
                     </div>
                 </button>
             </div>
@@ -51,7 +51,7 @@
                     <button name="action_open_mos_to_associate_with_task"
                             type="object"
                             string="Associate MO"/>
-                    <button name="action_open_mos_to_associate_with_task"
+                    <button name="action_open_dos_to_associate_with_task"
                             type="object"
                             string="Associate Delivery Order"/>
                 </header>

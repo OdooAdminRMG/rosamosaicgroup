@@ -114,3 +114,30 @@ class ProjectTask(models.Model):
             'context': {'task_id': peg_to_mo_task_id.id},
             'target': 'new'
         }
+
+    def action_open_dos_to_associate_with_task(self):
+        """
+
+        """
+        peg_to_do_task_id = self.filtered(
+            lambda task: task.peg_to_delivery_order
+        )
+        if not peg_to_do_task_id:
+            raise ValidationError(_(
+                'Please Select Peg to Delivery Order is True.'
+            ))
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'name': 'Transfers',
+            'res_model': 'stock.picking',
+            'view_id': self.env.ref(
+                'rmg_sales_project.view_vpicktree_rmg_sale_projects'
+            ).id,
+            'domain': [
+                ('state', 'not in', ('done', 'cancel')),
+                ('id', 'not in', peg_to_do_task_id.stock_picking_ids.ids)
+            ],
+            'context': {'task_id': peg_to_do_task_id.id},
+            'target': 'new'
+        }

@@ -34,6 +34,7 @@
     'data': [
         'views/project_task_views.xml',
         'views/mrp_views.xml',
+        'views/stock_picking_views.xml',
     ],
     'installable': True,
     'auto_install': False,
