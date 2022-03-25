@@ -2,7 +2,7 @@
 # Part of Odoo, S4 Solutions, LLC.
 # See LICENSE file for full copyright & licensing details.
 
-from . import mrp
+from . import mrp_production
 from . import project_task
-from . import sale
+from . import sale_order
 from . import stock_picking
