@@ -17,14 +17,15 @@ class SaleOrder(models.Model):
 
         """
         res = super(SaleOrder, self).action_confirm()
-        project_task = self.tasks_ids.filtered(
+        project_task_mo = self.tasks_ids.filtered(
             lambda p: p.peg_to_manufacturing_order
         )
-        if project_task:
-            production_ids = self.env['procurement.group'].search([
-                ('sale_id', 'in', self.ids)
-            ]).stock_move_ids.created_production_id.ids
-            project_task.update({
-                'production_ids': [(6, 0, production_ids)]
-            })
+        project_task_do = self.tasks_ids.filtered(
+            lambda p: p.peg_to_delivery_order
+        )
+        move_ids = self.env['procurement.group'].search([
+            ('sale_id', 'in', self.ids)
+        ]).stock_move_ids
+        move_ids.created_production_id.project_task_id = project_task_mo.id
+        move_ids.picking_id.project_task_id = project_task_do.id
         return res
