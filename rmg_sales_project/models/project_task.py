@@ -35,32 +35,34 @@ class ProjectTask(models.Model):
             (field, '=', True),
             ('id', '!=', self._origin.id)
         ])
-        if len(task_id) > 1:
+        if task_id:
             raise ValidationError(_(
-                "Task '%s' is already set as the %s Peg for "
+                "Task {task_name} is already set as the {label} Peg for "
                 "this Project.\nYou must first un-check its Peg to "
-                "%s checkbox before attempting to set it on this task."
-            ) % task_id.name, label, label)
+                "{label} checkbox before attempting to set it on this task."
+            ).format(task_name=task_id.name, label=label))
 
     @api.onchange('peg_to_manufacturing_order')
     def _onchange_peg_to_manufacturing_order(self):
         """Onchange: _onchange_peg_to_manufacturing_order
 
         """
-        self.get_tasks_for_associated(
-            field='peg_to_manufacturing_order',
-            label='Manufacturing Order'
-        )
+        if self.peg_to_manufacturing_order:
+            self.get_tasks_for_associated(
+                field='peg_to_manufacturing_order',
+                label='Manufacturing Order'
+            )
 
     @api.onchange('peg_to_delivery_order')
     def _onchange_peg_to_delivery_order(self):
         """Onchange: _onchange_peg_to_delivery_order
 
         """
-        self.get_tasks_for_associated(
-            field='peg_to_delivery_order',
-            label='Delivery Order'
-        )
+        if self.peg_to_delivery_order:
+            self.get_tasks_for_associated(
+                field='peg_to_delivery_order',
+                label='Delivery Order'
+            )
 
     def action_open_associated_pickings(self):
         """
