@@ -45,10 +45,11 @@ class SaleOrder(models.Model):
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
                                   and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
-                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids)
-                if len(l) == 0:
-
-                    raise UserError(_("In %s section have at least one product with MTO option in route") % (rec.name))
+                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
+                                  and x.rmg_sale_id.status != 'released')
+                footage_lst = self.order_line.filtered(lambda x: x.rmg_sale_id.square_footage_estimate == 0)
+                if len(footage_lst) > 0:
+                    raise UserError(_("Please add square footage estimate value in %s") % (rec.name))
                 if len(lst) > 1:
                     raise UserError(_("More than one product in the section %s has both its Replenish to Order (MTO) "
                                       "and Manufacture routes selected. Confirming or Saving this change would result in"
@@ -58,9 +59,9 @@ class SaleOrder(models.Model):
                                       "a single Sales Order Line whose product has these two routes set on its product template.") % (rec.name))
                 rmg_order_line.append(lst.mapped('rmg_sale_id'))
         res = super(SaleOrder, self).action_confirm()
-        if rmg_order_line:
+        if rmg_order_line and self.state in ['sale']:
             for rec in rmg_order_line:
-                rec.update({'status' : 'released'})
+                rec.update({'status': 'released'})
         return res
 
     def action_draft(self):
@@ -86,3 +87,18 @@ class SaleOrderLine(models.Model):
                 [("order_line_id", "=", rec.section_id.id)]
             )
             rec.rmg_sale_id = lines.id if lines else False
+
+
+    @api.model
+    def create(self, value):
+        rtn = super(SaleOrderLine, self).create(value)
+        section_id = False
+        for so in rtn:
+            if so.display_type == "line_section":
+                section_id = so.id
+            elif so.display_type != "line_note" and section_id:
+                so.update({"section_id": int(section_id)})
+            else:
+                pass
+        return rtn
+
