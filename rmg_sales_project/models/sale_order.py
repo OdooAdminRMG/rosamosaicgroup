@@ -148,5 +148,6 @@ class SaleOrder(models.Model):
         :return:
         """
         res = super(SaleOrder, self).action_confirm()
-        self.calculate_planned_dates(commitment_date=self.commitment_date)
+        if self.commitment_date:
+            self.calculate_planned_dates(commitment_date=self.commitment_date)
         return res
