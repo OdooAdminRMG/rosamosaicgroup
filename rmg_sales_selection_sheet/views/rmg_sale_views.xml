@@ -12,7 +12,7 @@
                     <field name="transferred_to_mo" readonly="0"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='sequence']" position="after">
-                    <field name="id" invisible="1" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
+                    <field name="id" invisible="0" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
                     <field name="section_id" invisible="1"/>
