@@ -47,7 +47,7 @@ class SaleOrder(models.Model):
                                   and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
                                   and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
                                   and x.rmg_sale_id.status != 'released')
-                footage_lst = self.order_line.filtered(lambda x: x.rmg_sale_id.square_footage_estimate == 0)
+                footage_lst = self.order_line.filtered(lambda x: x.rmg_sale_id.square_footage_estimate < 0)
                 if len(footage_lst) > 0:
                     raise UserError(_("Please add square footage estimate value in %s") % (rec.name))
                 if len(lst) > 1:
