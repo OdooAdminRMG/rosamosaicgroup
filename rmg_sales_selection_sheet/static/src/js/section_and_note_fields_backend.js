@@ -46,8 +46,10 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     args: [[['key', '=', 'rmg_sales_selection_sheet.companies']],["value"]],
                 }).then(function(data) {
                     if (eval(data[0].value).includes(record.data.company_id.data.id)) {
-                    $cell.append($button);
-                }
+                        if (record.data.id) {
+                            $cell.append($button);
+                        }
+                    }
 
                 });
 
