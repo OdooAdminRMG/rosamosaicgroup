@@ -150,4 +150,16 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
+        project_task_mo = self.tasks_ids.filtered(
+            lambda p: p.peg_to_manufacturing_order
+        )
+        project_task_do = self.tasks_ids.filtered(
+            lambda p: p.peg_to_delivery_order
+        )
+        move_ids = self.env['procurement.group'].search([
+            ('sale_id', 'in', self.ids)
+        ]).stock_move_ids
+        move_ids.created_production_id.project_task_id = project_task_mo.id
+        move_ids.picking_id.project_task_id = project_task_do.id
+        
         return res
