@@ -8,36 +8,6 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-
-class project_task(models.Model):
-	_inherit = 'project.task'
-
-	task_id = fields.Char(
-		string='Task ID',
-		default=lambda self: _('New'),
-		copy=True)
-	lead_time = fields.Integer('Lead Time', default=0, copy=True)
-	offset_hours = fields.Integer('Offset Hours', default=0, copy=True)
-
-	@api.model
-	def create(self, vals):
-		# Created Task_id sequence to mapped depend_on_ids tasks
-		if 'task_id' not in vals or vals.get('task_id') == _('New'):
-			vals['task_id'] = self.env['ir.sequence'].next_by_code('project.task') or _('New')
-		result = super(project_task, self).create(vals)
-		return result
-
-	@property
-	def SELF_READABLE_FIELDS(self):
-		""" Override this method to add task_id and lead_time as Readable Fields"""
-		return super().SELF_READABLE_FIELDS | PROJECT_TASK_READABLE_FIELDS
-
-	@property
-	def SELF_WRITABLE_FIELDS(self):
-		""" Override this method to add offset hours in task from template"""
-		return super(project_task, self).SELF_WRITABLE_FIELDS | PROJECT_TASK_WRITABLE_FIELDS
-
-
 class Project(models.Model):
 	_inherit = 'project.project'
 
