@@ -5,6 +5,8 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import ValidationError
 
+PROJECT_TASK_READABLE_FIELDS = {'task_id', 'lead_time', 'offset_hours'}
+PROJECT_TASK_WRITABLE_FIELDS = {'offset_hours'}
 
 class ProjectTask(models.Model):
     """
@@ -37,7 +39,7 @@ class ProjectTask(models.Model):
         # Created Task_id sequence to mapped depend_on_ids tasks
         if 'task_id' not in vals or vals.get('task_id') == _('New'):
             vals['task_id'] = self.env['ir.sequence'].next_by_code('project.task') or _('New')
-        result = super(project_task, self).create(vals)
+        result = super(ProjectTask, self).create(vals)
         return result
 
     @property
@@ -48,7 +50,7 @@ class ProjectTask(models.Model):
     @property
     def SELF_WRITABLE_FIELDS(self):
         """ Override this method to add offset hours in task from template"""
-        return super(project_task, self).SELF_WRITABLE_FIELDS | PROJECT_TASK_WRITABLE_FIELDS
+        return super(ProjectTask, self).SELF_WRITABLE_FIELDS | PROJECT_TASK_WRITABLE_FIELDS
 
     def _compute_picking_count(self):
         self.picking_count = len(self.stock_picking_ids)

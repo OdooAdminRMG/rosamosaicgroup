@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api, _
 
-PROJECT_TASK_READABLE_FIELDS = {'task_id', 'lead_time', 'offset_hours'}
-PROJECT_TASK_WRITABLE_FIELDS = {'offset_hours'}
-
 import logging
 
 _logger = logging.getLogger(__name__)
