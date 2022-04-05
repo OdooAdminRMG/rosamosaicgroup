@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="revised_mrp_production_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.internal_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div class="row">
+                            <div class="col-7">
+                                <h2>
+                                    <span t-field="o.name"/>
+                                </h2>
+                            </div>
+                            <div class="col-5">
+                                <span class="text-right">
+                                    <div t-field="o.name"
+                                         t-options="{'widget': 'barcode', 'width': 600, 'height': 100, 'img_style': 'width:350px;height:60px'}"/>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row mt32 mb32">
+                            <div class="col-3" t-if="o.origin">
+                                <strong>Source Document:</strong>
+                                <br/>
+                                <span t-field="o.origin"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Responsible:</strong>
+                                <br/>
+                                <span t-field="o.user_id"/>
+                            </div>
+                        </div>
+
+                        <div class="row mt32 mb32">
+                            <div class="col-3">
+                                <strong>Finished Product:</strong>
+                                <br/>
+                                <span t-field="o.product_id"/>
+                            </div>
+                            <div class="col-3" t-if="o.product_description_variants">
+                                <strong>Description:</strong>
+                                <br/>
+                                <span t-field="o.product_description_variants"/>
+                            </div>
+                            <div class="col-3">
+                                <strong>Quantity to Produce:</strong>
+                                <br/>
+                                <span t-field="o.product_qty"/>
+                                <span t-field="o.product_uom_id.name" groups="uom.group_uom"/>
+                            </div>
+                        </div>
+
+                        <div t-if="o.workorder_ids" groups="mrp.group_mrp_routings">
+                            <h3>
+                                <span t-if="o.state == 'done'">Operations Done</span>
+                                <span t-else="">Operations Planned</span>
+                            </h3>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>
+                                        <strong>Operation</strong>
+                                    </th>
+                                    <th>
+                                        <strong>WorkCenter</strong>
+                                    </th>
+                                    <th>
+                                        <strong>No. Of Minutes</strong>
+                                    </th>
+                                </tr>
+                                <tr t-foreach="o.workorder_ids" t-as="line2">
+                                    <td>
+                                        <span t-field="line2.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line2.workcenter_id.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-if="o.state != 'done'" t-field="line2.duration_expected"/>
+                                        <span t-if="o.state == 'done'" t-field="line2.duration"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <h3 t-if="o.move_raw_ids">
+                            <span t-if="o.state == 'done'">
+                                Consumed Products
+                            </span>
+                            <span t-else="">
+                                Products to Consume
+                            </span>
+                        </h3>
+
+                        <table class="table table-sm" t-if="o.move_raw_ids">
+                            <t t-set="has_product_barcode" t-value="any(m.product_id.barcode for m in o.move_raw_ids)"/>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th t-attf-class="{{ 'text-right' if not has_product_barcode else '' }}">Quantity
+                                    </th>
+                                    <th t-if="has_product_barcode" width="15%" class="text-center">Barcode</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="o.move_raw_ids">
+                                    <tr t-foreach="o.move_raw_ids" t-as="raw_line">
+                                        <td>
+                                            <span t-field="raw_line.product_id"/>
+                                        </td>
+                                        <td t-attf-class="{{ 'text-right' if not has_product_barcode else '' }}">
+                                            <span t-field="raw_line.product_uom_qty"/>
+                                            <span t-field="raw_line.product_uom" groups="uom.group_uom"/>
+                                        </td>
+                                        <td t-if="has_product_barcode" width="15%" class="text-center">
+                                            <t t-if="raw_line.product_id.barcode">
+                                                <div t-field="o.name"
+                                                     t-options="{'widget': 'barcode', 'width': 600, 'height': 100, 'img_style': 'width:100%;height:35px'}"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div class="oe_structure"/>
+                    </div>
+                    <p style="page-break-after:always;"></p>
+                    <div class="mb-5">
+                        <tr t-foreach="o.image_attachment_id" t-as="pack_operation">
+                            <div id="picture" class="watermark text-center" style="width:100%; height:100%;">
+                                <t t-if="pack_operation.mimetype in 'image/png, image/jpeg'">
+                                    <img t-attf-src="data:image/*;base64,{{ pack_operation.datas }}"
+                                         style="height:400px;"/>
+                                </t>
+                            </div>
+                            <p style="page-break-after:always;"></p>
+                        </tr>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

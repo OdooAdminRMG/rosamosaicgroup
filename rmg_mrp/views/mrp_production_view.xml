@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Fields Image and Work Instruction In Manufacutre Form View-->
+    <record id="mrp_production_view_inherit_rmg_mrp" model="ir.ui.view">
+        <field name="name">mrp.production.view.rmg.mrp</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form//sheet//page[@name='miscellaneous']" position="after">
+                <page string='Images and Work Instructions' name="image_work_instruction">
+                    <group>
+                        <group>
+                            <field name="image_attachment_id" widget="many2many_tags" domain="[('mimetype', 'in', ['image/png', 'image/jpeg', 'application/pdf'])]"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
