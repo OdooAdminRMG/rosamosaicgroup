@@ -138,3 +138,17 @@ class RmgSale(models.Model):
     def compute_order_lines(self):
         self.order_line_ids = self.order_id.order_line.filtered(
             lambda x: x.section_id.id == self.order_line_id.id).mapped('id')
+
+    def write(self, values):
+        if 'square_footage_estimate' in values:
+            mrp_ids = self.env['mrp.production'].search([
+                ('rmg_id', '=', self.id)
+            ])
+            for mrp in mrp_ids:
+                for mrp_line in mrp.move_raw_ids:
+                    mrp_line.product_uom_qty = values.get('square_footage_estimate')
+        res = super(RmgSale, self).write(values)
+        if self.order_id.state == 'sale' and self.status == 'pre_release' and self.square_footage_estimate >= 0:
+            self.status = 'released'
+
+        return res

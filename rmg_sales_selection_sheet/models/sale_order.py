@@ -41,15 +41,15 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         rmg_order_line = []
+        footage_lst = self.order_line.filtered(lambda x: x.display_type != "line_section" and x.rmg_sale_id.square_footage_estimate <= 0)
+        if footage_lst:
+            raise UserError(_("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
         for rec in self.order_line:
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
                                   and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
                                   and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
                                   and x.rmg_sale_id.status != 'released')
-                footage_lst = self.order_line.filtered(lambda x: x.rmg_sale_id.square_footage_estimate < 0)
-                if len(footage_lst) > 0:
-                    raise UserError(_("Please add square footage estimate value in %s") % (rec.name))
                 if len(lst) > 1:
                     raise UserError(_("More than one product in the section %s has both its Replenish to Order (MTO) "
                                       "and Manufacture routes selected. Confirming or Saving this change would result in"
@@ -88,17 +88,32 @@ class SaleOrderLine(models.Model):
             )
             rec.rmg_sale_id = lines.id if lines else False
 
-
-    @api.model
-    def create(self, value):
-        rtn = super(SaleOrderLine, self).create(value)
+    @api.model_create_multi
+    def create(self, vals_list):
+        lines = super(SaleOrderLine, self).create(vals_list)
+        for line in lines.filtered(lambda line: line.state == 'sale'):
+            if line.display_type == 'line_section':
+                self.env['rmg.sale'].create({
+                    'order_id': line.order_id.id,
+                    'order_line_id': line.id,
+                    'square_footage_estimate': 0,
+                })
         section_id = False
-        for so in rtn:
+        for so in lines:
             if so.display_type == "line_section":
                 section_id = so.id
             elif so.display_type != "line_note" and section_id:
                 so.update({"section_id": int(section_id)})
             else:
                 pass
-        return rtn
-
+        lines.filtered(lambda line: line.state == 'sale')._action_launch_stock_rule()
+        procurement_groups = self.env['procurement.group'].search([('sale_id', '=', lines.order_id.id)])
+        mrp_production_ids = procurement_groups.stock_move_ids.created_production_id.ids
+        for rec in mrp_production_ids:
+            mrp_id = self.env['mrp.production'].browse(rec)
+            if mrp_id.procurement_group_id.mrp_production_ids.move_dest_ids.sale_line_id.id in lines.filtered(
+                    lambda line: line.state == 'sale').ids:
+                mrp_id.rmg_id = lines[-1].rmg_sale_id.id if lines else False
+                for mrp_line in mrp_id.move_raw_ids:
+                    mrp_line.product_uom_qty = mrp_id.rmg_id.square_footage_estimate
+        return lines
