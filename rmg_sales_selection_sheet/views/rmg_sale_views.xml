@@ -46,23 +46,24 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="order_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field readonly="1" name="order_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
-                                <field name="order_line_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field readonly="1" name="order_line_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
                                 <field name="edge_profiles_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="slab_tagged_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                <field name="sink_by_bella_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="templated_by_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="corner_treatments_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="square_footage_estimate" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="installed_square_footage" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                             <group>
                                 <field name="faucets_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="faucet_model"
                                        attrs="{'invisible': [('faucets_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="sink_by_bella_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="customer_sink_types_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="customer_sink_model_number"
                                        attrs="{'invisible': [('customer_sink_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
@@ -85,6 +86,7 @@
                                     <field name="corner_treatment_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="shop_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="installation_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="splash" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="additional_holes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 </group>
                             </page>
@@ -103,8 +105,8 @@
             <field name="res_model">rmg.sale</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem id="customer_sink_types_config" action="rmg_sales_selection_sheet.action_rmg_sale_form"
+        <!-- <menuitem id="customer_sink_types_config" action="rmg_sales_selection_sheet.action_rmg_sale_form"
                   parent="rmg_sales_selection_sheet.selection_config_main"
-                  sequence="1"/>
+                  sequence="1"/> -->
     </data>
 </odoo>
