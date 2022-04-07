@@ -14,9 +14,6 @@ var SectionRenderer = require('account.section_and_note_backend');
 var rpc = require('web.rpc');
 
 var SectionAndNoteListRendererAccount = SectionRenderer.include({
-    // events:_.extend({}, SectionRenderer.prototype.events, {
-    //     'click .confirm_data': '_onConfirmData',
-    // }),
     /**
      * We want section and note to take the whole line (except handle and trash)
      * to look better and to hide the unnecessary fields.
@@ -91,14 +88,12 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
         var id = $row.data('id');
         var data = $(ev.target).closest('tr').find('.o_readonly_modifier')[0].innerText.trim()
         var myArray = data.split(" ");
-        console.log("myArray", myArray[0])
         rpc.query({
             model: 'rmg.sale',
             method: 'search',
             args: [[['order_line_id', '=', parseInt(myArray)]]],
         })
         .then(function (rmgIds) {
-            console.log("rmgIdsrmgIds", rmgIds)
             if (rmgIds.length > 0) {
                 return self.do_action({
                     type: 'ir.actions.act_window',
@@ -118,7 +113,6 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     res_model: 'rmg.sale',
                     views: [[false, 'form']],
                     target: 'new',
-                    // domain: [['order_line_id', '=', parseInt(myArray)]],
                     context: {
                         default_order_id: self.__parentedParent.res_id,
                         default_order_line_id: parseInt(myArray),
