@@ -36,7 +36,6 @@ class SaleOrder(models.Model):
                 for seq in sections:
                     if seq.sequence < rec.sequence:
                         rec.section_id = int(seq._origin.id)
-        # self.env['rmg.sale'].compute_order_lines(self)
         return
 
     def action_confirm(self):
@@ -68,8 +67,9 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).action_draft()
         rmg_sales = self.order_line.mapped('rmg_sale_id')
         if rmg_sales:
-            rmg_sales.update({'status' : 'pre_release'})
+            rmg_sales.update({'status': 'pre_release'})
         return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
