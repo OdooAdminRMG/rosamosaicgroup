@@ -46,11 +46,11 @@ class SaleOrder(models.Model):
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(
                     lambda x: x.section_id == rec
-                    and self.env.ref("stock.route_warehouse0_mto")
-                    in x.product_id.route_ids
-                    and self.env.ref("mrp.route_warehouse0_manufacture")
-                    in x.product_id.route_ids
-                    and x.rmg_sale_id.status != "released"
+                              and self.env.ref("stock.route_warehouse0_mto")
+                              in x.product_id.route_ids
+                              and self.env.ref("mrp.route_warehouse0_manufacture")
+                              in x.product_id.route_ids
+                              and x.rmg_sale_id.status != "released"
                 )
                 footage_lst = self.order_line.filtered(
                     lambda x: x.rmg_sale_id.square_footage_estimate < 0
@@ -73,25 +73,33 @@ class SaleOrder(models.Model):
                     )
                 rmg_order_line.append(lst.mapped("rmg_sale_id"))
             if (
-                rec.product_id
-                and not self.env["mrp.bom"]
-                .search(
-                    [
-                        "|",
-                        "|",
-                        ("byproduct_ids.product_id", "=", rec.product_id.id),
-                        ("product_id", "=", rec.product_id.id),
-                        "&",
-                        ("product_id", "=", False),
-                        ("product_tmpl_id", "=", rec.product_id.product_tmpl_id.id),
-                    ]
-                )
-                .bom_line_ids.ids
+                    rec.product_id and self.env.ref("stock.route_warehouse0_mto")
+                    in rec.product_id.route_ids
+                    and self.env.ref("mrp.route_warehouse0_manufacture")
+                    in rec.product_id.route_ids
+                    and not self.env["mrp.bom"]
+                    .search(
+                [
+                    "|",
+                    "|",
+                    ("byproduct_ids.product_id", "=", rec.product_id.id),
+                    ("product_id", "=", rec.product_id.id),
+                    "&",
+                    ("product_id", "=", False),
+                    ("product_tmpl_id", "=", rec.product_id.product_tmpl_id.id),
+                ]
+            )
+                    .bom_line_ids.ids
             ):
                 flag.append(rec.product_id.name)
         if flag:
             flag = ", ".join(flag)
-            raise UserError(_("Please define BOM in: " + flag))
+            raise UserError(
+                _(
+                    "Please define BOM in: %s"
+                )
+                % (flag)
+            )
 
         res = super(SaleOrder, self).action_confirm()
         if rmg_order_line and self.state in ["sale"]:
