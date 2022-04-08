@@ -33,7 +33,7 @@ class SelectionSheetConfiguration(models.TransientModel):
                                 "Select which Product Category nodes should be used as a filter for the Sink products selectable on the Selection Sheet"
                             )
                         )
-                parent = parent.parent_id
+                    parent = parent.parent_id
 
     @api.model
     def get_values(self):
