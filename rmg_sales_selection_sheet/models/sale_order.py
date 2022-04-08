@@ -172,3 +172,10 @@ class SaleOrderLine(models.Model):
                 for mrp_line in mrp_id.move_raw_ids:
                     mrp_line.product_uom_qty = mrp_id.rmg_id.square_footage_estimate
         return lines
+
+    def unlink(self):
+        # Unlink Rmg Sale ID when deleting line_section order line
+        for rec in self:
+            if rec.display_type == "line_section" and rec.rmg_sale_id:
+                rec.rmg_sale_id.sudo().unlink()
+        return super(SaleOrderLine, self).unlink()
