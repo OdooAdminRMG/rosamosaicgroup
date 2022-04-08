@@ -41,15 +41,19 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         rmg_order_line = []
         flag = []
-        footage_lst = self.order_line.filtered(lambda x: x.display_type != "line_section" and x.rmg_sale_id.square_footage_estimate <= 0)
+        footage_lst = self.order_line.filtered(
+            lambda x: x.display_type != "line_section" and x.rmg_sale_id and x.rmg_sale_id.square_footage_estimate <= 0)
         if footage_lst:
-            raise UserError(_("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
+            raise UserError(
+                _("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
         for rec in self.order_line:
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
-                                  and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
-                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
-                                  and x.rmg_sale_id.status != 'released')
+                                                         and self.env.ref(
+                    'stock.route_warehouse0_mto') in x.product_id.route_ids
+                                                         and self.env.ref(
+                    'mrp.route_warehouse0_manufacture') in x.product_id.route_ids
+                                                         and x.rmg_sale_id.status != 'released')
                 if len(lst) > 1:
                     raise UserError(
                         _(
