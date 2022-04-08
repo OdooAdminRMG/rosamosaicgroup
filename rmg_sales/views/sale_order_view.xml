@@ -14,15 +14,19 @@
                     <label for="commitment_date" string="Delivery Date"/>
                     <div class="o_row" id="o_row_delivery_date">
                         <field name="commitment_date"/>
-                        <span class="text-muted" attrs="{'invisible': [('effective_date', '!=', False), ('commitment_date', '!=', False)]}">Expected: <field name="expected_date" widget="date"/></span>
+                        <span class="text-muted"
+                              attrs="{'invisible': [('effective_date', '!=', False), ('commitment_date', '!=', False)]}">
+                            Expected:
+                            <field name="expected_date" widget="date"/>
+                        </span>
                     </div>
                     <field name="effective_date" attrs="{'invisible': [('effective_date', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
-                    <attribute name="context">{'from_so_action_confirm': True}</attribute>
+                    <attribute name="context">{'so_action_confirm_warning': "warning_1"}</attribute>
                 </xpath>
                 <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
-                    <attribute name="context">{'from_so_action_confirm': True}</attribute>
+                    <attribute name="context">{'so_action_confirm_warning': "warning_1"}</attribute>
                 </xpath>
             </field>
         </record>

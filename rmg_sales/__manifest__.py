@@ -4,10 +4,10 @@
     "name": "RMG Sales",
     "summary": """RMG Sales""",
     "description": """Manage Delivery Dates on Sale Order""",
-    'author': "S4 Solutions, LLC",
-    'website': "https://www.sfour.io/",
+    "author": "S4 Solutions, LLC",
+    "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.1.0.0",
+    "version": "15.0.1.0.1",
     "depends": ["sale_management", "sale_stock"],
     "data": [
         "security/ir.model.access.csv",

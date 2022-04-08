@@ -11,7 +11,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     selection_sheet_notes = fields.Text(string=_("Notes"))
-    transferred_to_mo = fields.Boolean('Transferred to MO')
+    transferred_to_mo = fields.Boolean("Transferred to MO")
 
     @api.model
     def create(self, value):
@@ -40,6 +40,7 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         rmg_order_line = []
+        flag = []
         footage_lst = self.order_line.filtered(lambda x: x.display_type != "line_section" and x.rmg_sale_id.square_footage_estimate <= 0)
         if footage_lst:
             raise UserError(_("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
@@ -50,24 +51,58 @@ class SaleOrder(models.Model):
                                   and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
                                   and x.rmg_sale_id.status != 'released')
                 if len(lst) > 1:
-                    raise UserError(_("More than one product in the section %s has both its Replenish to Order (MTO) "
-                                      "and Manufacture routes selected. Confirming or Saving this change would result in"
-                                      " multiple Manufacturing Orders being created. Since there is only one set of "
-                                      "Selection Sheet data per Sales Order section, the system cannot identify which "
-                                      "Manufacturing Order is relevant for the Selection Sheet data. Please specify only "
-                                      "a single Sales Order Line whose product has these two routes set on its product template.") % (rec.name))
-                rmg_order_line.append(lst.mapped('rmg_sale_id'))
+                    raise UserError(
+                        _(
+                            "More than one product in the section %s has both its Replenish to Order (MTO) "
+                            "and Manufacture routes selected. Confirming or Saving this change would result in"
+                            " multiple Manufacturing Orders being created. Since there is only one set of "
+                            "Selection Sheet data per Sales Order section, the system cannot identify which "
+                            "Manufacturing Order is relevant for the Selection Sheet data. Please specify only "
+                            "a single Sales Order Line whose product has these two routes set on its product template."
+                        )
+                        % (rec.name)
+                    )
+                rmg_order_line.append(lst.mapped("rmg_sale_id"))
+            if (
+                    rec.product_id and self.env.ref("stock.route_warehouse0_mto")
+                    in rec.product_id.route_ids
+                    and self.env.ref("mrp.route_warehouse0_manufacture")
+                    in rec.product_id.route_ids
+                    and not self.env["mrp.bom"]
+                    .search(
+                [
+                    "|",
+                    "|",
+                    ("byproduct_ids.product_id", "=", rec.product_id.id),
+                    ("product_id", "=", rec.product_id.id),
+                    "&",
+                    ("product_id", "=", False),
+                    ("product_tmpl_id", "=", rec.product_id.product_tmpl_id.id),
+                ]
+            )
+                    .bom_line_ids.ids
+            ):
+                flag.append(rec.product_id.name)
+        if flag:
+            flag = ", ".join(flag)
+            raise UserError(
+                _(
+                    "Please define BOM in: %s"
+                )
+                % (flag)
+            )
+
         res = super(SaleOrder, self).action_confirm()
-        if rmg_order_line and self.state in ['sale']:
+        if rmg_order_line and self.state in ["sale"]:
             for rec in rmg_order_line:
-                rec.update({'status': 'released'})
+                rec.update({"status": "released"})
         return res
 
     def action_draft(self):
         res = super(SaleOrder, self).action_draft()
-        rmg_sales = self.order_line.mapped('rmg_sale_id')
+        rmg_sales = self.order_line.mapped("rmg_sale_id")
         if rmg_sales:
-            rmg_sales.update({'status': 'pre_release'})
+            rmg_sales.update({"status": "pre_release"})
         return res
 
 
@@ -75,9 +110,8 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     rmg_sale_id = fields.Many2one(
-        "rmg.sale",
-        compute='compute_rmg_sale_id',
-        string="RMG Sale Id")
+        "rmg.sale", compute="compute_rmg_sale_id", string="RMG Sale Id"
+    )
     section_id = fields.Many2one("sale.order.line", string="Section Id", store=True)
     mrp_order_id = fields.Many2one("mrp.production", string="MRP Order Id")
 

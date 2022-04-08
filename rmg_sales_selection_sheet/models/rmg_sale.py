@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 import logging
 from ast import literal_eval
-from odoo.exceptions import UserError
-from odoo import _, api, fields, models
+
 from lxml import etree
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
 _logger = logging.getLogger(__name__)
 
 
 class RmgSale(models.Model):
     _name = "rmg.sale"
     _description = "rmg sale"
-    _rec_name = 'order_line_id'
+    _rec_name = "order_line_id"
 
     order_id = fields.Many2one("sale.order")
     order_line_id = fields.Many2one("sale.order.line")
     mrp_order_id = fields.Many2one("mrp.production", string="MRP Order Id")
     # order_line_ids = fields.One2many("sale.order.line", 'rmg_sale_id', string=_("Order Lines"))
     order_line_ids = fields.Many2many(
-        "sale.order.line",
-        compute="compute_order_lines",
-        string="Order Lines")
+        "sale.order.line", compute="compute_order_lines", string="Order Lines"
+    )
 
     # order_line_ids = fields.One2many(
     #     "sale.order.line",
@@ -104,9 +105,8 @@ class RmgSale(models.Model):
     @api.model
     def create(self, vals):
         if vals:
-            vals['status']='pre_release'
+            vals["status"] = "pre_release"
         return super().create(vals)
-
 
     def rec_child(self, ele):
         temp = ele
@@ -137,5 +137,4 @@ class RmgSale(models.Model):
         res = super(RmgSale, self).write(values)
         if self.order_id.state == 'sale' and self.status == 'pre_release' and self.square_footage_estimate >= 0:
             self.status = 'released'
-
         return res
