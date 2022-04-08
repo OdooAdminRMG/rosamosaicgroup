@@ -63,6 +63,7 @@ class SaleOrder(models.Model):
                                                          and self.env.ref(
                     'mrp.route_warehouse0_manufacture') in x.product_id.route_ids
                                                          and x.rmg_sale_id.status != 'released')
+                print("\n\n\n",lst)
                 if len(lst) > 1:
                     raise UserError(
                         _(

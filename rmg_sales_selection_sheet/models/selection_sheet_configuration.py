@@ -20,15 +20,19 @@ class SelectionSheetConfiguration(models.TransientModel):
 
     @api.onchange("sink_by_bella_product_categories")
     def onchange_sink_by_bella_product_categories(self):
-        for ele in self.sink_by_bella_product_categories:
-            parent = ele
-            while parent:
-                if parent.parent_id in list:
-                    raise UserError(
-                        _(
-                            "Select which Product Category nodes should be used as a filter for the Sink products selectable on the Selection Sheet"
+        list = self.env["product.category"].browse(
+            self.sink_by_bella_product_categories.ids
+        )
+        if list:
+            for ele in list:
+                parent = ele
+                while parent:
+                    if parent.parent_id in list:
+                        raise UserError(
+                            _(
+                                "Select which Product Category nodes should be used as a filter for the Sink products selectable on the Selection Sheet"
+                            )
                         )
-                    )
                 parent = parent.parent_id
 
     @api.model
