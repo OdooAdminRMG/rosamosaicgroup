@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import _, models
+from odoo.tools import format_datetime
 
 
 class SaleOrder(models.Model):
@@ -22,6 +23,8 @@ class SaleOrder(models.Model):
         }
 
     def action_confirm(self):
+        tzinfo = self.env.context.get('tz') or self.env.user.tz or 'UTC'
+        locale = self.env.context.get('lang') or self.env.user.lang or 'en_US'
         # Pass context from action_confirm button to open wizard for Delivery date confirmation
         copy_context = dict(self._context)
         if (
@@ -31,9 +34,7 @@ class SaleOrder(models.Model):
             copy_context.update({"so_action_confirm_warning": "warning_2"})
             if not any(
                 self.order_line.filtered(
-                    lambda product: product.product_id.detailed_type == "service"
-                    and product.product_id.service_policy == "delivered_timesheet"
-                    and product.product_id.service_tracking
+                    lambda line: line.product_id.service_tracking
                     in ["task_in_project", "project_only"]
                 )
             ):
@@ -47,7 +48,7 @@ class SaleOrder(models.Model):
             message = (
                 "This Sales Order’s Delivery Date is currently set to %s. "
                 "Please confirm this is correct before proceeding"
-                % self.commitment_date
+                % format_datetime(self.env, self.commitment_date, tzinfo=tzinfo, locale=locale)
             )
             return self.with_context(copy_context).open_message_wizard(message)
 
