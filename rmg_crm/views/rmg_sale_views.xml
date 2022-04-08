@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="before">
-                    <field name="job_name" attrs="{'readonly': [('opportunity_id', '=', True)]}"/>
+                    <field name="job_name" attrs="{'readonly': [('opportunity_id', '!=', False)]}"/>
                 </xpath>
             </field>
         </record>

@@ -41,11 +41,20 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         rmg_order_line = []
         flag = []
+        # Check Selection Sheet
+        selection_sheet_enable = self.env['ir.config_parameter'].sudo().get_param('rmg_sales_selection_sheet.companies')
+        if selection_sheet_enable:
+            not_selection_sheet_lines = self.order_line.filtered(
+                lambda x: x.display_type != "line_section" and not x.rmg_sale_id and x.section_id)
+            if not_selection_sheet_lines:
+                raise UserError(
+                    _("Please add Selection sheet to the Section : %s") % (','.join(not_selection_sheet_lines.mapped('section_id').mapped('name'))))
+        # Check Square Footage Estimation
         footage_lst = self.order_line.filtered(
             lambda x: x.display_type != "line_section" and x.rmg_sale_id and x.rmg_sale_id.square_footage_estimate <= 0)
         if footage_lst:
             raise UserError(
-                _("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
+                _("Please add square footage estimate value in Section : %s ") % (','.join(footage_lst.mapped('section_id').mapped('name'))))
         for rec in self.order_line:
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
@@ -54,6 +63,7 @@ class SaleOrder(models.Model):
                                                          and self.env.ref(
                     'mrp.route_warehouse0_manufacture') in x.product_id.route_ids
                                                          and x.rmg_sale_id.status != 'released')
+                print("\n\n\n",lst)
                 if len(lst) > 1:
                     raise UserError(
                         _(
