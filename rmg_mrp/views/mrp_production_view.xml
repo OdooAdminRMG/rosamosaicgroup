@@ -10,7 +10,7 @@
                 <page string='Images and Work Instructions' name="image_work_instruction">
                     <group>
                         <group>
-                            <field name="image_attachment_id" widget="many2many_tags" domain="[('mimetype', 'in', ['image/png', 'image/jpeg', 'application/pdf'])]"/>
+                            <field name="image_attachment_id" widget="many2many_binary" domain="[('mimetype', 'in', ['image/png', 'image/jpeg', 'application/pdf'])]"/>
                         </group>
                     </group>
                 </page>
