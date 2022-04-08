@@ -12,8 +12,17 @@ class Project(models.Model):
     def _compute_project_name(self):
         for project in self:
             project.job_name = project.sale_line_id.order_id.job_name
+            if project.job_name:
+                project.name = (
+                        project.sale_line_id.order_id.name + " - " + project.job_name
+                )
+            elif project.sale_line_id:
+                project.sale_line_id.order_id.name
 
-            project.name = (
-                    project.sale_line_id.order_id.name + " - " + project.job_name
-            ) if project.job_name else (
-                project.sale_line_id.order_id.name)
+
+class ProjectTask(models.Model):
+    _inherit = "project.task"
+
+    job_name = fields.Char(
+        related="project_id.job_name", string=_("Job Name"), store=True
+    )
