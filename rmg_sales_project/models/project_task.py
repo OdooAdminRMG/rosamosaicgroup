@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 PROJECT_TASK_READABLE_FIELDS = {'task_id', 'lead_time', 'offset_hours'}
 PROJECT_TASK_WRITABLE_FIELDS = {'offset_hours'}
 
+
 class ProjectTask(models.Model):
     """
 
@@ -28,11 +29,21 @@ class ProjectTask(models.Model):
     picking_count = fields.Integer(string='Total Pickings',
                                    compute="_compute_picking_count")
     task_id = fields.Char(
-            string='Task ID',
-            default=lambda self: _('New'),
-            copy=True)
+        string='Task ID',
+        default=lambda self: _('New'),
+        copy=True)
     lead_time = fields.Integer('Lead Time', default=0, copy=True)
     offset_hours = fields.Integer('Offset Hours', default=0, copy=True)
+    delivery_address = fields.Many2one("res.partner", string=_("Delivery Address"),
+                                       domain="['|',('company_id', '=', 'False'),('company_id', '=', company_id)]")
+    overall_square_feet = fields.Float('Overall Square Feet',
+                                       compute="_compute_overall_square_feet", store=True)
+
+    @api.depends('project_id.sale_line_id.order_id.order_line')
+    def _compute_overall_square_feet(self):
+        for rec in self:
+            rec.overall_square_feet = sum(
+                rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.square_footage_estimate'))
 
     @api.model
     def create(self, vals):

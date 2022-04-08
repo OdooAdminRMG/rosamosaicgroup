@@ -12,7 +12,8 @@ class Project(models.Model):
     def _compute_project_name(self):
         for project in self:
             project.job_name = project.sale_line_id.order_id.job_name
-            if project.job_name:
-                project.name = (
-                        project.sale_line_id.order_id.name + " - " + project.job_name
-                )
+
+            project.name = (
+                    project.sale_line_id.order_id.name + " - " + project.job_name
+            ) if project.job_name else (
+                project.sale_line_id.order_id.name)

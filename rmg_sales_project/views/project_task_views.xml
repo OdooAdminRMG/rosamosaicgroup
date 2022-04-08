@@ -6,10 +6,14 @@
         <field name="model">project.task</field>
         <field name="inherit_id" ref="project.view_task_form2"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="delivery_address"/>
+            </xpath>
             <xpath expr="//field[@name='parent_id']" position="after">
                 <field name="task_id"/>
                 <field name="lead_time" widget="float_time"/>
                 <field name="offset_hours" widget="float_time"/>
+                <field name="overall_square_feet" widget="float_time"/>
             </xpath>
             <xpath expr="//field[@name='depend_on_ids']" position="attributes">
                     <attribute name="domain">[('project_id', '=', project_id)]</attribute>

@@ -20,9 +20,11 @@ class SelectionSheetConfiguration(models.TransientModel):
 
     @api.onchange("sink_by_bella_product_categories")
     def onchange_sink_by_bella_product_categories(self):
+        print("\n\n\n", self.sink_by_bella_product_categories,"\n\n\n", self.sink_by_bella_product_categories.ids)
         list = self.env["product.category"].browse(
             self.sink_by_bella_product_categories.ids
         )
+        print("\nlist", list)
         if list:
             for ele in list:
                 parent = ele
