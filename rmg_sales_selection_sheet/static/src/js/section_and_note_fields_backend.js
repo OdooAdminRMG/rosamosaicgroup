@@ -37,8 +37,6 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                             </button>\
                         '
                     );
-
-                    console.log("recordrecordrecordrecord", record)
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
