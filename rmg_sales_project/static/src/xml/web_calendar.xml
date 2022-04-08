@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-extend="calendar-box">
+        <t t-jquery="div.o_event_title" t-operation="after">
+            <t t-if="record.job_name"><span> / </span>
+                <div t-esc="record.job_name"/></t>
+            <t t-if="record.partner_id"><span> / </span>
+                <div t-esc="record.partner_id[1]"/></t>
+            <t t-if="record.delivery_address"><span> / </span>
+                <div t-esc="record.delivery_address[1]"/></t>
+        </t>
+    </t>
+</templates>

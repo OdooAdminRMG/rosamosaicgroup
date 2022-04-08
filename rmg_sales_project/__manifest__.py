@@ -23,8 +23,9 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.1.0.0',
+    'version': '15.0.2.0.0',
     'depends': [
+        'project',
         'sale_project',
         'sale_timesheet',
         'resource',
@@ -36,6 +37,11 @@
         'views/mrp_views.xml',
         'views/stock_picking_views.xml',
     ],
+    'assets': {
+        'web.assets_qweb': [
+            'rmg_sales_project/static/src/xml/web_calendar.xml',
+        ],
+    },
     'installable': True,
     'auto_install': False,
 }
