@@ -101,8 +101,8 @@
         <field name="inherit_id" ref="project.view_task_calendar"/>
         <field name="arch" type="xml">
             <field name="partner_id" position="after">
-                <field name="job_name" invisible="0"/>
-                <field name="delivery_address_id" invisible="0"/>
+                <field name="job_name" invisible="1"/>
+                <field name="delivery_address_id" invisible="1"/>
             </field>
         </field>
     </record>
