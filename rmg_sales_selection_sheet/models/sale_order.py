@@ -41,15 +41,19 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         rmg_order_line = []
         flag = []
-        footage_lst = self.order_line.filtered(lambda x: x.display_type != "line_section" and x.rmg_sale_id.square_footage_estimate <= 0)
+        footage_lst = self.order_line.filtered(
+            lambda x: x.display_type != "line_section" and x.rmg_sale_id and x.rmg_sale_id.square_footage_estimate <= 0)
         if footage_lst:
-            raise UserError(_("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
+            raise UserError(
+                _("Please add square footage estimate value in %s") % (','.join(footage_lst.mapped('name'))))
         for rec in self.order_line:
             if rec.display_type == "line_section":
                 lst = self.order_line.filtered(lambda x: x.section_id == rec
-                                  and self.env.ref('stock.route_warehouse0_mto') in x.product_id.route_ids
-                                  and self.env.ref('mrp.route_warehouse0_manufacture') in x.product_id.route_ids
-                                  and x.rmg_sale_id.status != 'released')
+                                                         and self.env.ref(
+                    'stock.route_warehouse0_mto') in x.product_id.route_ids
+                                                         and self.env.ref(
+                    'mrp.route_warehouse0_manufacture') in x.product_id.route_ids
+                                                         and x.rmg_sale_id.status != 'released')
                 if len(lst) > 1:
                     raise UserError(
                         _(
@@ -116,7 +120,14 @@ class SaleOrderLine(models.Model):
     mrp_order_id = fields.Many2one("mrp.production", string="MRP Order Id")
 
     def compute_rmg_sale_id(self):
+        section_id = False
         for rec in self:
+            if rec.display_type == "line_section":
+                section_id = rec.id
+            elif rec.display_type != "line_note" and section_id:
+                rec.update({"section_id": int(section_id)})
+            else:
+                pass
             lines = rec.env["rmg.sale"].search(
                 [("order_line_id", "=", rec.section_id.id)]
             )
