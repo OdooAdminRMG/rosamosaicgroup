@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_picking_type_form_rmg_mrp" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.rmg_mrp</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <field name="show_operations" position="after">
+                <field name="check_relieve_full_lot"/>
+            </field>
+        </field>
+    </record>
+</odoo>

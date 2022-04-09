@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_order_form_inherit_sale_stock_inherit_date" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('o_row')]/field[@name='commitment_date']" position="replace"/>
+                <xpath expr="//div[hasclass('o_row')]//field[@name='expected_date']/parent::span" position="replace"/>
+                <xpath expr="//field[@name='effective_date']" position="replace"/>
+                <xpath expr="//field[@name='show_update_pricelist']" position="before">
+                    <label for="commitment_date" string="Delivery Date"/>
+                    <div class="o_row" id="o_row_delivery_date">
+                        <field name="commitment_date"/>
+                        <span class="text-muted"
+                              attrs="{'invisible': [('effective_date', '!=', False), ('commitment_date', '!=', False)]}">
+                            Expected:
+                            <field name="expected_date" widget="date"/>
+                        </span>
+                    </div>
+                    <field name="effective_date" attrs="{'invisible': [('effective_date', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
+                    <attribute name="context">{'so_action_confirm_warning': "warning_1"}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                    <attribute name="context">{'so_action_confirm_warning': "warning_1"}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

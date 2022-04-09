@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+        <!--  Data Leads -->
+        <record id="edge_profiles_data_1" model="edge.profiles">
+            <field name="name">Eased</field>
+        </record>
+        <record id="edge_profiles_data_2" model="edge.profiles">
+            <field name="name">¼ bullnose</field>
+        </record>
+        <record id="edge_profiles_data_3" model="edge.profiles">
+            <field name="name">⅛ bevel</field>
+        </record>
+        <record id="edge_profiles_data_4" model="edge.profiles">
+            <field name="name">¼ bevel</field>
+        </record>
+        <record id="edge_profiles_data_5" model="edge.profiles">
+            <field name="name">Ogee</field>
+        </record>
+        <record id="edge_profiles_data_6" model="edge.profiles">
+            <field name="name">Demi bullnose</field>
+        </record>
+        <record id="edge_profiles_data_7" model="edge.profiles">
+            <field name="name">Full bullnose</field>
+        </record>
+        <record id="edge_profiles_data_8" model="edge.profiles">
+            <field name="name">Half bullnose</field>
+        </record>
+        <record id="edge_profiles_data_9" model="edge.profiles">
+            <field name="name">Dupont</field>
+        </record>
+        <record id="edge_profiles_data_10" model="edge.profiles">
+            <field name="name">Eased</field>
+        </record>
+        <record id="edge_profiles_data_11" model="edge.profiles">
+            <field name="name">Mitered</field>
+        </record>
+        <record id="edge_profiles_data_12" model="edge.profiles">
+            <field name="name">Laminated</field>
+        </record>
+    </data>
+</odoo>

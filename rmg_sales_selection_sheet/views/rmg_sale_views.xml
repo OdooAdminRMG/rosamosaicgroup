@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="inherit_sale_order_form_view" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page/group/group/field[@name='invoice_status']" position="after">
+                    <field name="selection_sheet_notes"/>
+                    <field name="transferred_to_mo" readonly="0"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='sequence']" position="after">
+                    <field name="id" invisible="0" attrs="{'invisible': [('display_type', '!=', 'line_section')]}"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <field name="section_id" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" position="after">
+                    <field name="rmg_sale_id" invisible="1"/>
+                    <field name="mrp_order_id" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_rmg_sale_tree" model="ir.ui.view">
+            <field name="name">RMG Selection Sheet Tree</field>
+            <field name="model">rmg.sale</field>
+            <field name="arch" type="xml">
+                <tree string="Sales">
+                    <field name="order_id"/>
+                    <field name="order_line_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_rmg_sale_form" model="ir.ui.view">
+            <field name="name">RMG Selection Sheet Form</field>
+            <field name="model">rmg.sale</field>
+            <field name="arch" type="xml">
+                <form string="Sales">
+                    <header>
+                        <field name="status" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field readonly="1" name="order_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                            </group>
+                            <group>
+                                <field readonly="1" name="order_line_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                            </group>
+                            <group>
+                                <field name="edge_profiles_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="slab_tagged_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="templated_by_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="corner_treatments_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="square_footage_estimate" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="installed_square_footage" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                            </group>
+                            <group>
+                                <field name="faucets_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="faucet_model"
+                                       attrs="{'invisible': [('faucets_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="sink_by_bella_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="customer_sink_types_id" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="customer_sink_model_number"
+                                       attrs="{'invisible': [('customer_sink_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="range_types_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                <field name="range_model"
+                                       attrs="{'invisible': [('range_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Order Line" name="order_line">
+                                <field name="order_line_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <group>
+                                    <field name="slab_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="corner_treatment_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="shop_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="installation_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="splash" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="additional_holes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- <footer>
+                        <button class="btn-primary" string="Confirm" id="confirm_data"/>
+                        <button string="Discard" class="btn-secondary" special="cancel"/>
+                    </footer> -->
+                </form>
+            </field>
+        </record>
+
+        <record id="action_rmg_sale_form" model="ir.actions.act_window">
+            <field name="name">RMG Selection Sheet</field>
+            <field name="res_model">rmg.sale</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <!-- <menuitem id="customer_sink_types_config" action="rmg_sales_selection_sheet.action_rmg_sale_form"
+                  parent="rmg_sales_selection_sheet.selection_config_main"
+                  sequence="1"/> -->
+    </data>
+</odoo>

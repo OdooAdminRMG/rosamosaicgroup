@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="faucets_tree_view" model="ir.ui.view">
+        <field name="name">Faucets Tree View</field>
+        <field name="model">faucets</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="faucets_form_view" model="ir.ui.view">
+        <field name="name">Faucets Form View</field>
+        <field name="model">faucets</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_faucets" model="ir.actions.act_window">
+        <field name="name">Faucets</field>
+        <field name="res_model">faucets</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="faucets_config" action="rmg_sales_selection_sheet.action_faucets"
+              parent="rmg_sales_selection_sheet.selection_config_main"
+              sequence="2"/>
+</odoo>

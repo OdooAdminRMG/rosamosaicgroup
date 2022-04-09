@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="1">
+        <!--  Data Leads -->
+        <record id="faucets_data_1" model="faucets">
+            <field name="name">Single hole</field>
+        </record>
+        <record id="faucets_data_2" model="faucets">
+            <field name="name">8” spread</field>
+        </record>
+        <record id="faucets_data_3" model="faucets">
+            <field name="name">4” spread</field>
+        </record>
+    </data>
+</odoo>

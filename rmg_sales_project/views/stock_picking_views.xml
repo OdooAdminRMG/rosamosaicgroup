@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="ir.ui.view" id="view_vpicktree_rmg_sale_projects">
+        <field name="name">stock.picking.tree.rmg_sale_projects</field>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <tree string="Picking list"
+                  create="false" delete="false" edit="false"
+                  sample="1"
+                  js_class="lazy_column_list">
+                <header>
+                    <button name="action_link_do_with_task"
+                            type="object"
+                            class="btn-primary"
+                            string="Associate Delivery Orders"/>
+                    <button string="Close Delivery"
+                            type="action"
+                            name="%(stock.action_picking_tree_all)d"
+                            class="btn-secondary"/>
+                </header>
+                <field name="priority" optional="show" widget="priority" nolabel="1"/>
+                <field name="name" decoration-bf="1"/>
+                <field name="location_id" options="{'no_create': True}" string="From" groups="stock.group_stock_multi_locations" optional="show"/>
+                <field name="location_dest_id" options="{'no_create': True}" string="To" groups="stock.group_stock_multi_locations" optional="show"/>
+                <field name="partner_id" optional="show"/>
+                <field name="is_signed" string="Signed" optional="hide" groups="stock.group_stock_sign_delivery"/>
+                <field name="user_id" optional="hide" widget="many2one_avatar_user"/>
+                <field name="scheduled_date" optional="show" widget="remaining_days" attrs="{'invisible':[('state', 'in', ('done', 'cancel'))]}"/>
+                <field name="picking_type_code" invisible="1"/>
+                <field name="products_availability_state" invisible="1" options="{&quot;lazy&quot;: true}"/>
+                <field name="products_availability" options="{&quot;lazy&quot;: true}" optional="hide"
+                       attrs="{'invisible': ['|', ('picking_type_code', '!=', 'outgoing'), ('state', 'not in', ['confirmed', 'waiting', 'assigned'])]}"
+                       decoration-success="state == 'assigned' or products_availability_state == 'available'"
+                       decoration-warning="state != 'assigned' and products_availability_state in ('expected', 'available')"
+                       decoration-danger="state != 'assigned' and products_availability_state == 'late'"/>
+                <field name="date_deadline" optional="hide" widget="remaining_days" attrs="{'invisible':[('state', 'in', ('done', 'cancel'))]}"/>
+                <field name="date_done" string="Effective Date" optional="hide"/>
+                <field name="origin" optional="show"/>
+                <field name="backorder_id" optional="hide"/>
+                <field name="picking_type_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                <field name="state" optional="show" widget="badge" decoration-success="state == 'done'" decoration-info="state not in ('done', 'cancel', 'draft')" decoration-muted="state == 'draft'"/>
+                <field name="activity_exception_decoration" widget="activity_exception"/>
+                <field name="json_popover" nolabel="1" widget="stock_rescheduling_popover" attrs="{'invisible': [('json_popover', '=', False)]}"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

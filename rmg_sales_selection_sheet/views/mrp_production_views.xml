@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="inherit_mrp_production_form_view" model="ir.ui.view">
+            <field name="name">mrp.production.form</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='miscellaneous']" position="after">
+                    <page string="Selection Sheet" name="selection_sheet">
+                        <group>
+                            <group>
+                                <field name="rmg_id"/>
+                                <field name="slab_tagged_id"/>
+                                <field name="slab_notes"/>
+                                <field name="sink_by_bella_id"/>
+                                <field name="customer_sink_types_id"/>
+                            </group>
+                            <group>
+                                <field name="customer_sink_model_number"/>
+                                <field name="shop_notes"/>
+                                <field name="installation_notes"/>
+                                <field name="square_footage_estimate"/>
+                                <field name="templated_by_id"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
