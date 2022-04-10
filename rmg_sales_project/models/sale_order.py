@@ -160,6 +160,9 @@ class SaleOrder(models.Model):
             ('sale_id', 'in', self.ids)
         ]).stock_move_ids
         move_ids.created_production_id.project_task_id = project_task_mo.id
-        move_ids.picking_id.project_task_id = project_task_do.id
+        move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_end
+        picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+        picking_id.project_task_id = project_task_do.id
+        picking_id.scheduled_date = project_task_do.planned_date_end
         
         return res

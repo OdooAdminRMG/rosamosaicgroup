@@ -67,7 +67,7 @@
                         attrs="{'invisible': [('peg_to_delivery_order', '=', False)]}">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value"
-                              attrs="{'invisible': [('mrp_production_count', '=', 0)]}">
+                              attrs="{'invisible': [('picking_count', '=', 0)]}">
                             <field name="picking_count"/>
                         </span>
                         <span class="o_stat_text">Delivery</span>
@@ -77,24 +77,6 @@
         </field>
     </record>
 
-    <!--Add Button from TreeView -->
-    <record model="ir.ui.view" id="view_task_tree2_inherited_rmg_sale_projects">
-        <field name="name">project.task.tree2.inherited_rmg_sale_projects</field>
-        <field name="model">project.task</field>
-        <field name="inherit_id" ref="project.view_task_tree2"/>
-        <field name="arch" type="xml">
-            <tree position="inside">
-                <header>
-                    <button name="action_open_mos_to_associate_with_task"
-                            type="object"
-                            string="Associate MO"/>
-                    <button name="action_open_dos_to_associate_with_task"
-                            type="object"
-                            string="Associate Delivery Order"/>
-                </header>
-            </tree>
-        </field>
-    </record>
     <record id="view_project_task_calendar_inherit" model="ir.ui.view">
         <field name="name">project.task.calendar</field>
         <field name="model">project.task</field>
