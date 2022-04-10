@@ -52,6 +52,15 @@ class ProjectTask(models.Model):
         result = super(ProjectTask, self).create(vals)
         return result
 
+    def write(self, vals):
+        res = super(ProjectTask, self).write(vals)
+        if 'planned_date_end' in vals:
+            if self.peg_to_manufacturing_order and self.production_ids:
+                self.production_ids.date_planned_start = self.planned_date_end
+            if self.peg_to_delivery_order and self.stock_picking_ids:
+                self.stock_picking_ids.scheduled_date = self.planned_date_end
+        return res
+
     @property
     def SELF_READABLE_FIELDS(self):
         """ Override this method to add task_id and lead_time as Readable Fields"""
@@ -125,57 +134,3 @@ class ProjectTask(models.Model):
         """
         self.mrp_production_count = len(self.production_ids)
 
-    # create MO from project.task button
-    def action_open_mos_to_associate_with_task(self):
-        """
-
-        """
-        peg_to_mo_task_id = self.filtered(
-            lambda task: task.peg_to_manufacturing_order
-        )
-        if not peg_to_mo_task_id:
-            raise ValidationError(_(
-                'Please Select Peg to Manufacturing Order is True.'
-            ))
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'tree',
-            'name': 'Manufacturing Orders',
-            'res_model': 'mrp.production',
-            'view_id': self.env.ref(
-                'rmg_sales_project.rmg_mrp_production_tree_view'
-            ).id,
-            'domain': [
-                ('state', 'not in', ('done', 'cancel')),
-                ('id', 'not in', peg_to_mo_task_id.production_ids.ids)
-            ],
-            'context': {'task_id': peg_to_mo_task_id.id},
-            'target': 'new'
-        }
-
-    def action_open_dos_to_associate_with_task(self):
-        """
-
-        """
-        peg_to_do_task_id = self.filtered(
-            lambda task: task.peg_to_delivery_order
-        )
-        if not peg_to_do_task_id:
-            raise ValidationError(_(
-                'Please Select Peg to Delivery Order is True.'
-            ))
-        return {
-            'type': 'ir.actions.act_window',
-            'view_mode': 'tree',
-            'name': 'Transfers',
-            'res_model': 'stock.picking',
-            'view_id': self.env.ref(
-                'rmg_sales_project.view_vpicktree_rmg_sale_projects'
-            ).id,
-            'domain': [
-                ('state', 'not in', ('done', 'cancel')),
-                ('id', 'not in', peg_to_do_task_id.stock_picking_ids.ids)
-            ],
-            'context': {'task_id': peg_to_do_task_id.id},
-            'target': 'new'
-        }

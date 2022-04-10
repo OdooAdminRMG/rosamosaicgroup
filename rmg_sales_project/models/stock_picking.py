@@ -18,4 +18,30 @@ class StockPicking(models.Model):
 
         """
         picking_ids = self.browse(self._context.get('active_ids'))
-        picking_ids.project_task_id = self._context.get('task_id', False)
+        if self._context.get('task_id', False):
+            task_id = self.env['project.task'].browse(self._context.get('task_id', False))
+            picking_ids.project_task_id = self._context.get('task_id', False)
+            picking_ids.scheduled_date = task_id.planned_date_end
+
+    def open_dos_to_associate_with_task(self):
+        """
+
+        """
+        task_id = self.browse(self._context.get('active_ids')).mapped('project_task_id')[0]
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'name': 'Transfers',
+            'res_model': 'stock.picking',
+            'view_id': self.env.ref(
+                'rmg_sales_project.view_vpicktree_rmg_sale_projects'
+            ).id,
+            'domain': [
+                ('state', 'not in', ('done', 'cancel')),
+                ('picking_type_id.code', '=', 'outgoing'),
+                ('id', 'not in', task_id.stock_picking_ids.ids)
+            ],
+            'context': {'task_id': task_id.id},
+            'target': 'new'
+        }
+

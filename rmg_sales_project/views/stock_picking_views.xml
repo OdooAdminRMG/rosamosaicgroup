@@ -1,5 +1,17 @@
 <?xml version="1.0"?>
 <odoo>
+    <record id="stock_vpicktree_view_inherit" model="ir.ui.view">
+        <field name="name">stock.picking.tree</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/header" position="inside">
+                 <button name="open_dos_to_associate_with_task"
+                            type="object"
+                            string="Associate Delivery Order"/>
+            </xpath>
+        </field>
+     </record>
     <record model="ir.ui.view" id="view_vpicktree_rmg_sale_projects">
         <field name="name">stock.picking.tree.rmg_sale_projects</field>
         <field name="model">stock.picking</field>
