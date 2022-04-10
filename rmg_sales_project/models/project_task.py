@@ -59,6 +59,7 @@ class ProjectTask(models.Model):
                 self.production_ids.date_planned_start = self.planned_date_end
             if self.peg_to_delivery_order and self.stock_picking_ids:
                 self.stock_picking_ids.scheduled_date = self.planned_date_end
+                self.stock_picking_ids.date_deadline = self.planned_date_end
         return res
 
     @property
@@ -133,4 +134,46 @@ class ProjectTask(models.Model):
 
         """
         self.mrp_production_count = len(self.production_ids)
+
+    # create MO from project.task button
+    def open_mos_to_associate_with_task(self):
+        """
+
+        """
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'name': 'Manufacturing Orders',
+            'res_model': 'mrp.production',
+            'view_id': self.env.ref(
+                'rmg_sales_project.rmg_mrp_production_tree_view'
+            ).id,
+            'domain': [
+                ('state', 'not in', ('done', 'cancel')),
+                ('id', 'not in', self.production_ids.ids)
+            ],
+            'context': {'task_id': self.id},
+            'target': 'new'
+        }
+
+    def open_dos_to_associate_with_task(self):
+        """
+
+        """
+        return {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'name': 'Transfers',
+            'res_model': 'stock.picking',
+            'view_id': self.env.ref(
+                'rmg_sales_project.view_vpicktree_rmg_sale_projects'
+            ).id,
+            'domain': [
+                ('state', 'not in', ('done', 'cancel')),
+                ('picking_type_id.code', '=', 'outgoing'),
+                ('id', 'not in', self.stock_picking_ids.ids)
+            ],
+            'context': {'task_id': self.id},
+            'target': 'new'
+        }
 
