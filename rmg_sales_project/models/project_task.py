@@ -57,6 +57,7 @@ class ProjectTask(models.Model):
         if 'planned_date_end' in vals:
             if self.peg_to_manufacturing_order and self.production_ids:
                 self.production_ids.date_planned_start = self.planned_date_end
+                self.production_ids.date_deadline = self.planned_date_end
             if self.peg_to_delivery_order and self.stock_picking_ids:
                 self.stock_picking_ids.scheduled_date = self.planned_date_end
                 self.stock_picking_ids.date_deadline = self.planned_date_end
