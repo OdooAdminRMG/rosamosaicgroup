@@ -13,7 +13,7 @@
                 <field name="task_id"/>
                 <field name="lead_time" widget="float_time"/>
                 <field name="offset_hours" widget="float_time"/>
-                <field name="overall_square_feet" widget="float_time"/>
+                <field name="overall_square_feet"/>
             </xpath>
             <xpath expr="//field[@name='depend_on_ids']" position="attributes">
                 <attribute name="domain">[('project_id', '=', project_id)]</attribute>
@@ -95,6 +95,7 @@
             <field name="partner_id" position="after">
                 <field name="job_name" invisible="1"/>
                 <field name="delivery_address_id" invisible="1"/>
+                <field name="overall_square_feet" invisible="1"/>
             </field>
         </field>
     </record>

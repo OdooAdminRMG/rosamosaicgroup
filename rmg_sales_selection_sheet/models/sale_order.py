@@ -118,6 +118,13 @@ class SaleOrder(models.Model):
             rmg_sales.update({"status": "pre_release"})
         return res
 
+    def unlink(self):
+        # Unlink Rmg Sale ID when deleting SO which have any Section with RMG Sale ID
+        for rec in self.order_line.filtered(lambda x: x.display_type == 'line_section'):
+            if rec.rmg_sale_id:
+                rec.rmg_sale_id.sudo().unlink()
+        return super(SaleOrder, self).unlink()
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -130,6 +137,7 @@ class SaleOrderLine(models.Model):
 
     def compute_rmg_sale_id(self):
         section_id = False
+        lines = False
         for rec in self:
             if rec.display_type == "line_section":
                 section_id = rec.id
@@ -137,9 +145,10 @@ class SaleOrderLine(models.Model):
                 rec.update({"section_id": int(section_id)})
             else:
                 pass
-            lines = rec.env["rmg.sale"].search(
-                [("order_line_id", "=", rec.section_id.id)]
-            )
+            if rec.section_id:
+                lines = rec.env["rmg.sale"].search(
+                    [("order_line_id", "=", rec.section_id.id)]
+                )
             rec.rmg_sale_id = lines.id if lines else False
 
     @api.model_create_multi
