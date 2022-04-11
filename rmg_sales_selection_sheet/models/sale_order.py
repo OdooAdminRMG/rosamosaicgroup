@@ -48,7 +48,7 @@ class SaleOrder(models.Model):
                 lambda x: x.display_type != "line_section" and not x.rmg_sale_id and x.section_id)
             if not_selection_sheet_lines:
                 raise UserError(
-                    _("Please add Selection sheet to the Section : %s") % (','.join(not_selection_sheet_lines.mapped('section_id').mapped('name'))))
+                    _("At least one value must be populated on the Selection Sheet for the Section '%s' prior to confirming this Sales Order") % (','.join(not_selection_sheet_lines.mapped('section_id').mapped('name'))))
         # Check Square Footage Estimation
         footage_lst = self.order_line.filtered(
             lambda x: x.display_type != "line_section" and x.rmg_sale_id and x.rmg_sale_id.square_footage_estimate <= 0)

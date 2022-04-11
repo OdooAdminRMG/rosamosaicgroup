@@ -16,7 +16,7 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     peg_to_manufacturing_order = fields.Boolean(
-        string="Pag To Manufacturing", copy=True)
+        string="Peg To Manufacturing", copy=True)
     peg_to_delivery_order = fields.Boolean(
         string="Peg to Delivery Order", copy=True)
     production_ids = fields.One2many(
