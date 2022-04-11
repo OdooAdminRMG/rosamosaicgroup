@@ -52,6 +52,19 @@ class ProjectTask(models.Model):
         result = super(ProjectTask, self).create(vals)
         return result
 
+    def write(self, vals):
+        res = super(ProjectTask, self).write(vals)
+        if 'planned_date_end' in vals:
+            mo_task = self.filtered(lambda x: x.peg_to_manufacturing_order)
+            do_task = self.filtered(lambda x: x.peg_to_delivery_order)
+            if mo_task and mo_task.production_ids:
+                mo_task.production_ids.date_planned_start = mo_task.planned_date_end
+                mo_task.production_ids.date_deadline = mo_task.planned_date_end
+            if do_task and do_task.stock_picking_ids:
+                do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
+                do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
+        return res
+
     @property
     def SELF_READABLE_FIELDS(self):
         """ Override this method to add task_id and lead_time as Readable Fields"""
@@ -126,17 +139,10 @@ class ProjectTask(models.Model):
         self.mrp_production_count = len(self.production_ids)
 
     # create MO from project.task button
-    def action_open_mos_to_associate_with_task(self):
+    def open_mos_to_associate_with_task(self):
         """
 
         """
-        peg_to_mo_task_id = self.filtered(
-            lambda task: task.peg_to_manufacturing_order
-        )
-        if not peg_to_mo_task_id:
-            raise ValidationError(_(
-                'Please Select Peg to Manufacturing Order is True.'
-            ))
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'tree',
@@ -147,23 +153,16 @@ class ProjectTask(models.Model):
             ).id,
             'domain': [
                 ('state', 'not in', ('done', 'cancel')),
-                ('id', 'not in', peg_to_mo_task_id.production_ids.ids)
+                ('id', 'not in', self.production_ids.ids)
             ],
-            'context': {'task_id': peg_to_mo_task_id.id},
+            'context': {'task_id': self.id},
             'target': 'new'
         }
 
-    def action_open_dos_to_associate_with_task(self):
+    def open_dos_to_associate_with_task(self):
         """
 
         """
-        peg_to_do_task_id = self.filtered(
-            lambda task: task.peg_to_delivery_order
-        )
-        if not peg_to_do_task_id:
-            raise ValidationError(_(
-                'Please Select Peg to Delivery Order is True.'
-            ))
         return {
             'type': 'ir.actions.act_window',
             'view_mode': 'tree',
@@ -174,8 +173,10 @@ class ProjectTask(models.Model):
             ).id,
             'domain': [
                 ('state', 'not in', ('done', 'cancel')),
-                ('id', 'not in', peg_to_do_task_id.stock_picking_ids.ids)
+                ('picking_type_id.code', '=', 'outgoing'),
+                ('id', 'not in', self.stock_picking_ids.ids)
             ],
-            'context': {'task_id': peg_to_do_task_id.id},
+            'context': {'task_id': self.id},
             'target': 'new'
         }
+

@@ -15,4 +15,8 @@ class MrpProduction(models.Model):
 
         """
         mrp_active_id = self.browse(self._context.get('active_ids'))
-        mrp_active_id.project_task_id = self._context.get('task_id', False)
+        if self._context.get('task_id', False):
+            task_id = self.env['project.task'].browse(self._context.get('task_id', False))
+            mrp_active_id.project_task_id = task_id
+            mrp_active_id.date_planned_start = task_id.planned_date_end
+            mrp_active_id.date_deadline = task_id.planned_date_end

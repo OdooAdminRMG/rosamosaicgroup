@@ -23,7 +23,7 @@ class SaleOrder(models.Model):
         }
 
     def action_confirm(self):
-        tzinfo = self.env.context.get('tz') or self.env.user.tz or 'UTC'
+        tz = self.env.context.get('tz') or self.env.user.tz or 'UTC'
         locale = self.env.context.get('lang') or self.env.user.lang or 'en_US'
         # Pass context from action_confirm button to open wizard for Delivery date confirmation
         copy_context = dict(self._context)
@@ -48,7 +48,7 @@ class SaleOrder(models.Model):
             message = (
                 "This Sales Order’s Delivery Date is currently set to %s. "
                 "Please confirm this is correct before proceeding"
-                % format_datetime(self.env, self.commitment_date, tzinfo=tzinfo, locale=locale)
+                % format_datetime(self.env, self.commitment_date, tz=tz)
             )
             return self.with_context(copy_context).open_message_wizard(message)
 

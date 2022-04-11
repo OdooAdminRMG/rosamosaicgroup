@@ -18,4 +18,8 @@ class StockPicking(models.Model):
 
         """
         picking_ids = self.browse(self._context.get('active_ids'))
-        picking_ids.project_task_id = self._context.get('task_id', False)
+        if self._context.get('task_id', False):
+            task_id = self.env['project.task'].browse(self._context.get('task_id', False))
+            picking_ids.project_task_id = self._context.get('task_id', False)
+            picking_ids.scheduled_date = task_id.planned_date_end
+            picking_ids.date_deadline = task_id.planned_date_end
