@@ -33,6 +33,7 @@
         'stock',
     ],
     'data': [
+        'data/ir_sequence_data.xml',
         'views/project_task_views.xml',
         'views/mrp_views.xml',
         'views/stock_picking_views.xml',
