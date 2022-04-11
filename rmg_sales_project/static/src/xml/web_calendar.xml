@@ -8,6 +8,8 @@
                 <div t-esc="record.partner_id[1]"/></t>
             <t t-if="record.delivery_address"><span> / </span>
                 <div t-esc="record.delivery_address[1]"/></t>
+            <t t-if="record.overall_square_feet"><span> / </span>
+                <div t-esc="record.overall_square_feet"/></t>
         </t>
     </t>
 </templates>
