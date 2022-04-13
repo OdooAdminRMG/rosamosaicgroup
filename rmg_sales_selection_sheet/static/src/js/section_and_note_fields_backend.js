@@ -37,6 +37,13 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                             </button>\
                         '
                     );
+
+
+
+                this.getSession().user_has_group('sales_team.group_sale_manager').then(function(has_group){
+                    console.log("22222")
+                        if (has_group){
+                    console.log("333333")
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
@@ -49,6 +56,53 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                         }
 
                     });
+                        }
+                    });
+                    console.log("444444")
+                    this.getSession().user_has_group('sales_team.group_sale_salesman').then(function(has_group){
+                    console.log("555555555")
+                        if (has_group){
+                    console.log("6666666")
+                    rpc.query({
+                        model: 'ir.config_parameter',
+                        method: "search_read",
+                        args: [[['key', '=', 'rmg_sales_selection_sheet.companies']],["value"]],
+                    }).then(function(data) {
+                        if (eval(data[0].value).includes(record.data.company_id.data.id)) {
+                            if (record.data.id ) {
+                                $cell.append($button);
+                            }
+                        }
+
+                    });
+                        }
+                    });
+                    console.log("7777777")
+                    this.getSession().user_has_group('sales_team.group_sale_salesman_all_leads').then(function(has_group){
+                    console.log("888888888")
+                        if (has_group){
+                    console.log("99999999")
+                    rpc.query({
+                        model: 'ir.config_parameter',
+                        method: "search_read",
+                        args: [[['key', '=', 'rmg_sales_selection_sheet.companies']],["value"]],
+                    }).then(function(data) {
+                        if (eval(data[0].value).includes(record.data.company_id.data.id)) {
+                            if (record.data.id ) {
+                                $cell.append($button);
+                            }
+                        }
+
+                    });
+                        }
+                    });
+
+
+
+
+
+
+
 
                     $button.on('click', this._onClickOpen.bind(this));
                 }
