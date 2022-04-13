@@ -38,7 +38,7 @@ class RmgSale(models.Model):
     slab_notes = fields.Text(string=_("Slab Notes"))
 
     def _get_sink_by_bella_domain(self):
-        res = self.env["ir.config_parameter"].get_param(
+        res = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.sink_by_bella_product_categories"
         )
         res = literal_eval(res) if res else []
@@ -71,7 +71,7 @@ class RmgSale(models.Model):
 
     # Only show records whose department_id value is one of those maintained in Sales > Configuration > Selection Sheet > Template Departments
     def _get_template_by_id_domain(self):
-        res = self.env["ir.config_parameter"].get_param(
+        res = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.template_departments"
         )
         res = literal_eval(res) if res else []
