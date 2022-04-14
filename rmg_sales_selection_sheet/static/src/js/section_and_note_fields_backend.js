@@ -41,9 +41,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
 
 
                 this.getSession().user_has_group('sales_team.group_sale_manager').then(function(has_group){
-                    console.log("22222")
                         if (has_group){
-                    console.log("333333")
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
@@ -58,11 +56,8 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     });
                         }
                     });
-                    console.log("444444")
                     this.getSession().user_has_group('sales_team.group_sale_salesman').then(function(has_group){
-                    console.log("555555555")
                         if (has_group){
-                    console.log("6666666")
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
@@ -77,11 +72,8 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     });
                         }
                     });
-                    console.log("7777777")
                     this.getSession().user_has_group('sales_team.group_sale_salesman_all_leads').then(function(has_group){
-                    console.log("888888888")
                         if (has_group){
-                    console.log("99999999")
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
