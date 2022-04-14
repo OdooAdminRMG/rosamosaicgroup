@@ -162,11 +162,10 @@ class SaleOrder(models.Model):
         move_ids.created_production_id.project_task_id = project_task_mo.id
         picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
         picking_id.project_task_id = project_task_do.id
-        if project_task_do.planned_date_end:
-            if picking_id:
-                picking_id.scheduled_date = project_task_do.planned_date_end
-                picking_id.date_deadline = project_task_do.planned_date_end
-            if move_ids.created_production_id:
-                move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_end
-                move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
+        if project_task_do.planned_date_end and picking_id:
+            picking_id.scheduled_date = project_task_do.planned_date_end
+            picking_id.date_deadline = project_task_do.planned_date_end
+        if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
+            move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
+            move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
         return res
