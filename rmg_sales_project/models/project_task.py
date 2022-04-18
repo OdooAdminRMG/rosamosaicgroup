@@ -117,7 +117,7 @@ class ProjectTask(models.Model):
         """
 
         """
-        action = self.env.ref('stock.action_picking_tree_all').read()[0]
+        action = self.env.ref('stock.action_picking_tree_all').sudo().read()[0]
         action['domain'] = [['id', 'in', self.stock_picking_ids.ids]]
         return action
 
@@ -126,7 +126,7 @@ class ProjectTask(models.Model):
         """
 
         """
-        action = self.env.ref('mrp.mrp_production_action').read()[0]
+        action = self.env.ref('mrp.mrp_production_action').sudo().read()[0]
         action['domain'] = [['id', 'in', self.production_ids.ids]]
         return action
 
