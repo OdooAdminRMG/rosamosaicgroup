@@ -38,13 +38,13 @@ class SelectionSheetConfiguration(models.TransientModel):
     @api.model
     def get_values(self):
         res = super(SelectionSheetConfiguration, self).get_values()
-        sink_by_bella_product_categories = self.env["ir.config_parameter"].get_param(
+        sink_by_bella_product_categories = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.sink_by_bella_product_categories"
         )
-        template_departments = self.env["ir.config_parameter"].get_param(
+        template_departments = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.template_departments"
         )
-        companies = self.env["ir.config_parameter"].get_param(
+        companies = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.companies"
         )
         if sink_by_bella_product_categories:

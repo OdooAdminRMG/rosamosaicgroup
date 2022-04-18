@@ -12,7 +12,8 @@ class MrpProduction(models.Model):
     )
     rmg_ids = fields.One2many("rmg.sale", "mrp_order_id", string="Rmg Lines")
     rmg_id = fields.Many2one("rmg.sale", string="Rmg Id")
-
+    edge_profiles_id = fields.Many2one("edge.profiles", string=_("Edge Profiles"), related="rmg_id.edge_profiles_id")
+    splash = fields.Text(string=_("Splash"), related="rmg_id.splash")
     slab_tagged_id = fields.Many2one(
         "stock.production.lot", related="rmg_id.slab_tagged_id", string=_("Slab Tagged")
     )
