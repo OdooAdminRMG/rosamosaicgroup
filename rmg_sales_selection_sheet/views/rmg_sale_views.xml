@@ -70,6 +70,7 @@
                                 <field name="range_types_id" options="{'no_create': True,}" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 <field name="range_model"
                                        attrs="{'invisible': [('range_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
+                                <field name="splash" attrs="{'readonly': [('status', '=', 'released')]}"/>
                             </group>
                         </group>
                         <notebook>
@@ -86,7 +87,6 @@
                                     <field name="corner_treatment_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="shop_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="installation_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                    <field name="splash" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                     <field name="additional_holes" attrs="{'readonly': [('status', '=', 'released')]}"/>
                                 </group>
                             </page>
