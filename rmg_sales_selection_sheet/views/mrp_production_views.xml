@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="mrp_production_form_rmg_sale_view_inherit" model="ir.ui.view">
-            <field name="name">mrp.production.rmg_sale.form</field>
-            <field name="model">mrp.production</field>
-            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='user_id']" position="after">
-                    <field name="splash"/>
-                </xpath>
-            </field>
-        </record>
         <record id="inherit_mrp_production_form_view" model="ir.ui.view">
             <field name="name">mrp.production.form</field>
             <field name="model">mrp.production</field>
@@ -31,6 +21,7 @@
                                 <field name="customer_sink_model_number"/>
                                 <field name="shop_notes"/>
                                 <field name="installation_notes"/>
+                                <field name="splash"/>
                                 <field name="square_footage_estimate"/>
                                 <field name="templated_by_id"/>
                             </group>
