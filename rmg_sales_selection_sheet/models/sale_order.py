@@ -42,27 +42,51 @@ class SaleOrder(models.Model):
         rmg_order_line = []
         flag = []
         # Check Selection Sheet
-        selection_sheet_enable = self.env['ir.config_parameter'].sudo().get_param('rmg_sales_selection_sheet.companies')
+        selection_sheet_enable = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("rmg_sales_selection_sheet.companies")
+        )
         if selection_sheet_enable:
             not_selection_sheet_lines = self.order_line.filtered(
-                lambda x: x.display_type != "line_section" and not x.rmg_sale_id and x.section_id)
+                lambda x: x.display_type != "line_section"
+                and not x.rmg_sale_id
+                and x.section_id
+            )
             if not_selection_sheet_lines:
                 raise UserError(
-                    _("At least one value must be populated on the Selection Sheet for the Section '%s' prior to confirming this Sales Order") % (','.join(not_selection_sheet_lines.mapped('section_id').mapped('name'))))
+                    _(
+                        "At least one value must be populated on the Selection Sheet for the Section '%s' prior to confirming this Sales Order"
+                    )
+                    % (
+                        ",".join(
+                            not_selection_sheet_lines.mapped("section_id").mapped(
+                                "name"
+                            )
+                        )
+                    )
+                )
         # Check Square Footage Estimation
         footage_lst = self.order_line.filtered(
-            lambda x: x.display_type != "line_section" and x.rmg_sale_id and x.rmg_sale_id.square_footage_estimate <= 0)
+            lambda x: x.display_type != "line_section"
+            and x.rmg_sale_id
+            and x.rmg_sale_id.square_footage_estimate <= 0
+        )
         if footage_lst:
             raise UserError(
-                _("Please add square footage estimate value in Section : %s ") % (','.join(footage_lst.mapped('section_id').mapped('name'))))
+                _("Please add square footage estimate value in Section : %s ")
+                % (",".join(footage_lst.mapped("section_id").mapped("name")))
+            )
         for rec in self.order_line:
             if rec.display_type == "line_section":
-                lst = self.order_line.filtered(lambda x: x.section_id == rec
-                                                         and self.env.ref(
-                    'stock.route_warehouse0_mto') in x.product_id.route_ids
-                                                         and self.env.ref(
-                    'mrp.route_warehouse0_manufacture') in x.product_id.route_ids
-                                                         and x.rmg_sale_id.status != 'released')
+                lst = self.order_line.filtered(
+                    lambda x: x.section_id == rec
+                    and self.env.ref("stock.route_warehouse0_mto")
+                    in x.product_id.route_ids
+                    and self.env.ref("mrp.route_warehouse0_manufacture")
+                    in x.product_id.route_ids
+                    and x.rmg_sale_id.status != "released"
+                )
                 if len(lst) > 1:
                     raise UserError(
                         _(
@@ -77,33 +101,29 @@ class SaleOrder(models.Model):
                     )
                 rmg_order_line.append(lst.mapped("rmg_sale_id"))
             if (
-                    rec.product_id and self.env.ref("stock.route_warehouse0_mto")
-                    in rec.product_id.route_ids
-                    and self.env.ref("mrp.route_warehouse0_manufacture")
-                    in rec.product_id.route_ids
-                    and not self.env["mrp.bom"]
-                    .search(
-                [
-                    "|",
-                    "|",
-                    ("byproduct_ids.product_id", "=", rec.product_id.id),
-                    ("product_id", "=", rec.product_id.id),
-                    "&",
-                    ("product_id", "=", False),
-                    ("product_tmpl_id", "=", rec.product_id.product_tmpl_id.id),
-                ]
-            )
-                    .bom_line_ids.ids
+                rec.product_id
+                and self.env.ref("stock.route_warehouse0_mto")
+                in rec.product_id.route_ids
+                and self.env.ref("mrp.route_warehouse0_manufacture")
+                in rec.product_id.route_ids
+                and not self.env["mrp.bom"]
+                .search(
+                    [
+                        "|",
+                        "|",
+                        ("byproduct_ids.product_id", "=", rec.product_id.id),
+                        ("product_id", "=", rec.product_id.id),
+                        "&",
+                        ("product_id", "=", False),
+                        ("product_tmpl_id", "=", rec.product_id.product_tmpl_id.id),
+                    ]
+                )
+                .bom_line_ids.ids
             ):
                 flag.append(rec.product_id.name)
         if flag:
             flag = ", ".join(flag)
-            raise UserError(
-                _(
-                    "Please define BOM in: %s"
-                )
-                % (flag)
-            )
+            raise UserError(_("Please define BOM in: %s") % (flag))
 
         res = super(SaleOrder, self).action_confirm()
         if rmg_order_line and self.state in ["sale"]:
@@ -120,7 +140,7 @@ class SaleOrder(models.Model):
 
     def unlink(self):
         # Unlink Rmg Sale ID when deleting SO which have any Section with RMG Sale ID
-        for rec in self.order_line.filtered(lambda x: x.display_type == 'line_section'):
+        for rec in self.order_line.filtered(lambda x: x.display_type == "line_section"):
             if rec.rmg_sale_id:
                 rec.rmg_sale_id.sudo().unlink()
         return super(SaleOrder, self).unlink()
@@ -154,13 +174,15 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         lines = super(SaleOrderLine, self).create(vals_list)
-        for line in lines.filtered(lambda line: line.state == 'sale'):
-            if line.display_type == 'line_section':
-                self.env['rmg.sale'].create({
-                    'order_id': line.order_id.id,
-                    'order_line_id': line.id,
-                    'square_footage_estimate': 0,
-                })
+        for line in lines.filtered(lambda line: line.state == "sale"):
+            if line.display_type == "line_section":
+                self.env["rmg.sale"].create(
+                    {
+                        "order_id": line.order_id.id,
+                        "order_line_id": line.id,
+                        "square_footage_estimate": 0,
+                    }
+                )
         section_id = False
         for so in lines:
             if so.display_type == "line_section":
@@ -169,13 +191,17 @@ class SaleOrderLine(models.Model):
                 so.update({"section_id": int(section_id)})
             else:
                 pass
-        lines.filtered(lambda line: line.state == 'sale')._action_launch_stock_rule()
-        procurement_groups = self.env['procurement.group'].search([('sale_id', '=', lines.order_id.id)])
+        lines.filtered(lambda line: line.state == "sale")._action_launch_stock_rule()
+        procurement_groups = self.env["procurement.group"].search(
+            [("sale_id", "=", lines.order_id.id)]
+        )
         mrp_production_ids = procurement_groups.stock_move_ids.created_production_id.ids
         for rec in mrp_production_ids:
-            mrp_id = self.env['mrp.production'].browse(rec)
-            if mrp_id.procurement_group_id.mrp_production_ids.move_dest_ids.sale_line_id.id in lines.filtered(
-                    lambda line: line.state == 'sale').ids:
+            mrp_id = self.env["mrp.production"].browse(rec)
+            if (
+                mrp_id.procurement_group_id.mrp_production_ids.move_dest_ids.sale_line_id.id
+                in lines.filtered(lambda line: line.state == "sale").ids
+            ):
                 mrp_id.rmg_id = lines[-1].rmg_sale_id.id if lines else False
                 for mrp_line in mrp_id.move_raw_ids:
                     mrp_line.product_uom_qty = mrp_id.rmg_id.square_footage_estimate
