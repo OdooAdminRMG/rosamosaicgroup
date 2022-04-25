@@ -141,6 +141,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
             if (rmgIds.length > 0) {
                 return self.do_action({
                     type: 'ir.actions.act_window',
+                    name: 'RMG Selection Sheet',
                     res_model: 'rmg.sale',
                     views: [[false, 'form']],
                     target: 'new',
@@ -155,6 +156,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                 return self.do_action({
                     type: 'ir.actions.act_window',
                     res_model: 'rmg.sale',
+                    name: 'RMG Selection Sheet',
                     views: [[false, 'form']],
                     target: 'new',
                     context: {
@@ -167,11 +169,6 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
             }
         })
     },
-
-    
-
-
-
 });
 
 });

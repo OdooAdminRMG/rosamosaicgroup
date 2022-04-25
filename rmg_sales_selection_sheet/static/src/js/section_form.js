@@ -15,16 +15,16 @@ odoo.define('rmg_sales_mrp.form_rendered', function(require) {
         * @private
         * @param {MouseEvent} ev
         */
-        _onSave: function (ev) {
-            ev.stopPropagation(); // Prevent x2m lines to be auto-saved
-            if (this.modelName == "rmg.sale") {
-                window.location.reload()
-            }
-            else {
-                this._disableButtons();
-                this.saveRecord().then(this._enableButtons.bind(this)).guardedCatch(this._enableButtons.bind(this));
-            }
-        },
+//        _onSave: function (ev) {
+//            ev.stopPropagation(); // Prevent x2m lines to be auto-saved
+//            if (this.modelName == "rmg.sale") {
+//                window.location.reload()
+//            }
+//            else {
+//                this._disableButtons();
+//                this.saveRecord().then(this._enableButtons.bind(this)).guardedCatch(this._enableButtons.bind(this));
+//            }
+//        },
     });
 
     var RMGFormView = FormView.extend({

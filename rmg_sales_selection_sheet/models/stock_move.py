@@ -17,7 +17,9 @@ class StockMoveLine(models.Model):
         )
 
         for line in self.picking_id.sale_id.order_line.filtered(
-            lambda line: line.display_type == False and line.rmg_sale_id and line.rmg_sale_id.slab_tagged_id
+            lambda line: line.display_type == False
+            and line.rmg_sale_id
+            and line.rmg_sale_id.slab_tagged_id
         ):
             bom_line_ids = (
                 self.env["mrp.bom"]
