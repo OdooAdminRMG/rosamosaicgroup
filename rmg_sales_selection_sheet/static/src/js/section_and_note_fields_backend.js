@@ -37,6 +37,11 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                             </button>\
                         '
                     );
+
+
+
+                this.getSession().user_has_group('sales_team.group_sale_manager').then(function(has_group){
+                        if (has_group){
                     rpc.query({
                         model: 'ir.config_parameter',
                         method: "search_read",
@@ -49,6 +54,47 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                         }
 
                     });
+                        }
+                    });
+                    this.getSession().user_has_group('sales_team.group_sale_salesman').then(function(has_group){
+                        if (has_group){
+                    rpc.query({
+                        model: 'ir.config_parameter',
+                        method: "search_read",
+                        args: [[['key', '=', 'rmg_sales_selection_sheet.companies']],["value"]],
+                    }).then(function(data) {
+                        if (eval(data[0].value).includes(record.data.company_id.data.id)) {
+                            if (record.data.id ) {
+                                $cell.append($button);
+                            }
+                        }
+
+                    });
+                        }
+                    });
+                    this.getSession().user_has_group('sales_team.group_sale_salesman_all_leads').then(function(has_group){
+                        if (has_group){
+                    rpc.query({
+                        model: 'ir.config_parameter',
+                        method: "search_read",
+                        args: [[['key', '=', 'rmg_sales_selection_sheet.companies']],["value"]],
+                    }).then(function(data) {
+                        if (eval(data[0].value).includes(record.data.company_id.data.id)) {
+                            if (record.data.id ) {
+                                $cell.append($button);
+                            }
+                        }
+
+                    });
+                        }
+                    });
+
+
+
+
+
+
+
 
                     $button.on('click', this._onClickOpen.bind(this));
                 }

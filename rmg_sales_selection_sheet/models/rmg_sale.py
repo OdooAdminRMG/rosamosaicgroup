@@ -2,9 +2,7 @@
 import logging
 from ast import literal_eval
 
-from lxml import etree
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -38,7 +36,7 @@ class RmgSale(models.Model):
     slab_notes = fields.Text(string=_("Slab Notes"))
 
     def _get_sink_by_bella_domain(self):
-        res = self.env["ir.config_parameter"].get_param(
+        res = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.sink_by_bella_product_categories"
         )
         res = literal_eval(res) if res else []
@@ -74,7 +72,7 @@ class RmgSale(models.Model):
 
     # Only show records whose department_id value is one of those maintained in Sales > Configuration > Selection Sheet > Template Departments
     def _get_template_by_id_domain(self):
-        res = self.env["ir.config_parameter"].get_param(
+        res = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.template_departments"
         )
         res = literal_eval(res) if res else []
@@ -145,9 +143,10 @@ class RmgSale(models.Model):
         if not self:
             self = self.env["rmg.sale"].browse(self.env.context.get("rmg_id", False))
         if (
-            self.old_square_footage_estimate != self.square_footage_estimate
-            or "skip_mo_ids" in self.env.context
-            or "skip_po_ids" in self.env.context
+                self.old_square_footage_estimate != self.square_footage_estimate
+                or "skip_mo_ids" in self.env.context
+                or "skip_po_ids" in self.env.context
+                or "skip_picking_ids" in self.env.context
         ):
             if self.old_square_footage_estimate != self.square_footage_estimate:
                 self.old_square_footage_estimate = self.square_footage_estimate
@@ -156,11 +155,11 @@ class RmgSale(models.Model):
                 if mrp.state not in ["cancel", "done"]:
                     mrp.move_raw_ids[0].product_uom_qty = self.square_footage_estimate
                     po_ids = (
-                        mrp.procurement_group_id.stock_move_ids.created_purchase_line_id.order_id
-                        | mrp.procurement_group_id.stock_move_ids.move_orig_ids.purchase_line_id.order_id
+                            mrp.procurement_group_id.stock_move_ids.created_purchase_line_id.order_id
+                            | mrp.procurement_group_id.stock_move_ids.move_orig_ids.purchase_line_id.order_id
                     )
                     for po in po_ids.filtered(
-                        lambda po: po.state in ["draft", "purchase"]
+                            lambda po: po.state in ["draft", "purchase"]
                     ):
                         order = po.order_line[0]
                         if po.state == "draft":
@@ -176,6 +175,22 @@ class RmgSale(models.Model):
                                         order.product_id.name, order.product_qty
                                     )
                                 )
+                    for picking_id in mrp.picking_ids:
+                        if picking_id.state not in ['done']:
+                            picking_id.move_ids_without_package[0].product_uom_qty = self.square_footage_estimate
+                        else:
+                            skip_picking_ids = self.env.context.get("skip_picking_ids", [])
+                            if picking_id.id not in skip_picking_ids:
+                                skip_picking_ids.append(picking_id.id)
+                                return self.with_context(
+                                    {"rmg_id": self.id, "skip_picking_ids": skip_picking_ids}
+                                ).open_warning_wizard(
+                                    "A Delivery has already been done for the component material {} in the quantity of {}. Since you have updated the Estimated Square Footage, you will need to manually update that Purchase Order. Do you wish to proceed?".format(
+                                        picking_id.move_ids_without_package[0].product_id.name,
+                                        picking_id.move_ids_without_package[0].product_qty
+                                    )
+                                )
+
                 else:
                     skip_mo_ids = self.env.context.get("skip_mo_ids", [])
                     if mrp.id not in skip_mo_ids:
@@ -187,9 +202,9 @@ class RmgSale(models.Model):
                         )
 
         if (
-            self.order_id.state == "sale"
-            and self.status == "pre_release"
-            and self.square_footage_estimate >= 0
+                self.order_id.state == "sale"
+                and self.status == "pre_release"
+                and self.square_footage_estimate >= 0
         ):
             self.status = "released"
         return

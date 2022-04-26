@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="inherit_mrp_production_form_view" model="ir.ui.view">
             <field name="name">mrp.production.form</field>
             <field name="model">mrp.production</field>
@@ -16,11 +15,13 @@
                                 <field name="slab_notes"/>
                                 <field name="sink_by_bella_id"/>
                                 <field name="customer_sink_types_id"/>
+                                <field name="edge_profiles_id"/>
                             </group>
                             <group>
                                 <field name="customer_sink_model_number"/>
                                 <field name="shop_notes"/>
                                 <field name="installation_notes"/>
+                                <field name="splash"/>
                                 <field name="square_footage_estimate"/>
                                 <field name="templated_by_id"/>
                             </group>

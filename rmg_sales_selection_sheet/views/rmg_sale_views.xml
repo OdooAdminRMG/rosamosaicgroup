@@ -70,6 +70,7 @@
                                 <field name="range_types_id" options="{'no_create': True,}"/>
                                 <field name="range_model"
                                        attrs="{'invisible': [('range_types_id',  '=', False)]}"/>
+                                <field name="splash"/>
                             </group>
                         </group>
                         <notebook>
@@ -86,7 +87,6 @@
                                     <field name="corner_treatment_notes"/>
                                     <field name="shop_notes"/>
                                     <field name="installation_notes"/>
-                                    <field name="splash"/>
                                     <field name="additional_holes"/>
                                 </group>
                             </page>
