@@ -10,7 +10,7 @@
                     <page string="Selection Sheet" name="selection_sheet">
                         <group>
                             <group>
-                                <field name="rmg_id"/>
+                                <field name="rmg_id" invisible="True"/>
                                 <field name="slab_tagged_id"/>
                                 <field name="slab_notes"/>
                                 <field name="sink_by_bella_id"/>
