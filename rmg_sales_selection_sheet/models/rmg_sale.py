@@ -185,7 +185,7 @@ class RmgSale(models.Model):
                                 return self.with_context(
                                     {"rmg_id": self.id, "skip_picking_ids": skip_picking_ids}
                                 ).open_warning_wizard(
-                                    "A Delivery has already been done for the component material {} in the quantity of {}. Since you have updated the Estimated Square Footage, you will need to manually update that Purchase Order. Do you wish to proceed?".format(
+                                    "A Delivery Order has already been done for the component material {} in the quantity of {}. Since you have updated the Estimated Square Footage, you will need to manually update that Delivery Order. Do you wish to proceed?".format(
                                         picking_id.move_ids_without_package[0].product_id.name,
                                         picking_id.move_ids_without_package[0].product_qty
                                     )
