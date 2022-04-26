@@ -69,8 +69,8 @@
                                        attrs="{'invisible': [('customer_sink_types_id',  '=', False)]}"/>
                                 <field name="range_types_id" options="{'no_create': True,}"/>
                                 <field name="range_model"
-                                       attrs="{'invisible': [('range_types_id',  '=', False)], 'readonly': [('status', '=', 'released')]}"/>
-                                <field name="splash" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                       attrs="{'invisible': [('range_types_id',  '=', False)]}"/>
+                                <field name="splash"/>
                             </group>
                         </group>
                         <notebook>
@@ -83,11 +83,11 @@
                             </page>
                             <page string="Notes" name="notes">
                                 <group>
-                                    <field name="slab_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                    <field name="corner_treatment_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                    <field name="shop_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                    <field name="installation_notes" attrs="{'readonly': [('status', '=', 'released')]}"/>
-                                    <field name="additional_holes" attrs="{'readonly': [('status', '=', 'released')]}"/>
+                                    <field name="slab_notes"/>
+                                    <field name="corner_treatment_notes"/>
+                                    <field name="shop_notes"/>
+                                    <field name="installation_notes"/>
+                                    <field name="additional_holes"/>
                                 </group>
                             </page>
                         </notebook>
