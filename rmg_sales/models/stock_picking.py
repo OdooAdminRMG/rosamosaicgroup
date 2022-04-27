@@ -27,7 +27,7 @@ class MrpProduction(models.Model):
             self.env["ir.config_parameter"].sudo().get_param("rmg_sales.manufacturing_order_report_id")) if self.env[
             "ir.config_parameter"].sudo().get_param("rmg_sales.manufacturing_order_report_id") else False
 
-        mrp_ids = self.env['mrp.production'].search([('job_name', '=', self.job_name)]) if self.job_name else []
+        mrp_ids = self.env['mrp.production'].search([('job_name', '=', self.job_name)]) if self.job_name and report_id else []
 
         stock_report_id = self.env['ir.actions.report'].search(
             [('report_name', '=', "rmg_sales.rmg_report_deliveryslip")]).id
