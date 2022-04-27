@@ -1,55 +1,33 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _, models
-from odoo.tools import format_datetime
+
+from odoo import _, api, models, fields
 
 
-class SaleOrder(models.Model):
-    _inherit = "sale.order"
+class InventoryConfiguration(models.TransientModel):
+    _inherit = "res.config.settings"
 
-    def open_message_wizard(self, message):
-        context = dict(self._context)
-        context.update({"default_sale_id": self.id, "default_message": message})
-        return {
-            "type": "ir.actions.act_window",
-            "res_model": "sale.order.confirm.wiz",
-            "name": "Confirm Sale Order Delivery Date",
-            "target": "new",
-            "views": [(False, "form")],
-            "view_mode": "form",
-            "view_id": self.env.ref("rmg_sales.view_sale_order_confirm_wiz_form").id,
-            # Set default sale_id and message
-            "context": context,
-        }
+    manufacturing_order_report_id = fields.Many2one('ir.actions.report',
+                                                    domain=[('model', 'like', 'mrp.production')],
+                                                    string=_(
+                                                        "Manufacturing Order Report for RMG Deliveries"))
 
-    def action_confirm(self):
-        tz = self.env.context.get('tz') or self.env.user.tz or 'UTC'
-        locale = self.env.context.get('lang') or self.env.user.lang or 'en_US'
-        # Pass context from action_confirm button to open wizard for Delivery date confirmation
-        copy_context = dict(self._context)
-        if (
-            "so_action_confirm_warning" in copy_context
-            and copy_context.get("so_action_confirm_warning") == "warning_1"
-        ):
-            copy_context.update({"so_action_confirm_warning": "warning_2"})
-            if not any(
-                self.order_line.filtered(
-                    lambda line: line.product_id.service_tracking
-                    in ["task_in_project", "project_only"]
-                )
-            ):
-                return self.with_context(copy_context).open_message_wizard(
-                    "There were no products added to this Sales Order which will result in the generation of a project. You may still save this order, but you will need to add such a product at a later date. Are you sure you want to proceed"
-                )
-        if "so_action_confirm_warning" in copy_context and (
-            copy_context.get("so_action_confirm_warning") == "warning_2"
-        ):
-            copy_context.update({"so_action_confirm_warning": "end"})
-            message = (
-                "This Sales Order’s Delivery Date is currently set to %s. "
-                "Please confirm this is correct before proceeding"
-                % format_datetime(self.env, self.commitment_date, tz=tz)
+    @api.model
+    def get_values(self):
+        res = super(InventoryConfiguration, self).get_values()
+        manufacturing_order_report_id = self.env["ir.config_parameter"].get_param(
+            "rmg_sales.manufacturing_order_report_id"
+        )
+        if manufacturing_order_report_id:
+            res.update(
+                manufacturing_order_report_id=int(manufacturing_order_report_id)
             )
-            return self.with_context(copy_context).open_message_wizard(message)
 
-        return super(SaleOrder, self).action_confirm()
+        return res
+
+    def set_values(self):
+        self.env["ir.config_parameter"].set_param(
+            "rmg_sales.manufacturing_order_report_id",
+            self.manufacturing_order_report_id.id,
+        )
+        return super(InventoryConfiguration, self).set_values()

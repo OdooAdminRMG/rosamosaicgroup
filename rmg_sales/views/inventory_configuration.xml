@@ -1,61 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <odoo>
-    <record id="selection_sheet_configuration" model="ir.ui.view">
-        <field name="name">selection.sheet.configuration</field>
+    <record id="inventory_configuration" model="ir.ui.view">
+        <field name="name">inventory.configuration</field>
         <field name="model">res.config.settings</field>
         <field name="priority" eval="10"/>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[@id='connectors_setting_container']" position="after">
-                <h2 class="mt32">Selection Sheet Configuration</h2>
-                <div class="row mt16 o_settings_container" id="selection_sheet_setting_container"
-                     style="padding-left: 50px;">
-                    <group>
-                        <label for="sink_by_bella_product_categories"/>
-                        <span title="Product Category"/>
-                        <div class="text-muted">
-                            Select which Product Category nodes should be used as a filter for the Sink products
-                            selectable on the Selection Sheet
-                        </div>
+            <xpath expr="//div[@id='reception_report']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="annual_inventory_date_1"
+                     groups='stock.group_stock_manager'>
+                    <div class="o_setting_right_pane">
+                        <label for="manufacturing_order_report_id"
+                               string="Manufacturing Order Report for RMG Deliveries"/>
                         <div class="content-group">
-                            <div class="mt16">
-                                <field name="sink_by_bella_product_categories" widget="many2many_tags"
-                                       options="{'no_create': True, 'no_open': True}"/>
-                            </div>
+                            <field name="manufacturing_order_report_id" class="o_light_label" style="width: 235px;"/>
                         </div>
-                    </group>
-                    <group>
-                        <group>
-                            <label for="template_departments"/>
-                            <span title="Template Departments"/>
-                            <div class="text-muted">
-                                Select the Departments whose employees may be used to populate the Templated By
-                                field on
-                                the
-                                Selection Sheet
-                            </div>
-                            <div class="content-group">
-                                <field name="template_departments" widget="many2many_tags"
-                                       options="{'no_create': True, 'no_open': True}"/>
-                            </div>
-                        </group>
-
-
-                        <group>
-                            <label for="companies"/>
-                            <span title="Companies"/>
-                            <div class="text-muted">
-                                Specify Companies for which the Selection Sheet may be visible for use on Quotations
-                                and
-                                Sales Orders
-                            </div>
-                            <div class="content-group">
-                                <field name="companies" widget="many2many_tags"
-                                       options="{'no_create': True, 'no_open': True}"/>
-                            </div>
-                        </group>
-                    </group>
+                    </div>
                 </div>
             </xpath>
         </field>
