@@ -12,6 +12,7 @@ class IrActionsReport(models.Model):
                 self.model == "stock.picking"
                 and self.report_file == "rmg_sales.rmg_report_deliveryslip"
                 and res_ids
+                and data
                 and not data.get("from_method")
         ):
             return (
