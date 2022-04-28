@@ -12,6 +12,8 @@ class IrActionsReport(models.Model):
             self.model == "mrp.production"
             and self.report_file == "rmg_mrp.revised_mrp_production_template"
             and res_ids
+            and data
+
             and not data.get("from_method")
         ):
             return (
