@@ -22,5 +22,25 @@
                 </div>
             </xpath>
         </template>
+
+
+        <template id="ckus_stub_inherit" inherit_id="l10n_us_check_printing.ckus_stub">
+            <xpath expr="//div[@t-attf-class='ckus_stub ckus_stub_{{ stub_num }}']/div[hasclass('row')]"
+                   position="replace">
+                <div class="row summary_line">
+                    <div class="col-8 text-right">
+                        <span t-esc="page['partner_name']"/>
+                    </div>
+                    <div class="col-2 text-middle">
+                        <span t-esc="page['date']"/>
+                    </div>
+                    <div class="col-2 text-right sequence_number">
+                        <span t-if="page['sequence_number']" t-esc="page['sequence_number']"/>
+                    </div>
+                </div>
+            </xpath>
+        </template>
+
+
     </data>
 </odoo>
