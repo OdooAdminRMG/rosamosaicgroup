@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_rmg_sale_warning_wiz_form" model="ir.ui.view">
+            <field name="name">rmg.sale.warning.wiz.form</field>
+            <field name="model">rmg.sale.warning.wiz</field>
+            <field name="arch" type="xml">
+                <form string="Create Menu">
+                    <group>
+                        <field name="rmg_id" invisible="1"/>
+                        <field name="message" readonly="True" nolabel="1"/>
+                    </group>
+                    <footer>
+                        <button name="continue_rmg_sale" string="Continue" type="object" class="btn-primary"
+                                data-hotkey="q"/>
+                        <button name="open_rmg_selection_sheet" type="object" string="Cancel"
+                                data-hotkey="z"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

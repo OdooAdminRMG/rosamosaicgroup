@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_report_rmg_deliveryslip" model="ir.actions.report">
+            <field name="name">RMG Delivery Slip</field>
+            <field name="model">stock.picking</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">rmg_sales.rmg_report_deliveryslip</field>
+            <field name="report_file">rmg_sales.rmg_report_deliveryslip</field>
+            <field name="binding_model_id" ref="model_stock_picking"/>
+            <field name="binding_type">report</field>
+        </record>
+        <template id="rmg_report_deliveryslip">
+            <t t-call="stock.report_deliveryslip"/>
+        </template>
+    </data>
+</odoo>

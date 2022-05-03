@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="inventory_configuration" model="ir.ui.view">
+        <field name="name">inventory.configuration</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='reception_report']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="annual_inventory_date_1"
+                     groups='stock.group_stock_manager'>
+                    <div class="o_setting_right_pane">
+                        <label for="manufacturing_order_report_id"
+                               string="Manufacturing Order Report for RMG Deliveries"/>
+                        <div class="content-group">
+                            <field name="manufacturing_order_report_id" class="o_light_label" style="width: 235px;"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

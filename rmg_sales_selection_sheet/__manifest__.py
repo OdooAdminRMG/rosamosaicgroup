@@ -7,7 +7,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.1.0.0",
+    "version": "15.0.2.0.0",
     "depends": ["sale_management", "stock", "purchase", "mrp", "hr_recruitment"],
     "data": [
         "data/edge_profiles_data.xml",
@@ -24,6 +24,7 @@
         "views/corner_treatments_views.xml",
         "views/range_types_views.xml",
         "views/rmg_sale_views.xml",
+        "wizard/rmg_sale_warning_wiz_view.xml",
     ],
     "assets": {
         "web.assets_backend": [
