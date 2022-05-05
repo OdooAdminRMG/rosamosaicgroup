@@ -9,6 +9,11 @@ from odoo.tools import float_is_zero, html_keep_url, is_html_empty
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    partner_shipping_id = fields.Many2one(
+        'res.partner', string='Delivery Address', readonly=True, required=False,
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)], 'sale': [('readonly', False)]},
+        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]", )
+
     def open_message_wizard(self, message):
         context = dict(self._context)
         context.update({"default_sale_id": self.id, "default_message": message})
