@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_project_calendar" name="Project Calendar" parent="project.menu_main_pm" sequence="110" />
+        <menuitem id="menu_project_installation_calendar" action="rmg_project.action_calendar_event_project_installation" name="Installation Calendar" parent="rmg_project.menu_project_calendar" sequence="1" />
+        <menuitem id="menu_project_templating_calendar" action="rmg_project.action_calendar_event_project_templating" name="Templating Calendar" parent="rmg_project.menu_project_calendar" sequence="2" />
+    </data>
+</odoo>
