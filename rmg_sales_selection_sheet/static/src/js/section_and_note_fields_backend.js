@@ -132,6 +132,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
         var id = $row.data('id');
         var data = $(ev.target).closest('tr').find('.o_readonly_modifier')[0].innerText.trim()
         var myArray = data.split(" ");
+        var line = myArray[0].replace(',', '');
         rpc.query({
             model: 'rmg.sale',
             method: 'search',
