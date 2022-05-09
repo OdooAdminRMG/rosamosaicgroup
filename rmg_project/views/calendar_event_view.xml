@@ -14,8 +14,8 @@
             <field name="inherit_id" ref="calendar.view_calendar_event_form" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='location']" position="after">
-                    <field name="is_templating" />
-                    <field name="is_installing" />
+                    <field name="is_templating" invisible='1'/>
+                    <field name="is_installing" invisible='1'/>
                 </xpath>
             </field>
         </record>
@@ -25,6 +25,8 @@
             <field name="view_mode">calendar</field>
             <field name="view_id" ref="calendar.view_calendar_event_calendar" />
             <field name="domain">[('is_installing', '=', True)]</field>
+            <field name="context">{'default_is_installing': True}</field>
+
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     No meetings found. Let's schedule one!
@@ -42,6 +44,8 @@
             <field name="view_mode">calendar</field>
             <field name="view_id" ref="calendar.view_calendar_event_calendar" />
             <field name="domain">[('is_templating', '=', True)]</field>
+            <field name="context">{'default_is_templating': True}</field>
+
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     No meetings found. Let's schedule one!
