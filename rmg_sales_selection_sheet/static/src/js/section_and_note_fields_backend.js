@@ -136,7 +136,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
         rpc.query({
             model: 'rmg.sale',
             method: 'search',
-            args: [[['order_line_id', '=', parseInt(myArray)]]],
+            args: [[['order_line_id', '=', parseInt(line)]]],
         })
         .then(function (rmgIds) {
             if (rmgIds.length > 0) {
@@ -162,7 +162,7 @@ var SectionAndNoteListRendererAccount = SectionRenderer.include({
                     target: 'new',
                     context: {
                         default_order_id: self.__parentedParent.res_id,
-                        default_order_line_id: parseInt(myArray),
+                        default_order_line_id: parseInt(line),
                         active_id: rmgIds[0],
                     },
                     flags: {'action_buttons': true},
