@@ -54,16 +54,18 @@ class ProjectTask(models.Model):
 
     def write(self, vals):
         res = super(ProjectTask, self).write(vals)
-        if 'planned_date_begin' in vals:
+        if 'planned_date_begin' in vals or 'planned_date_end' in vals:
             mo_task = self.filtered(lambda x: x.peg_to_manufacturing_order)
             do_task = self.filtered(lambda x: x.peg_to_delivery_order)
             if mo_task and mo_task.production_ids:
                 mo_orders = mo_task.production_ids.filtered(lambda x: x.state not in ('done', 'cancel'))
-                mo_orders.date_planned_start = mo_task.planned_date_begin
-                mo_orders.date_deadline = mo_task.planned_date_end
-            if do_task and do_task.stock_picking_ids:
-                do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
-                do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
+                if vals.get('planned_date_begin'):
+                    mo_orders.date_planned_start = mo_task.planned_date_begin
+                if vals.get('planned_date_end'):
+                    mo_orders.date_deadline = mo_task.planned_date_end
+                    if do_task and do_task.stock_picking_ids:
+                        do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
+                        do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
         return res
 
     @property
@@ -180,4 +182,3 @@ class ProjectTask(models.Model):
             'context': {'task_id': self.id},
             'target': 'new'
         }
-
