@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Part of Odoo, S4 Solutions, LLC.
+# See LICENSE file for full copyright & licensing details.
 
 {
     "name": "RMG Project Enhancements",
@@ -7,8 +9,11 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.2.0.1",
-    "depends": ["sale_project", "project", "calendar"],
+    "version": "15.0.2.0.2",
+    "depends": [
+        "sale_project",
+        "calendar"
+    ],
     "data": [
         "views/calendar_event_view.xml",
         "views/sale_order_view.xml",
