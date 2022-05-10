@@ -15,7 +15,7 @@ class CalendarEvent(models.Model):
          Override Create method  to check name of meeting include template or install
 
         '''
-        res = super().create(vals_list)
+        res = super(CalendarEvent, self).create(vals_list)
         res.check_templating_installing()
         return res
 

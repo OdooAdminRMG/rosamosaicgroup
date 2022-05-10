@@ -16,10 +16,7 @@ class SaleOrder(models.Model):
 
         :return:
         """
-        context = self._context.copy()
-        context.update({"default_model_id": "sale.order"})
         action_data = self.env.ref(
             "rmg_project.action_calendar_event_project_installation"
         ).read()[0]
-        action_data['context'] = context
         return action_data
