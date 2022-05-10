@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+# Part of Odoo, S4 Solutions, LLC.
+# See LICENSE file for full copyright & licensing details.
 
 from . import product_category
-from . import product_template
-from . import purchase_order
+from . import stock_move
 
