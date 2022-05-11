@@ -25,18 +25,33 @@
         <record id="mrp_production_kanban_view_inherit" model="ir.ui.view">
             <field name="name">mrp.production.kanban.inherit</field>
             <field name="model">mrp.production</field>
+            <field name="priority" eval="100"/>
             <field name="inherit_id" ref="mrp.mrp_production_kanban_view"/>
             <field name="arch" type="xml">
                 <field name="state" position="after">
                     <field name="job_name"/>
                 </field>
-
                 <xpath expr="//div[hasclass('o_kanban_record_bottom')]" position="before">
                     <div class="text-muted">
-                        <span><t t-esc="record.job_name.value"/></span>
+                        <span>
+                            <t t-esc="record.job_name.value"/>
+                        </span>
                     </div>
                 </xpath>
             </field>
         </record>
+
+
+        <record id="view_mrp_production_filter_inherit" model="ir.ui.view">
+            <field name="name">mrp.production.select</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <field name="job_name"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
