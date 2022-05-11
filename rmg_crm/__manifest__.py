@@ -7,7 +7,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.2.1.1",
+    "version": "15.0.2.2.1",
     "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp"],
     "data": [
         "views/rmg_sale_views.xml",

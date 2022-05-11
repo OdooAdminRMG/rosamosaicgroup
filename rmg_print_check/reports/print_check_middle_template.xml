@@ -12,7 +12,7 @@
                     <div class="row">
                         <div class="col-6 ckus_payee_name" t-esc="page['partner_name']"/>
                         <div class="col-6 ckus_payee_amount">
-                            <t t-esc="page['amount'].replace(o.currency_id.symbol, '')"/>
+                            <t t-esc="page['amount']"/>
                         </div>
                     </div>
                     <div class="ckus_amount_in_word" t-esc="page['amount_in_word']"/>
@@ -40,7 +40,5 @@
                 </div>
             </xpath>
         </template>
-
-
     </data>
 </odoo>
