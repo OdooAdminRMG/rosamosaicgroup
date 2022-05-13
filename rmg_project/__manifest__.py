@@ -15,7 +15,7 @@
         "calendar"
     ],
     "data": [
-        "views/calendar_event_view.xml",
+        "views/project_view.xml",
         "views/sale_order_view.xml",
         "views/menu_view.xml",
     ],

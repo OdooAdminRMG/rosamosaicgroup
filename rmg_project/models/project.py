@@ -3,8 +3,8 @@
 from odoo import fields, models, api
 
 
-class CalendarEvent(models.Model):
-    _inherit = "calendar.event"
+class ProjectTask(models.Model):
+    _inherit = "project.task"
 
     is_templating = fields.Boolean()
     is_installing = fields.Boolean()
@@ -15,7 +15,7 @@ class CalendarEvent(models.Model):
          Override Create method  to check name of meeting include template or install
 
         '''
-        res = super(CalendarEvent, self).create(vals_list)
+        res = super(ProjectTask, self).create(vals_list)
         res.check_templating_installing()
         return res
 
@@ -23,7 +23,7 @@ class CalendarEvent(models.Model):
         '''
          Override Write method  to check name of meeting include template or install
         '''
-        res = super(CalendarEvent, self).write(vals)
+        res = super(ProjectTask, self).write(vals)
         if vals.get('name'):
             self.check_templating_installing()
         return res
