@@ -9,7 +9,8 @@
                 <button class="oe_stat_button"
                         type="object"
                         name="action_calendar_installation_view"
-                        icon="fa-calendar"/>
+                        icon="fa-calendar"
+                        help="Installation Calendar"/>
             </field>
         </field>
     </record>
