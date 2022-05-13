@@ -5,7 +5,7 @@
     "category": "Accounting/Localizations/Check",
     "summary": "RMG Print Check",
     "sequence": 20,
-    "version": "15.0.0.4.0",
+    "version": "15.0.0.5.0",
     'author': "S4 Solutions, LLC",
     'website': "https://www.sfour.io/",
     "depends": ["l10n_us_check_printing",],
