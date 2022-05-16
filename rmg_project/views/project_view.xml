@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_check_template_installing" model="ir.actions.server">
+        <field name="name">Check Template/Installing</field>
+        <field name="model_id" ref="model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="code">records.check_templating_installing()</field>
+    </record>
+
+    <record id="view_task_form2_form_inherit1" model="ir.ui.view">
+        <field name="name">project.task.install.template.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <field name="is_closed" position="after">
+                <field name="is_templating" invisible='1'/>
+                <field name="is_installing" invisible='1'/>
+            </field>
+        </field>
+    </record>
+    <record id="action_calendar_event_project_installation" model="ir.actions.act_window">
+        <field name="name">Installation Calendar</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">calendar</field>
+         <field name="view_id" ref="project.view_task_calendar"/>
+        <field name="domain">[('is_installing', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tasks found. Let's create one!
+            </p><p>
+                 To get things done, use activities and status on tasks.<br/>
+                Chat in real-time or by email to collaborate efficiently.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_calendar_event_project_templating" model="ir.actions.act_window">
+        <field name="name">Templating Calendar</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">calendar</field>
+        <field name="view_id" ref="project.view_task_calendar"/>
+        <field name="domain">[('is_templating', '=', True)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tasks found. Let's create one!
+            </p><p>
+                 To get things done, use activities and status on tasks.<br/>
+                Chat in real-time or by email to collaborate efficiently.
+            </p>
+        </field>
+    </record>
+
+  
+</odoo>
