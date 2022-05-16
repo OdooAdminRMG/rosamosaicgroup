@@ -13,7 +13,8 @@ class StockMove(models.Model):
             Overide Method to get custom account when created Journal entries
 
         """
-        if self.product_id.categ_id.property_valuation == 'real_time' and self.product_id.categ_id.inv_adj_account_id and (self.picking_id or self.raw_material_production_id):
+        if self.product_id.categ_id.property_valuation == 'real_time' and \
+                (self.picking_id or self.raw_material_production_id or self.production_id):
             return self.location_id.valuation_out_account_id.id or accounts_data['stock_input'].id
         else:
             return self.location_dest_id.valuation_in_account_id.id or self.product_id.categ_id.inv_adj_account_id.id
@@ -23,7 +24,8 @@ class StockMove(models.Model):
             Overide Method to get custom account when created Journal entries
 
         """
-        if self.product_id.categ_id.property_valuation == 'real_time' and self.product_id.categ_id.inv_adj_account_id and (self.picking_id or self.raw_material_production_id):
+        if self.product_id.categ_id.property_valuation == 'real_time' and \
+                (self.picking_id or self.raw_material_production_id or self.production_id):
             return self.location_dest_id.valuation_in_account_id.id or accounts_data['stock_output'].id
         else:
             return self.location_dest_id.valuation_in_account_id.id or self.product_id.categ_id.inv_adj_account_id.id
