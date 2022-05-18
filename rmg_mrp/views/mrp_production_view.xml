@@ -8,21 +8,17 @@
         <field name="arch" type="xml">
             <xpath expr="//form//sheet//page[@name='miscellaneous']" position="after">
                 <page string='Images and Work Instructions' name="image_work_instruction">
-                    <group>
-                        <group>
-                            <field name="image_attachment_id" widget="one2many"
-                                   domain="[('mimetype', 'in', ['image/png', 'image/jpeg', 'application/pdf'])]"
-                                   context="{'default_res_model': active_model, 'default_res_id': active_id}">
-                                <tree create="1" editable="bottom">
-                                    <field name="res_model" force_save="1" invisible="1"/>
-                                    <field name="res_id" force_save="1" invisible="1"/>
-                                    <field name="type" invisible="1"/>
-                                    <field name="name"/>
-                                    <field name="datas" filename="name"/>
-                                </tree>
-                            </field>
-                        </group>
-                    </group>
+                    <field name="image_attachment_id" widget="one2many"
+                           domain="[('mimetype', 'in', ['image/png', 'image/jpeg', 'application/pdf'])]"
+                           context="{'default_res_model': active_model, 'default_res_id': active_id}">
+                        <tree create="1" editable="bottom">
+                            <field name="res_model" force_save="1" invisible="1"/>
+                            <field name="res_id" force_save="1" invisible="1"/>
+                            <field name="type" invisible="1"/>
+                            <field name="name"/>
+                            <field name="datas" filename="name"/>
+                        </tree>
+                    </field>
                 </page>
             </xpath>
         </field>
