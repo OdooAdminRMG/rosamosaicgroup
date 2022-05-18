@@ -5,7 +5,7 @@
     "category": "sales",
     "summary": "",
     "sequence": 20,
-    "version": "15.0.1.1.0",
+    "version": "15.0.1.2.0",
     'author': "S4 Solutions, LLC",
     'website': "https://www.sfour.io/",
     "depends": ["stock", "sale_management", "mrp"],
