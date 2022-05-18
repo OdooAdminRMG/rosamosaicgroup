@@ -10,7 +10,7 @@
                     <field name="job_name" attrs="{'readonly': [('opportunity_id', '!=', False)]}"/>
                 </xpath>
                 <xpath expr="//notebook/page[last()]" position="after">
-                    <page name="attachments" string="Attachments">
+                    <page name="attachments" string="Attachments" invisible="1">
                         <field name="readonly_attachments" invisible="1"/>
                         <field name="attachment_ids" widget="one2many"
                                attrs="{'readonly': ['|',('readonly_attachments', '=', True),('state','in','sale')]}">
