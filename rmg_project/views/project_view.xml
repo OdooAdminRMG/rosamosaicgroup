@@ -60,18 +60,16 @@
         <field name="inherit_id" ref="project.view_project_kanban"/>
         <field name="arch" type="xml">
             <xpath expr="//span[hasclass('o_text_overflow')]" position="attributes">
-                <attributes name="class" remove="o_text_overflow"/>
+                <attribute name="class" remove="o_text_overflow"/>
             </xpath>
             <xpath expr="//div[hasclass('o_project_kanban_boxes')]/a" position="replace">
                 <div>
-                    <div>
-                        <span class="o_value">
-                            <t t-esc="record.task_count.value"/>
-                        </span>
-                        <span class="o_label">
-                            <t t-esc="record.label_tasks.value"/>
-                        </span>
-                    </div>
+                    <span class="o_value">
+                        <t t-esc="record.task_count.value"/>
+                    </span>
+                    <span class="o_label">
+                        <t t-esc="record.label_tasks.value"/>
+                    </span>
                 </div>
             </xpath>
         </field>
