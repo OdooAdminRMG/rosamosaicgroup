@@ -9,7 +9,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.0.1.0",
+    "version": "15.0.0.2.0",
     "depends": [
         "sale_project",
     ],
