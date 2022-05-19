@@ -5,10 +5,8 @@
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.view_project_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//span[hasclass('o_text_overflow')]" position="replace">
-                <span>
-                    <t t-esc="record.name.value"/>
-                </span>
+            <xpath expr="//span[hasclass('o_text_overflow')]" position="attributes">
+                <attributes name="class" remove="o_text_overflow"/>
             </xpath>
             <xpath expr="//div[hasclass('o_project_kanban_boxes')]/a" position="replace">
                 <div>
