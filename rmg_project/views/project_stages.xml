@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+	<data>
+		<record id="project_project_stage_form_sort_by_date" model="ir.ui.view">
+			<field name="name">project.project.stage.sort_by_date</field>
+			<field name="model">project.project.stage</field>
+			<field name="inherit_id" ref="project.project_project_stage_view_tree"/>
+			<field name="arch" type="xml">
+				<field name="name" position="after">
+					<field name="sort_by_date" />
+				</field>
+			</field>
+		</record>
+	</data>
+</odoo>
