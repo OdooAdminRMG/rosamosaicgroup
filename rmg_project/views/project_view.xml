@@ -19,6 +19,7 @@
             </field>
         </field>
     </record>
+
     <record id="action_calendar_event_project_installation" model="ir.actions.act_window">
         <field name="name">Installation Calendar</field>
         <field name="res_model">project.task</field>
