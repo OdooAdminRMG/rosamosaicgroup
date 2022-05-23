@@ -28,7 +28,7 @@ class Project(models.Model):
                 last_index = index
             # Write the sequence for those project which has no expiration date set
             for index, remaining_project in enumerate(has_not_expiration_date):
-                remaining_project.write({'sequence': index + last_index})
+                remaining_project.write({'sequence': index + last_index + 1})
 
     def set_project_dates(self):
         """
