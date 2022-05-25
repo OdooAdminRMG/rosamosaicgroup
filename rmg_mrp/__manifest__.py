@@ -5,11 +5,12 @@
     "category": "sales",
     "summary": "",
     "sequence": 20,
-    "version": "15.0.2.2.0",
+    "version": "15.0.2.3.0",
     'author': "S4 Solutions, LLC",
     'website': "https://www.sfour.io/",
     "depends": ["stock", "sale_management", "mrp"],
     "data": [
+        "data/create_records_for_existing_data.xml",
         "security/ir.model.access.csv",
         "views/quants_locations.xml",
         "views/product_view.xml",
