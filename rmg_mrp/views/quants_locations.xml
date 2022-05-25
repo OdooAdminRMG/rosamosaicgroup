@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="quant_location_tree_view" model="ir.ui.view">
+        <field name="name">quant.location.tree</field>
+        <field name="model">quant.location</field>
+        <field name="arch" type="xml">
+            <tree create="False" edit="False">
+                <field name="location_id"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="product_id"/>
+                <field name="product_qty"/>
+            </tree>
+        </field>
+    </record>
+</odoo>
