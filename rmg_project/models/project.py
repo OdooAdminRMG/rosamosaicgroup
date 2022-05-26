@@ -7,10 +7,6 @@ from datetime import datetime
 class Project(models.Model):
     _inherit = "project.project"
 
-    def read(self, fields=None, load='_classic_read'):
-        records = super(Project, self).read(fields=fields, load=load)
-        return records
-
     def set_sequence(self, stage_id=False):
         """
             Method is responsible to set the proper sequence as per the stage's configuration
@@ -38,8 +34,10 @@ class Project(models.Model):
         for project in self.filtered('task_ids'):
             task_planned_start_date = project.task_ids.filtered('planned_date_begin').mapped('planned_date_begin')
             task_planned_end_date = project.task_ids.filtered('planned_date_end').mapped('planned_date_end')
-            project.date_start = sorted(task_planned_start_date)[0] if task_planned_start_date else datetime.now()
-            project.date = sorted(task_planned_end_date)[-1] if task_planned_end_date else datetime.now()
+            project.write({
+                'date_start': sorted(task_planned_start_date)[0] if task_planned_start_date else datetime.now(),
+                'date': sorted(task_planned_end_date)[-1] if task_planned_end_date else datetime.now()
+            })
 
     @api.model_create_multi
     def create(self, vals_list):
