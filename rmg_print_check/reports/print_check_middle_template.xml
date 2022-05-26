@@ -8,12 +8,9 @@
                         <div class="o-watermark">VOID</div>
                     </t>
                     <div class="sequence_number" t-if="page['sequence_number']" t-esc="page['sequence_number']"/>
-                    <div class="display_date" t-esc="page['date']"/>
-                    <div class="row">
-                        <div class="col-6 ckus_payee_name" t-esc="page['partner_name']"/>
-                        <div class="col-6 ckus_payee_amount">
-                            <t t-esc="page['amount']"/>
-                        </div>
+                    <div class="row display_date">
+                        <span class="mr-3" t-esc="page['date']"/>
+                        <span class="ml-5" t-esc="page['amount']"/>
                     </div>
                     <div class="ckus_amount_in_word" t-esc="page['amount_in_word']"/>
                     <div class="ckus_payee_addr" t-esc="page['partner_id']"
