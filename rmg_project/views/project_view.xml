@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="rmg_view_project_kanban_inherit" model="ir.ui.view">
+        <field name="name">rmg.project.project.kanban.inherit</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[hasclass('o_text_overflow')]" position="attributes">
+                <attribute name="class" remove="o_text_overflow"/>
+            </xpath>
+            <xpath expr="//div[hasclass('o_project_kanban_boxes')]/a" position="replace">
+                <div>
+                    <span class="o_value">
+                        <t t-esc="record.task_count.value"/>
+                    </span>
+                    <span class="o_label">
+                        <t t-esc="record.label_tasks.value"/>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
     <record id="action_check_template_installing" model="ir.actions.server">
         <field name="name">Check Template/Installing</field>
         <field name="model_id" ref="model_project_task"/>
@@ -51,6 +71,4 @@
             </p>
         </field>
     </record>
-
-  
 </odoo>
