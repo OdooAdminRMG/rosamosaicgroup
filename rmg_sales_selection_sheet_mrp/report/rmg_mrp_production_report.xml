@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="revised_mrp_production_template_inherit" inherit_id="rmg_mrp.revised_mrp_production_template">
+        <xpath expr="//div[@id='finished_product']" position="before">
+            <div id="selection_sheet_data">
+                <div class="row mt32 mb32" id="finished_product">
+                    <div class="col-12">
+                        <strong>Selection Sheet:</strong>
+                        <br/>
+                    </div>
+                    <div class="col-3">
+                        <t t-if="o.slab_tagged_id">
+                            Slab Tagged:
+                            <span t-field="o.slab_tagged_id"/>
+                        </t>
+                        <t t-if="o.slab_notes">
+                            Slab Notes:
+                            <span t-field="o.slab_notes"/>
+                        </t>
+                        <t t-if="o.sink_by_bella_id">
+                            Sink by Bella:
+                            <span t-field="o.sink_by_bella_id"/>
+                        </t>
+                            <t t-if="o.customer_sink_types_id">
+                            Customer Sink Types:
+                            <span t-field="o.customer_sink_types_id"/>
+                        </t>
+                        <t t-if="o.edge_profiles_id">
+                            Edge Profiles:
+                            <span t-field="o.edge_profiles_id"/>
+                        </t>
+                    </div>
+                    <div class="col-3">
+                        <span t-if="o.customer_sink_model_number">
+                            Customer Sink Model Number:
+                            <span t-field="o.customer_sink_model_number"/>
+                        </span>
+                        <span t-if="o.shop_notes">
+                            Shop Notes:
+                            <span t-field="o.shop_notes"/>
+                        </span>
+                        <span t-if="o.installation_notes">
+                            Installation Notes:
+                            <span t-field="o.installation_notes"/>
+                        </span>
+                        <span t-if="o.splash">
+                            Splash:
+                            <span t-field="o.splash"/>
+                        </span>
+                        <span t-if="o.square_footage_estimate">
+                            Square Footage Estimate:
+                            <span t-field="o.square_footage_estimate"/>
+                        </span>
+                        <span t-if="o.installed_square_footage">
+                            Installed Square Footage:
+                            <span t-field="o.installed_square_footage"/>
+                        </span>
+                        <span t-if="o.templated_by_id">
+                            Templated by:
+                            <span t-field="o.templated_by_id"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
