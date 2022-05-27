@@ -12,6 +12,20 @@
                 <xpath expr="//field[@name='company_id']" position="after">
                     <field name="job_name" invisible="1"/>
                 </xpath>
+                <xpath expr="//notebook/page[last()]" position="after">
+                    <page name="attachments" string="Attachments">
+                        <field name="attachment_ids" widget="one2many">
+                            <tree create="1" editable="bottom">
+                                <field name="datas" filename="name"/>
+                                <field name="name"/>
+                                <field name="type" invisible="1"/>
+                                <field name="create_uid" readonly="1"/>
+                                <field name="create_date" readonly="1"/>
+                                <field name="type_id"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
             </field>
         </record>
     </data>
