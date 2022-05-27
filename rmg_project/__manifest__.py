@@ -18,6 +18,7 @@
         "views/project_view.xml",
         "views/sale_order_view.xml",
         "views/menu_view.xml",
+        "views/project_stages.xml",
     ],
     "installable": True,
     "application": True,
