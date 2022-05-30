@@ -42,7 +42,7 @@ class ProjectTask(models.Model):
     def _compute_overall_square_feet(self):
         for rec in self:
             rec.overall_square_feet = sum(
-                rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.square_footage_estimate'))
+                rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.installed_square_footage'))
 
     @api.model
     def create(self, vals):
