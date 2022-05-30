@@ -12,7 +12,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.0.0.0",
+    "version": "15.0.0.1.0",
     "depends": ["rmg_sales_selection_sheet", "rmg_mrp"],
     "data": [
         "report/rmg_mrp_production_report.xml",
