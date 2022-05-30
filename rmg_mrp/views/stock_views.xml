@@ -13,7 +13,7 @@
                     <field name="quant_location_id" groups="stock.group_production_lot"
                            attrs="{'readonly': ['&amp;', ('package_level_id', '!=', False), ('parent.picking_type_entire_packs', '=', True)]}"
                            invisible="not context.get('show_lots_m2o')"
-                           domain="[('inventory_quantity','>',0), ('location_id','ilike',location_id), ('product_id', '=', parent.product_id), ('company_id', '=', company_id)]"
+                           domain="[('inventory_quantity_auto_apply','>',0), ('location_id','ilike',location_id), ('product_id', '=', parent.product_id), ('company_id', '=', company_id)]"
                            context="{
                                             'active_picking_id': picking_id,
                                             'default_company_id': parent.company_id,
