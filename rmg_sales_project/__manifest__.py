@@ -23,7 +23,7 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.3.0.2',
+    'version': '15.0.3.0.3',
     'depends': [
         'project',
         'sale_project',
