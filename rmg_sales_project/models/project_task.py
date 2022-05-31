@@ -38,7 +38,7 @@ class ProjectTask(models.Model):
     overall_square_feet = fields.Float('Overall Square Feet',
                                        compute="_compute_overall_square_feet", store=True)
 
-    @api.depends("project_id.sale_line_id.order_id.order_line.rmg_sale_id.installed_square_footage")
+    @api.depends("project_id.sale_line_id.rmg_sale_id.installed_square_footage")
     def _compute_overall_square_feet(self):
         for rec in self:
             rec.overall_square_feet = sum(
