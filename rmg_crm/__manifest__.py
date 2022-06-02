@@ -7,7 +7,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.2.5.1",
+    "version": "15.0.3.5.1",
     "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp"],
     "data": [
         "security/ir.model.access.csv",
@@ -18,6 +18,9 @@
         "views/rmg_mrp_views.xml",
         "views/rmg_project_views.xml",
         "views/rmg_stock_picking_views.xml",
+        "views/replenish_source_views.xml",
+        "views/job_costing_views.xml",
+        "views/purchase_order_views.xml",
     ],
     "assets": {
         "web.assets_qweb": [

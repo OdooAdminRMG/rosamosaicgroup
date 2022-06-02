@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="job_costing_tree" model="ir.ui.view">
+            <field name="name">job.costing.tree</field>
+            <field name="model">job.costing</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="job_name"/>
+                    <field name="purchase_eff"/>
+                    <field name="total_cost_of_components"/>
+                    <field name="project_cost"/>
+                </tree>
+            </field>
+        </record>
+        <record id="job_costing_form" model="ir.ui.view">
+            <field name="name">job.costing.form</field>
+            <field name="model">job.costing</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="purchase_eff"/>
+                            <field name="total_cost_of_components"/>
+                            <field name="project_cost"/>
+                        </group>
+                        <group>
+                            <field name="job_name"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

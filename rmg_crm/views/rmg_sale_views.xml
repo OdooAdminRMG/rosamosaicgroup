@@ -6,6 +6,15 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='other_information']/group/group[@name='sale_reporting']"
+                       position="after">
+                    <group string="Costing" name="budgeted_cost">
+                        <group colspan="2" class="mt-0">
+                            <field name="budgeted_labor_cost"/>
+                            <field name="budgeted_material_cost"/>
+                        </group>
+                    </group>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="before">
                     <field name="job_name" attrs="{'readonly': [('opportunity_id', '!=', False)]}"/>
                 </xpath>
@@ -25,8 +34,27 @@
                         </field>
                     </page>
                 </xpath>
-
             </field>
         </record>
+        <record id="action_create_job_costing_record" model="ir.actions.server">
+            <field name="name">Set as Supplier</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="rmg_crm.model_job_costing"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['job.costing'].create_job_costing_record()
+            </field>
+        </record>
+        <menuitem id="job_costing_menu"
+                  name="Job Costing"
+                  parent="sale.sale_menu_root"
+                  sequence="20"/>
+        <menuitem id="report_job_costing"
+                  name="Job Costing Tree"
+                  parent="job_costing_menu"
+                  action="rmg_crm.action_create_job_costing_record"
+                  sequence="1"/>
     </data>
 </odoo>
