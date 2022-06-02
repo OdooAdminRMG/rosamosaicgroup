@@ -7,6 +7,8 @@
             <field name="arch" type="xml">
                 <tree editable="bottom">
                     <field name="job_name"/>
+                    <field name="budgeted_labor_cost"/>
+                    <field name="budgeted_labor_cost"/>
                     <field name="purchase_eff"/>
                     <field name="total_cost_of_components"/>
                     <field name="project_cost"/>
@@ -20,6 +22,8 @@
                 <form>
                     <group>
                         <group>
+                            <field name="budgeted_labor_cost"/>
+                            <field name="budgeted_labor_cost"/>
                             <field name="purchase_eff"/>
                             <field name="total_cost_of_components"/>
                             <field name="project_cost"/>

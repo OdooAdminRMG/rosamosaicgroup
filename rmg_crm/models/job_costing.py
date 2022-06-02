@@ -13,6 +13,8 @@ class JobCosting(models.Model):
     purchase_eff = fields.Float(string=_("Purchase Eff"), compute="_compute_purchase_eff")
     total_cost_of_components = fields.Float(string=_("Total Cost of Components"), compute="_compute_mrp_cost")
     project_cost = fields.Float(string=_("Project"), compute="_compute_project_cost")
+    budgeted_labor_cost = fields.Float(compute='_compute_budgeted_labor_cost', string=_("Budgeted Labor Cost"))
+    budgeted_material_cost = fields.Float(compute='_compute_budgeted_labor_cost', string=_("Budgeted Material Cost"))
 
     def _compute_purchase_eff(self):
         for rec in self:
@@ -51,6 +53,20 @@ class JobCosting(models.Model):
                     )
                 )
             )
+
+    def _compute_budgeted_labor_cost(self):
+        for rec in self:
+            rec.budgeted_labor_cost = sum(self.env['sale.order'].search(
+                [
+                    ('job_name', '=', rec.job_name)
+                ]).mapped('budgeted_labor_cost'))
+
+    def _compute_budgeted_labor_cost(self):
+        for rec in self:
+            rec.budgeted_labor_cost = sum(self.env['sale.order'].search(
+                [
+                    ('job_name', '=', rec.job_name)
+                ]).mapped('budgeted_labor_cost'))
 
     @api.model
     def create_job_costing_record(self):
