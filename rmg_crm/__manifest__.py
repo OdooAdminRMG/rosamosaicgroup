@@ -7,10 +7,11 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.3.8.1",
+    "version": "15.0.3.9.1",
     "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp"],
     "data": [
         "security/ir.model.access.csv",
+        "data/create_replenish_sources_history_for_existing_po.xml",
         "views/ir_attachment_type_views.xml",
         "views/ir_attachment_views.xml",
         "views/crm_views.xml",
