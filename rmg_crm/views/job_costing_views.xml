@@ -5,13 +5,18 @@
             <field name="name">job.costing.tree</field>
             <field name="model">job.costing</field>
             <field name="arch" type="xml">
-                <tree editable="bottom">
+                <tree create="0" edit="0" delete="0">
                     <field name="job_name"/>
-                    <field name="budgeted_labor_cost"/>
-                    <field name="budgeted_labor_cost"/>
-                    <field name="purchase_eff"/>
-                    <field name="total_cost_of_components"/>
-                    <field name="project_cost"/>
+                    <field name="contract_amount"/>
+                    <field name="billings_to_date"/>
+                    <field name="remaining"/>
+                    <field name="total_cost_of_purchase" invisible="True"/>
+                    <field name="total_cost_of_components" invisible="True"/>
+                    <field name="total_cost_of_purchase_timesheet" invisible="True"/>
+                    <field name="actual"/>
+                    <field name="budget"/>
+                    <field name="pct" widget="percentage"/>
+                    <field name="overrun"/>
                 </tree>
             </field>
         </record>
@@ -19,21 +24,51 @@
             <field name="name">job.costing.form</field>
             <field name="model">job.costing</field>
             <field name="arch" type="xml">
-                <form>
+                <form create="0" edit="0" delete="0">
                     <group>
+                        <field name="job_name"/>
                         <group>
-                            <field name="budgeted_labor_cost"/>
-                            <field name="budgeted_labor_cost"/>
-                            <field name="purchase_eff"/>
-                            <field name="total_cost_of_components"/>
-                            <field name="project_cost"/>
+                            <field name="contract_amount"/>
+                            <field name="billings_to_date"/>
+                            <field name="remaining"/>
                         </group>
                         <group>
-                            <field name="job_name"/>
+                            <field name="total_cost_of_purchase" invisible="True"/>
+                            <field name="total_cost_of_components" invisible="True"/>
+                            <field name="total_cost_of_purchase_timesheet" invisible="True"/>
+                            <field name="actual"/>
+                            <field name="budget"/>
+                            <field name="pct"/>
+                            <field name="overrun"/>
                         </group>
                     </group>
                 </form>
             </field>
         </record>
+        <record id="act_job_costing" model="ir.actions.act_window">
+            <field name="name">Action Job Costing</field>
+            <field name="res_model">job.costing</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="action_create_job_costing_record" model="ir.actions.server">
+            <field name="name">Job Costing</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="rmg_crm.model_job_costing"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                action = env['job.costing'].create_job_costing_record()
+            </field>
+        </record>
+        <menuitem id="job_costing_menu"
+                  name="Job Costing"
+                  parent="sale.sale_menu_root"
+                  sequence="20"/>
+        <menuitem id="report_job_costing"
+                  name="Job Costing Report"
+                  parent="job_costing_menu"
+                  action="rmg_crm.action_create_job_costing_record"
+                  sequence="1"/>
     </data>
 </odoo>
