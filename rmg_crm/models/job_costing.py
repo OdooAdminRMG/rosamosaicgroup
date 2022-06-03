@@ -129,7 +129,7 @@ class JobCosting(models.Model):
             ]).mapped(
             lambda so: self.env['job.costing'].create({'job_name': so.job_name}))
         return {
-            'name': _('Job Costing Tree'),
+            'name': _('Job Costing'),
             'type': 'ir.actions.act_window',
             'res_model': "job.costing",
             'view_mode': "tree",
