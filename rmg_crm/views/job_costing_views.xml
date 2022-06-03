@@ -7,16 +7,15 @@
             <field name="arch" type="xml">
                 <tree create="0" edit="0" delete="0">
                     <field name="job_name"/>
-                    <field name="contract_amount"/>
-                    <field name="billings_to_date"/>
-                    <field name="remaining"/>
-                    <field name="total_cost_of_purchase" invisible="True"/>
-                    <field name="total_cost_of_components" invisible="True"/>
-                    <field name="total_cost_of_purchase_timesheet" invisible="True"/>
-                    <field name="actual"/>
-                    <field name="budget"/>
+                    <field name="contract_amount" sum="Total Contract Amount"/>
+                    <field name="billings_to_date" sum="Total Billings To Date"/>
+                    <field name="remaining" sum="Total Remaining"/>
+                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" invisible="True"/>
+                    <field name="total_cost_of_components" sum="Total Cost Of Components" invisible="True"/>                    <field name="total_cost_of_purchase_timesheet" sum="Total " invisible="True"/>
+                    <field name="actual" sum="Total Actual Cost"/>
+                    <field name="budget" sum="Total Budget Cost"/>
                     <field name="pct" widget="percentage"/>
-                    <field name="overrun"/>
+                    <field name="overrun" sum="Total Overrun"/>
                 </tree>
             </field>
         </record>
