@@ -147,7 +147,7 @@ class JobCosting(models.Model):
     def _compute_pct(self):
         for rec in self:
             budget = rec.budget
-            rec.pct = (rec.actual * 100) / budget if budget else 0.0
+            rec.pct = float(rec.actual / budget if budget else 0.0)
 
     def _compute_overrun(self):
         for rec in self:

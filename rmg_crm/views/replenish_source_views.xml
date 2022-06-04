@@ -13,7 +13,7 @@
                     <field name="so_id" invisible="True"/>
                     <field name="job_name"/>
                     <field name="product_id"/>
-                    <field name="product_uom_qty"/>
+                    <field name="product_uom_qty" invisible="True"/>
                     <field name="price_unit"/>
                     <field name="requested_by"/>
                     <field name="requested_on"/>
