@@ -20,7 +20,7 @@
             </field>
         </record>
         <record id="act_job_costing" model="ir.actions.act_window">
-            <field name="name">Action Job Costing</field>
+            <field name="name">Job Costing</field>
             <field name="res_model">job.costing</field>
             <field name="view_mode">tree</field>
         </record>
