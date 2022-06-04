@@ -63,7 +63,6 @@ class SaleOrderLine(models.Model):
     def create(self, vals):
         rtn = super(SaleOrderLine, self).create(vals)
         for line in rtn:
-            print("lineeeeee", line)
             line.order_id._get_purchase_orders().filtered(
                 lambda po: line.product_id.id in po.order_line.mapped(
                     'product_id.id') and line.id not in po.replenish_source_ids.mapped(

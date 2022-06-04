@@ -32,9 +32,11 @@ class ReplenishSources(models.Model):
                 rec.product_uom_qty = rec.so_line_id.product_uom_qty
             else:
                 rec.job_name = rec.mo_id.job_name
-            rec.price_unit = \
-                rec.po_id.order_line.filtered(lambda po_line: po_line.product_id.id == rec.product_id.id).mapped(
-                    'price_unit')[0]
+            rec.price_unit = sum(
+                rec.po_id.order_line.filtered(
+                    lambda po_line: po_line.product_id.id == rec.product_id.id
+                ).mapped('price_unit')
+            )
 
     @api.depends('mo_origin')
     def _compute_mo_id(self):
@@ -47,16 +49,16 @@ class ReplenishSources(models.Model):
     def create_replenish_sources_history_for_existing_po(self):
         self.env['replenish.sources'].search([]).unlink()
         for po in self.env['purchase.order'].search([]):
-            for rs in self.env['sale.order.line'].search(
+            for so_rs in self.env['sale.order.line'].search(
                     [
                         ('order_id', 'in', po._get_sale_orders().ids),
                         ('product_id', 'in', po.order_line.mapped('product_id.id')),
                     ]
             ).ids:
-                po.write({'replenish_source_ids': [(0, 0, {'so_line_id': rs})]}),
-            for rs in self.env['stock.move'].search(
+                po.write({'replenish_source_ids': [(0, 0, {'so_line_id': so_rs})]})
+            for mo_rs in self.env['stock.move'].search(
                     [
-                        ('workorder_id', 'in', po._get_mrp_productions().ids),
+                        ('raw_material_production_id', 'in', po._get_mrp_productions().ids),
                         ('product_id', 'in', po.order_line.mapped('product_id.id')),
                     ]
             ):
@@ -64,8 +66,8 @@ class ReplenishSources(models.Model):
                     {'replenish_source_ids': [
                         (0, 0,
                          {
-                             'mo_origin': rs.workorder_id.name,
-                             'product_id': rs.product_id.id,
-                             'product_uom_qty': rs.product_qty,
+                             'mo_origin': mo_rs.raw_material_production_id.name,
+                             'product_id': mo_rs.product_id.id,
+                             'product_uom_qty': mo_rs.product_qty,
                          })],
                     })

@@ -1,27 +1,67 @@
 # -*- coding: utf-8 -*-
 
-from odoo import _, api, fields, models
+from odoo import _, api, fields, models, tools
 
 
 class JobCosting(models.Model):
     _name = "job.costing"
     _description = "Job Costing"
+    _auto = False
+    _log_access = True  # Include magic fields
     _rec_name = 'job_name'
 
-    job_name = fields.Char(string=_("Job Name"), require=True)
+    job_name = fields.Char(string=_("Job Name"))
 
-    total_cost_of_purchase = fields.Float(string=_("Total Cost Of Purchase"), compute="_compute_actual")
-    total_cost_of_components = fields.Float(string=_("Total Cost Of Components"), compute="_compute_actual")
-    total_cost_of_purchase_timesheet = fields.Float(string=_("Total Cost Of Timesheet"), compute="_compute_actual")
-    # budgeted_labor_cost = fields.Float(compute='_compute_budgeted_labor_cost', string=_("Budgeted Labor Cost"))
-    # budgeted_material_cost = fields.Float(compute='_compute_budgeted_labor_cost', string=_("Budgeted Material Cost"))
-    contract_amount = fields.Float(compute='_compute_contract_amount', string=_("Contract Amount"))
-    billings_to_date = fields.Float(compute='_compute_billings_to_date', string=_("Billings To Date"))
-    remaining = fields.Float(compute='_compute_remaining', string=_("Remaining"))
-    actual = fields.Float(compute='_compute_actual', string=_("Actual"))
-    budget = fields.Float(compute='_compute_budget', string=_("Budget"))
-    pct = fields.Float(compute='_compute_pct', string=_("Pct"))
-    overrun = fields.Float(compute='_compute_overrun', string=_("Overrun"))
+    total_cost_of_purchase = fields.Float(
+        string=_("Total Cost Of Purchase"),
+        compute="_compute_actual",
+        compute_sudo=True
+    )
+    total_cost_of_components = fields.Float(
+        string=_("Total Cost Of Components"),
+        compute="_compute_actual",
+        compute_sudo=True
+    )
+    total_cost_of_purchase_timesheet = fields.Float(
+        string=_("Total Cost Of Timesheet"),
+        compute="_compute_actual"
+    )
+    # budgeted_labor_cost = fields.Float(
+    # compute='_compute_contract_amount',
+    # string=_("Budgeted Labor Cost")
+    # )
+    # budgeted_material_cost = fields.Float(
+    # compute='_compute_contract_amount',
+    # string=_("Budgeted Material Cost")
+    # )
+    contract_amount = fields.Float(
+        compute='_compute_contract_amount',
+        string=_("Contract Amount")
+    )
+    billings_to_date = fields.Float(
+        compute='_compute_billings_to_date',
+        string=_("Billings To Date")
+    )
+    remaining = fields.Float(
+        compute='_compute_remaining',
+        string=_("Remaining")
+    )
+    actual = fields.Float(
+        compute='_compute_actual',
+        string=_("Actual")
+    )
+    budget = fields.Float(
+        compute='_compute_budget',
+        string=_("Budget")
+    )
+    pct = fields.Float(
+        compute='_compute_pct',
+        string=_("Pct")
+    )
+    overrun = fields.Float(
+        compute='_compute_overrun',
+        string=_("Overrun")
+    )
 
     def _compute_contract_amount(self):
         for rec in self:
@@ -79,11 +119,8 @@ class JobCosting(models.Model):
                 )
             ]
             rec.total_cost_of_purchase = cal_actual[0]
-
             rec.total_cost_of_components = cal_actual[1]
-
             rec.total_cost_of_purchase_timesheet = cal_actual[2]
-
             rec.actual = sum(cal_actual)
 
     def _compute_budget(self):
@@ -104,7 +141,8 @@ class JobCosting(models.Model):
                             ]
                         ).mapped('budgeted_labor_cost')
                     ),
-                ])
+                ]
+            )
 
     def _compute_pct(self):
         for rec in self:
@@ -115,24 +153,11 @@ class JobCosting(models.Model):
         for rec in self:
             rec.overrun = rec.actual - rec.budget
 
-    @api.model
-    def create_job_costing_record(self):
-        so_job_names = self.env['sale.order'].search([]).mapped('job_name')
-        self.env['job.costing'].search(
-            [
-                ('job_name', 'not in', so_job_names)
-            ]).unlink()
-        jc_job_names = self.env['job.costing'].search([]).mapped('job_name')
-        self.env['sale.order'].search(
-            [
-                ('job_name', '!=', False), ('job_name', 'not in', jc_job_names)
-            ]).mapped(
-            lambda so: self.env['job.costing'].create({'job_name': so.job_name}))
-        return {
-            'name': _('Job Costing'),
-            'type': 'ir.actions.act_window',
-            'res_model': "job.costing",
-            'view_mode': "tree",
-            'view_id': self.env.ref("rmg_crm.job_costing_tree").id,
-            'target': "current",
-        }
+    def init(self):
+        self.env.cr.execute("""DROP TABLE %s""" % (self._table))
+        tools.drop_view_if_exists(self._cr, self._table)
+        self._cr.execute("""
+        CREATE or REPLACE VIEW %s AS
+              select id,job_name  
+              FROM sale_order WHERE job_name != ''
+        """ % (self._table))

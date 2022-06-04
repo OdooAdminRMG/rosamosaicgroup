@@ -10,8 +10,8 @@
                        position="after">
                     <group string="Costing" name="budgeted_cost">
                         <group colspan="2" class="mt-0">
-                            <field name="budgeted_labor_cost"/>
-                            <field name="budgeted_material_cost"/>
+                            <field name="budgeted_labor_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="budgeted_material_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         </group>
                     </group>
                 </xpath>

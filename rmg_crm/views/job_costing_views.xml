@@ -19,46 +19,10 @@
                 </tree>
             </field>
         </record>
-        <record id="job_costing_form" model="ir.ui.view">
-            <field name="name">job.costing.form</field>
-            <field name="model">job.costing</field>
-            <field name="arch" type="xml">
-                <form create="0" edit="0" delete="0">
-                    <group>
-                        <field name="job_name"/>
-                        <group>
-                            <field name="contract_amount"/>
-                            <field name="billings_to_date"/>
-                            <field name="remaining"/>
-                        </group>
-                        <group>
-                            <field name="total_cost_of_purchase" invisible="True"/>
-                            <field name="total_cost_of_components" invisible="True"/>
-                            <field name="total_cost_of_purchase_timesheet" invisible="True"/>
-                            <field name="actual"/>
-                            <field name="budget"/>
-                            <field name="pct"/>
-                            <field name="overrun"/>
-                        </group>
-                    </group>
-                </form>
-            </field>
-        </record>
         <record id="act_job_costing" model="ir.actions.act_window">
             <field name="name">Action Job Costing</field>
             <field name="res_model">job.costing</field>
-            <field name="view_mode">tree,form</field>
-        </record>
-        <record id="action_create_job_costing_record" model="ir.actions.server">
-            <field name="name">Job Costing</field>
-            <field name="type">ir.actions.server</field>
-            <field name="model_id" ref="sale.model_sale_order"/>
-            <field name="binding_model_id" ref="rmg_crm.model_job_costing"/>
-            <field name="binding_view_types">list</field>
-            <field name="state">code</field>
-            <field name="code">
-                action = env['job.costing'].create_job_costing_record()
-            </field>
+            <field name="view_mode">tree</field>
         </record>
         <menuitem id="job_costing_menu"
                   name="Job Costing"
@@ -67,7 +31,7 @@
         <menuitem id="report_job_costing"
                   name="Job Costing"
                   parent="job_costing_menu"
-                  action="rmg_crm.action_create_job_costing_record"
+                  action="rmg_crm.act_job_costing"
                   sequence="1"/>
     </data>
 </odoo>
