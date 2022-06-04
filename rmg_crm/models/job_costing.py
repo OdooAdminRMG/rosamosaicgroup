@@ -154,7 +154,6 @@ class JobCosting(models.Model):
             rec.overrun = rec.actual - rec.budget
 
     def init(self):
-        self.env.cr.execute("""DROP TABLE %s""" % (self._table))
         tools.drop_view_if_exists(self._cr, self._table)
         self._cr.execute("""
         CREATE or REPLACE VIEW %s AS
