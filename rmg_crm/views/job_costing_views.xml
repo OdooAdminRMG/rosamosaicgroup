@@ -10,8 +10,9 @@
                     <field name="contract_amount" sum="Total Contract Amount"/>
                     <field name="billings_to_date" sum="Total Billings To Date"/>
                     <field name="remaining" sum="Total Remaining"/>
-                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" invisible="True"/>
-                    <field name="total_cost_of_components" sum="Total Cost Of Components" invisible="True"/>                    <field name="total_cost_of_purchase_timesheet" sum="Total " invisible="True"/>
+                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" optional="show"/>
+                    <field name="total_cost_of_components" sum="Total Cost Of Components" optional="show"/>
+                    <field name="total_cost_of_purchase_timesheet" sum="Total " optional="show"/>
                     <field name="actual" sum="Total Actual Cost"/>
                     <field name="budget" sum="Total Budget Cost"/>
                     <field name="pct" widget="percentage"/>
