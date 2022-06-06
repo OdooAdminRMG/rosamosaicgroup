@@ -139,7 +139,7 @@ class JobCosting(models.Model):
                             [
                                 ('job_name', '=', rec.job_name)
                             ]
-                        ).mapped('budgeted_labor_cost')
+                        ).mapped('budgeted_material_cost')
                     ),
                 ]
             )
