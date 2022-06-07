@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Full Lot Numbers on Inventory Transfers",
+    "name": "RMG Manufacturing Customizations",
     "description": "",
     "category": "sales",
     "summary": "",
