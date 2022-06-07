@@ -37,17 +37,19 @@ class MrpProduction(models.Model):
     square_footage_estimate = fields.Float(
         related="rmg_id.square_footage_estimate", string=_("Square Footage Estimate")
     )
+    installed_square_footage = fields.Float(related="rmg_id.square_footage_estimate",
+                                            string=_("Installed Square Footage"))
     templated_by_id = fields.Many2one(
         "hr.employee", related="rmg_id.templated_by_id", string=_("Templated by")
     )
 
     def _get_move_raw_values(
-        self,
-        product_id,
-        product_uom_qty,
-        product_uom,
-        operation_id=False,
-        bom_line=False,
+            self,
+            product_id,
+            product_uom_qty,
+            product_uom,
+            operation_id=False,
+            bom_line=False,
     ):
         data = super()._get_move_raw_values(
             product_id, product_uom_qty, product_uom, operation_id=False, bom_line=False
@@ -66,16 +68,16 @@ class StockRule(models.Model):
     _inherit = "stock.rule"
 
     def _prepare_mo_vals(
-        self,
-        product_id,
-        product_qty,
-        product_uom,
-        location_id,
-        name,
-        origin,
-        company_id,
-        values,
-        bom,
+            self,
+            product_id,
+            product_qty,
+            product_uom,
+            location_id,
+            name,
+            origin,
+            company_id,
+            values,
+            bom,
     ):
         res = super()._prepare_mo_vals(
             product_id,
