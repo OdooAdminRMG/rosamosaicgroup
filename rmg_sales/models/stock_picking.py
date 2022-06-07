@@ -51,9 +51,7 @@ class MrpProduction(models.Model):
         os.remove("/tmp/line_{}.pdf".format(self.id))
         # if mrp_ids:
         for pdf_attachment in mrp_ids:
-            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PDF")
-            if not os.path.exists(path):
-                os.mkdir(path)
+            path = os.path.join("/tmp/")
             path += '/' + str(pdf_attachment) + '.pdf'
 
             temp = base64.b64encode(
@@ -75,9 +73,7 @@ class MrpProduction(models.Model):
                 for attachment in pdf_attachment.image_attachment_id.filtered(
                         lambda l: l.mimetype == "application/pdf"
                 ):
-                    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PDF")
-                    if not os.path.exists(path):
-                        os.mkdir(path)
+                    path = os.path.join("/tmp")
                     path += '/' + str(attachment) + '.pdf'
                     with open(
                             os.path.expanduser(path), "wb"

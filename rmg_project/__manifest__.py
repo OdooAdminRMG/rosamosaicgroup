@@ -9,7 +9,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.2.2.2",
+    "version": "15.0.2.0.2",
     "depends": [
         "sale_project",
         "calendar"
@@ -18,6 +18,7 @@
         "views/project_view.xml",
         "views/sale_order_view.xml",
         "views/menu_view.xml",
+        "views/project_stages.xml",
     ],
     "installable": True,
     "application": True,
