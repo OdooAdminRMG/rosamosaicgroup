@@ -25,6 +25,7 @@
         "views/range_types_views.xml",
         "views/rmg_sale_views.xml",
         "wizard/rmg_sale_warning_wiz_view.xml",
+        "reports/rmg_quoration_report.xml",
     ],
     "assets": {
         "web.assets_backend": [

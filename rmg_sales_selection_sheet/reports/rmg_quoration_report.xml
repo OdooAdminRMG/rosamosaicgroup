@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_report_rmg_quotation" model="ir.actions.report">
+            <field name="name">RMG Quotation / Order s</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sale.report_saleorder</field>
+            <field name="report_file">sale.report_saleorder</field>
+            <field name="binding_model_id" ref="model_rmg_sale"/>
+            <field name="binding_type">report</field>
+        </record>
+        <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
+            <xpath expr="//t[@t-set='address']" position="replace">
+            </xpath>
+            <xpath expr="//t[@t-set='information_block']" position="replace">
+            </xpath>
+            <xpath expr="//div[hasclass('page')]" position="before">
+                <div>
+                    <div>
+                        <span t-field="doc.partner_id"/>
+                        <br/>
+                        <!--                                 t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>-->
+                        <t t-if="doc.job_name">
+                            <span>
+                                <strong>Job Name:</strong>
+                                <span t-field="doc.job_name"/>
+                            </span>
+                            <br/>
+                        </t>
+                        <t t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id">
+                            <t t-set="information_block">
+                                <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
+                                    <strong>Shipping Address:</strong>
+                                    <br/>
+                                    <span t-field="doc.partner_shipping_id"/>
+<!--                                          t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
+                                    <br/>
+                                </t>
+                            </t>
+                        </t>
+                    </div>
+                    <div>
+                        <t t-if="doc.partner_invoice_id != doc.partner_id">
+                            <t t-set="information_block">
+                                <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoicing and Shipping
+                                    Address:
+                                </strong>
+                                <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:
+                                </strong>
+                                <br/>
+                                <span t-field="doc.partner_invoice_id"/>
+<!--                                      t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
+                                <br/>
+                            </t>
+                        </t>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//table/tbody/t/t[@t-set='current_subtotal']" position="before">
+                <t t-set="rmg_sale_id" t-value="line.rmg_sale_id"/>
+            </xpath>
+            <xpath expr="//table/tbody/t/t/tr" position="before">
+                <t t-if="rmg_sale_id">
+                    <tr t-att-class="'bg-200 font-weight-bold o_line_section'">
+                        <td name="td_section_line_info" colspan="99">
+                            <p>
+                                <t t-if="rmg_sale_id.edge_profiles_id">
+                                    Edge Profiles:
+                                    <span t-field="rmg_sale_id.edge_profiles_id"/>
+                                    <br/>
+                                </t>
+                                <t t-if="rmg_sale_id.splash">
+                                    Splash:
+                                    <span t-field="rmg_sale_id.splash"/>
+                                    <br/>
+                                </t>
+                                <t t-if="rmg_sale_id.sink_by_bella_id">
+                                    Sink by Bella:
+                                    <span t-field="rmg_sale_id.sink_by_bella_id"/>
+                                    <br/>
+                                </t>
+                                <t t-if="rmg_sale_id.customer_sink_types_id">
+                                    Customer Sink Types:
+                                    <span t-field="rmg_sale_id.customer_sink_types_id"/>
+                                    <br/>
+                                </t>
+                                <t t-if="rmg_sale_id.faucets_id">
+                                    Faucets:
+                                    <span t-field="rmg_sale_id.faucets_id"/>
+                                    <br/>
+                                </t>
+                                <t t-if="rmg_sale_id.range_types_id">
+                                    Range Types:
+                                    <span t-field="rmg_sale_id.range_types_id"/>
+                                    <br/>
+                                </t>
+                            </p>
+                        </td>
+                    </tr>
+                </t>
+            </xpath>
+        </template>
+    </data>
+</odoo>
