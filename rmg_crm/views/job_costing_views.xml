@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="job_costing_tree" model="ir.ui.view">
+            <field name="name">job.costing</field>
+            <field name="model">job.costing</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0">
+                    <field name="job_name"/>
+                    <field name="contract_amount" sum="Total Contract Amount"/>
+                    <field name="billings_to_date" sum="Total Billings To Date"/>
+                    <field name="remaining" sum="Total Remaining"/>
+                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" optional="show"/>
+                    <field name="total_cost_of_components" sum="Total Cost Of Components" optional="show"/>
+                    <field name="total_cost_of_purchase_timesheet" sum="Total " optional="show"/>
+                    <field name="actual" sum="Total Actual Cost"/>
+                    <field name="budget" sum="Total Budget Cost"/>
+                    <field name="pct" widget="percentage"/>
+                    <field name="overrun" sum="Total Overrun"/>
+                </tree>
+            </field>
+        </record>
+        <record id="act_job_costing" model="ir.actions.act_window">
+            <field name="name">Job Costing</field>
+            <field name="res_model">job.costing</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem id="job_costing_menu"
+                  name="Job Costing"
+                  parent="sale.sale_menu_root"
+                  sequence="20"/>
+        <menuitem id="report_job_costing"
+                  name="Job Costing"
+                  parent="job_costing_menu"
+                  action="rmg_crm.act_job_costing"
+                  sequence="1"/>
+    </data>
+</odoo>
