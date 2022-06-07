@@ -4,12 +4,12 @@
         <field name="name">quant.location.tree</field>
         <field name="model">quant.location</field>
         <field name="arch" type="xml">
-            <tree create="False" edit="False">
-                <field name="location_id"/>
-                <field name="name"/>
-                <field name="ref"/>
-                <field name="product_id"/>
-                <field name="product_qty"/>
+            <tree string="Lots/Serial Numbers" multi_edit="1">
+                <field name="location_id" readonly="1"/>
+                <field name="name" decoration-bf="1"/>
+                <field name="ref" optional="show"/>
+                <field name="product_id" readonly="1"/>
+                <field name="product_qty" readonly="1"/>
             </tree>
         </field>
     </record>
