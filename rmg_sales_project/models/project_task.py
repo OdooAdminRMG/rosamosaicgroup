@@ -35,14 +35,13 @@ class ProjectTask(models.Model):
     lead_time = fields.Integer('Lead Time', default=0, copy=True)
     offset_hours = fields.Integer('Offset Hours', default=0, copy=True)
     delivery_address_id = fields.Many2one("res.partner", string=_("Delivery Address"))
-    overall_square_feet = fields.Float('Overall Square Feet',
-                                       compute="_compute_overall_square_feet", store=True)
+    overall_square_feet = fields.Float(string=_('Overall Square Feet'),
+                                       compute="_compute_overall_square_feet")
 
-    @api.depends('project_id.sale_line_id.order_id.order_line')
     def _compute_overall_square_feet(self):
         for rec in self:
             rec.overall_square_feet = sum(
-                rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.square_footage_estimate'))
+                rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.installed_square_footage'))
 
     @api.model
     def create(self, vals):

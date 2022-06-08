@@ -1,0 +1,12 @@
+<odoo>
+    <record id="create_records_for_existing_data" model="ir.cron">
+        <field name="name">Create Records For Existing Data</field>
+        <field name="model_id" ref="model_stock_quant"/>
+        <field name="state">code</field>
+        <field name="code">model.create_records_for_existing_data()</field>
+        <field name="active" eval="False"/>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+    </record>
+</odoo>

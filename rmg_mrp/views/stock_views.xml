@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rmg_view_stock_move_line_operation_tree_expiry" model="ir.ui.view">
+            <field name="name">stock.move.line.tree.inherit</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lot_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='lot_id']" position="after">
+                    <field name="quant_location_id" groups="stock.group_production_lot"
+                           attrs="{'readonly': ['&amp;', ('package_level_id', '!=', False), ('parent.picking_type_entire_packs', '=', True)]}"
+                           invisible="not context.get('show_lots_m2o')"
+                           domain="[('inventory_quantity_auto_apply','>',0), ('location_id','ilike',location_id), ('product_id', '=', parent.product_id), ('company_id', '=', company_id)]"
+                           context="{
+                                            'active_picking_id': picking_id,
+                                            'default_company_id': parent.company_id,
+                                            'default_product_id': parent.product_id,
+                                        }"
+                    />
+
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

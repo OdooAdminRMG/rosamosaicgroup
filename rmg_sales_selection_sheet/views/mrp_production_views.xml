@@ -23,6 +23,7 @@
                                 <field name="installation_notes"/>
                                 <field name="splash"/>
                                 <field name="square_footage_estimate"/>
+                                <field name="installed_square_footage"/>
                                 <field name="templated_by_id"/>
                             </group>
                         </group>
