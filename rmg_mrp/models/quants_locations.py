@@ -16,4 +16,5 @@ class QuantLocations(models.Model):
     company_id = fields.Many2one('Company', related="lot_id.company_id")
 
     location_id = fields.Many2one(related="quant_id.location_id", string=_("Location"))
-    inventory_quantity = fields.Float(related="quant_id.inventory_quantity", string=_("Quantity On Hand"))
+    inventory_quantity_auto_apply = fields.Float(related="quant_id.inventory_quantity_auto_apply",
+                                                   string=_("Quantity On Hand"), store=True)
