@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        <record id="action_report_rmg_quotation" model="ir.actions.report">
-            <field name="name">RMG Quotation / Order</field>
-            <field name="model">sale.order</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="report_name">sale.report_saleorder</field>
-            <field name="report_file">sale.report_saleorder</field>
-            <field name="binding_model_id" ref="model_rmg_sale"/>
-            <field name="binding_type">report</field>
-        </record>
         <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
             <xpath expr="//t[@t-set='address']" position="replace">
                 <t t-set="address">
@@ -23,7 +14,6 @@
                         <div t-field="doc.partner_invoice_id"
                              t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                     </t>
-
                 </t>
             </xpath>
             <xpath expr="//t[@t-set='information_block']" position="replace"/>
