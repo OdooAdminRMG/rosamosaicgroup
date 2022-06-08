@@ -12,51 +12,46 @@
         </record>
         <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
             <xpath expr="//t[@t-set='address']" position="replace">
-            </xpath>
-            <xpath expr="//t[@t-set='information_block']" position="replace">
-            </xpath>
-            <xpath expr="//div[hasclass('page')]" position="before">
-                <div>
-                    <div>
-                        <span t-field="doc.partner_id"/>
-                        <br/>
-                        <!--                                 t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>-->
-                        <t t-if="doc.job_name">
-                            <span>
-                                <strong>Job Name:</strong>
-                                <span t-field="doc.job_name"/>
-                            </span>
-                            <br/>
-                        </t>
-                        <t t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                <t t-set="address">
+                    <t t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
                              or doc.partner_shipping_id != doc.partner_invoice_id">
-                            <t t-set="information_block">
-                                <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
-                                    <strong>Shipping Address:</strong>
-                                    <br/>
-                                    <span t-field="doc.partner_shipping_id"/>
-<!--                                          t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
-                                    <br/>
-                                </t>
-                            </t>
+                        <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoicing and Shipping
+                            Address:
+                        </strong>
+                        <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:</strong>
+                        <div t-field="doc.partner_invoice_id"
+                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </t>
+
+                </t>
+            </xpath>
+            <xpath expr="//t[@t-set='information_block']" position="replace"/>
+            <xpath expr="//t[@t-set='address']" position="after">
+                <t t-set="information_block">
+                    <div t-field="doc.partner_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    <p t-if="doc.partner_id.vat"><t
+                            t-esc="doc.company_id.account_fiscal_country_id.vat_label or 'Tax ID'"/>:
+                        <span t-field="doc.partner_id.vat"/>
+                    </p>
+                    <t t-if="doc.job_name">
+                        <span>
+                            <strong>Job Name:</strong>
+                            <span t-field="doc.job_name"/>
+                        </span>
+                        <br/>
+                    </t>
+                    <t t-if="doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id">
+                        <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
+                            <strong>Shipping Address:</strong>
+                            <div t-field="doc.partner_shipping_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                         </t>
-                    </div>
-                    <div>
-                        <t t-if="doc.partner_invoice_id != doc.partner_id">
-                            <t t-set="information_block">
-                                <strong t-if="doc.partner_shipping_id == doc.partner_invoice_id">Invoicing and Shipping
-                                    Address:
-                                </strong>
-                                <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:
-                                </strong>
-                                <br/>
-                                <span t-field="doc.partner_invoice_id"/>
-<!--                                      t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
-                                <br/>
-                            </t>
-                        </t>
-                    </div>
-                </div>
+                    </t>
+                </t>
             </xpath>
             <xpath expr="//table/tbody/t/t[@t-set='current_subtotal']" position="before">
                 <t t-set="rmg_sale_id" t-value="line.rmg_sale_id"/>
