@@ -1,0 +1,12 @@
+<odoo>
+    <record id="create_replenish_sources_history_for_existing_po" model="ir.cron">
+        <field name="name">Create Replenish Sources History For Existing PO</field>
+        <field name="model_id" ref="rmg_crm.model_replenish_sources"/>
+        <field name="state">code</field>
+        <field name="code">model.create_replenish_sources_history_for_existing_po()</field>
+        <field name="active" eval="False"/>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+    </record>
+</odoo>

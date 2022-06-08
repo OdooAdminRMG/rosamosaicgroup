@@ -6,6 +6,15 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='other_information']/group/group[@name='sale_reporting']"
+                       position="after">
+                    <group string="Costing" name="budgeted_cost">
+                        <group colspan="2" class="mt-0">
+                            <field name="budgeted_labor_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="budgeted_material_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                        </group>
+                    </group>
+                </xpath>
                 <xpath expr="//field[@name='partner_id']" position="before">
                     <field name="job_name" attrs="{'readonly': [('opportunity_id', '!=', False)]}"/>
                 </xpath>
@@ -25,7 +34,6 @@
                         </field>
                     </page>
                 </xpath>
-
             </field>
         </record>
     </data>

@@ -7,7 +7,7 @@
                 <t t-call="web.internal_layout">
                     <div class="page">
                         <div class="oe_structure"/>
-                        <div class="row">
+                        <div class="row" id="general_info">
                             <div class="col-7">
                                 <h2>
                                     <span t-field="o.name"/>
@@ -20,7 +20,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="row mt32 mb32">
+                        <div class="row mt32 mb32" id="source_document">
                             <div class="col-3" t-if="o.origin">
                                 <strong>Source Document:</strong>
                                 <br/>
@@ -33,7 +33,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt32 mb32">
+                        <div class="row mt32 mb32" id="finished_product">
                             <div class="col-3">
                                 <strong>Finished Product:</strong>
                                 <br/>
@@ -52,7 +52,7 @@
                             </div>
                         </div>
 
-                        <div t-if="o.workorder_ids" groups="mrp.group_mrp_routings">
+                        <div t-if="o.workorder_ids" groups="mrp.group_mrp_routings" id="operations_planned">
                             <h3>
                                 <span t-if="o.state == 'done'">Operations Done</span>
                                 <span t-else="">Operations Planned</span>
@@ -126,7 +126,7 @@
                         <div class="oe_structure"/>
                     </div>
                     <p style="page-break-after:always;"></p>
-                    <div class="mb-5">
+                    <div class="mb-5" id="image_attachment">
                         <tr t-foreach="o.image_attachment_id" t-as="pack_operation">
                             <div id="picture" class="watermark text-center" style="width:100%; height:100%;">
                                 <t t-if="pack_operation.mimetype in 'image/png, image/jpeg'">
