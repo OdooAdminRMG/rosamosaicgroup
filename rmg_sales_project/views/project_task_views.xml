@@ -48,9 +48,9 @@
                         string="Associate MOs"
                         attrs="{'invisible': [('peg_to_manufacturing_order', '=', False)]}"/>
                 <button name="open_dos_to_associate_with_task"
-                            type="object"
-                            string="Associate Delivery Order"
-                            attrs="{'invisible': [('peg_to_delivery_order', '=', False)]}"/>
+                        type="object"
+                        string="Associate Delivery Order"
+                        attrs="{'invisible': [('peg_to_delivery_order', '=', False)]}"/>
             </xpath>
             <field name="parent_id" position="after">
                 <field name="peg_to_manufacturing_order"/>
@@ -97,6 +97,17 @@
                 <field name="delivery_address_id" invisible="1"/>
                 <field name="overall_square_feet" invisible="1"/>
             </field>
+        </field>
+    </record>
+    <record id="rmg_project_task_map_view_no_title" model="ir.ui.view">
+        <field name="name">project.task.view.map</field>
+        <field name="model">project.task</field>
+        <field name="priority">12</field>
+        <field name="inherit_id" ref="project_enterprise.project_task_map_view_no_title"/>
+        <field name="arch" type="xml">
+            <xpath expr="//map" position="attributes">
+                <attribute name="res_partner">delivery_address_id</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
