@@ -24,6 +24,10 @@ class StockMoveLine(models.Model):
             self.location_id = self.quant_location_id.location_id if self.quant_location_id.location_id else False
         self.lot_id = self.quant_location_id.lot_id if self.quant_location_id.location_id else False
 
+    @api.onchange('location_id')
+    def _onchange_location_id(self):
+        if self.location_id != self.quant_location_id.location_id: self.quant_location_id = False
+
     def assign_all_reserve_qty_lot(self, product_id, picking_type_id, lot_id):
         product_id = self.env['product.product'].browse(product_id)
         picking_type_id = self.env['stock.picking.type'].browse(picking_type_id)

@@ -6,8 +6,9 @@ class QuantLocations(models.Model):
     _description = "Create records for each location of respective lot."
     _rec_name = "name"
 
-    lot_id = fields.Many2one('stock.production.lot', string=_('Stock Production Lot Id'), invisible=True)
-    quant_id = fields.Many2one('stock.quant', string=_('Stock Quant Id'), invisible=True)
+    lot_id = fields.Many2one('stock.production.lot', string=_('Lot/Serial Number'), domain=[('id', '=', False)],
+                             required=True)
+    quant_id = fields.Many2one('stock.quant', string=_('Quant'))
 
     name = fields.Char(string=_('Lot/Serial Number'), related="lot_id.name")
     ref = fields.Char(string=_('Internal Reference'), related="lot_id.ref")
@@ -17,4 +18,4 @@ class QuantLocations(models.Model):
 
     location_id = fields.Many2one(related="quant_id.location_id", string=_("Location"))
     inventory_quantity_auto_apply = fields.Float(related="quant_id.inventory_quantity_auto_apply",
-                                                   string=_("Quantity On Hand"), store=True)
+                                                 string=_("Quantity On Hand"), store=True)
