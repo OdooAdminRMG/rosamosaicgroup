@@ -23,9 +23,11 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.2.0.2',
+    'version': '15.0.3.0.2',
     'depends': [
         'project',
+        'rmg_crm',
+        'rmg_sales_selection_sheet',
         'sale_project',
         'sale_timesheet',
         'resource',
@@ -37,6 +39,7 @@
         'views/project_task_views.xml',
         'views/mrp_views.xml',
         'views/stock_picking_views.xml',
+        "reports/rmg_quotation_report.xml",
     ],
     'assets': {
         'web.assets_qweb': [
