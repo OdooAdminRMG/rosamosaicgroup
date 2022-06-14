@@ -6,4 +6,4 @@ class IrAttachmentType(models.Model):
     _description = "Ir Attachment Type"
     _rec_name = "name"
 
-    name = fields.Char(string=_("Name"))
+    name = fields.Char(string=_("Name"), required=True)
