@@ -23,9 +23,10 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.3.1.2',
+    'version': '15.0.3.2.2',
     'depends': [
         'project',
+        'project_enterprise',
         'rmg_crm',
         'rmg_sales_selection_sheet',
         'sale_project',
