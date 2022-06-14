@@ -157,6 +157,9 @@ class JobCosting(models.Model):
         tools.drop_view_if_exists(self._cr, self._table)
         self._cr.execute("""
         CREATE or REPLACE VIEW %s AS
-              select id,job_name  
+              select create_uid,create_date,write_date,write_uid,id,job_name  
               FROM sale_order WHERE job_name != ''
         """ % (self._table))
+        self.env.cr.execute(
+            """UPDATE %s SET create_uid = %s, create_date = '%s', write_date = '%s', write_uid = %s""" % (
+                self._table, self.env.user.id, fields.Datetime.now(), fields.Datetime.now(), self.env.user.id))
