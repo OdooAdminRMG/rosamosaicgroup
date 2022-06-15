@@ -1,0 +1,5 @@
+<template xml:spacer="preserve">
+    <t t-name="rmg_preview_button">
+        <button type="button" class="rmg_binary_file_preview btn btn-secondary fa fa-external-link" style="padding: 0px 4px;" title="Preview" aria-label="Preview"/>
+    </t>
+</template>
