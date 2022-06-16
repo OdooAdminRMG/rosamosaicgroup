@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="ir_attachment_form_view_inherit" model="ir.ui.view">
-            <field name="name">ir.attachment.form</field>
-            <field name="model">ir.attachment.type</field>
+        <record id="attachment_form_view_inherit" model="ir.ui.view">
+            <field name="name">attachment.form</field>
+            <field name="model">attachment.type</field>
             <field name="arch" type="xml">
                 <form>
                     <group>
@@ -14,25 +14,25 @@
                 </form>
             </field>
         </record>
-        <record id="ir_attachment_type_tree_view" model="ir.ui.view">
-            <field name="name">ir.attachment.type.tree</field>
-            <field name="model">ir.attachment.type</field>
+        <record id="attachment_type_tree_view" model="ir.ui.view">
+            <field name="name">attachment.type.tree</field>
+            <field name="model">attachment.type</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
                 </tree>
             </field>
         </record>
-        <record id="action_ir_attachment_type" model="ir.actions.act_window">
-            <field name="name">ir.attachment.type.action</field>
-            <field name="res_model">ir.attachment.type</field>
+        <record id="action_attachment_type" model="ir.actions.act_window">
+            <field name="name">attachment.type.action</field>
+            <field name="res_model">attachment.type</field>
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem
                 id="crm_team_menu_config_attachment_type"
                 name="Attachment Type"
                 parent="crm.crm_menu_config"
-                action="rmg_crm.action_ir_attachment_type"
+                action="rmg_crm.action_attachment_type"
                 sequence="10"/>
     </data>
 </odoo>

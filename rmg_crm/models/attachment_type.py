@@ -2,7 +2,7 @@ from odoo import _, fields, models
 
 
 class IrAttachmentType(models.Model):
-    _name = "ir.attachment.type"
+    _name = "attachment.type"
     _description = "Ir Attachment Type"
     _rec_name = "name"
 
