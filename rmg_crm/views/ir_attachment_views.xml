@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="ir_attachment_type_form_view" model="ir.ui.view">
-            <field name="name">ir.attachment.type.form</field>
+            <field name="name">attachment.type.form</field>
             <field name="model">ir.attachment</field>
             <field name="inherit_id" ref="base.view_attachment_form"/>
             <field name="arch" type="xml">
