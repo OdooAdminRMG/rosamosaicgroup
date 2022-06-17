@@ -5,7 +5,10 @@ class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
     job_name = fields.Char(
-        string=_("Job Name"), compute="_compute_job_name", store=True
+        string=_("Job Name"),
+        compute="_compute_job_name",
+        store=True,
+        help="Compute 'Job name' based on related Sale Order."
     )
 
     @api.depends(
