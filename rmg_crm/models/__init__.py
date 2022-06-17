@@ -16,5 +16,5 @@ from . import (
     stock_picking,
     stock_rule,
     job_costing,
-account_move,
+    account_move,
 )
