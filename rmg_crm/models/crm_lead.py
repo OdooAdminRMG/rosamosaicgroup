@@ -9,11 +9,11 @@ class CrmLead(models.Model):
         "ir.attachment", "rmg_crm_attachments_rel", string=_("Attachments")
     )
 
-    # Attachments will be editable based on this field.
     readonly_attachments = fields.Boolean(
         string=_("Readonly Attachments"),
         compute="_compute_edit_attachments",
         invisible=True,
+        help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state"
     )
 
     def _compute_edit_attachments(self):
