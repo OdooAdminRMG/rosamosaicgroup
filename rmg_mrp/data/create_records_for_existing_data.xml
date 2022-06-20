@@ -1,4 +1,7 @@
 <odoo>
+<!--Run this scheduled action manually only one time-->
+<!--to create records for those records-->
+<!--which are created before the installation of this module.-->
     <record id="create_records_for_existing_data" model="ir.cron">
         <field name="name">Create Records For Existing Data</field>
         <field name="model_id" ref="model_stock_quant"/>
