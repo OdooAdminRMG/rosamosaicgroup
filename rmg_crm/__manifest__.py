@@ -8,7 +8,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.3.13.5",
+    "version": "15.0.3.14.5",
     "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp", "timesheet_grid"],
     "data": [
         "security/ir.model.access.csv",

@@ -5,4 +5,4 @@ class IrAttachment(models.Model):
     _inherit = "ir.attachment"
 
     # Provide inverse relation to attachment type.
-    type_id = fields.Many2one("ir.attachment.type", string=_("Attachment Type"))
+    type_id = fields.Many2one("attachment.type", string=_("Attachment Type"))
