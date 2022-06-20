@@ -5,6 +5,7 @@ from odoo import _, api, fields, models
 
 class RmgSaleWarningWiz(models.TransientModel):
     _name = "rmg.sale.warning.wiz"
+    _description = "RMG Sale Warning Wizard"
 
     rmg_id = fields.Many2one("rmg.sale")
     message = fields.Html(string="Message", default="")
