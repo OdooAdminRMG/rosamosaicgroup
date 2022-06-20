@@ -7,7 +7,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.2.0.1",
+    "version": "15.0.2.0.2",
     "depends": ["sale_management", "sale_stock", 'stock'],
     "data": [
         "security/ir.model.access.csv",
