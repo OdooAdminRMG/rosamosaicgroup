@@ -9,7 +9,8 @@
                 <xpath expr="//field[@name='product_id']" position="attributes">
                     <attribute name="context">{'default_detailed_type': 'product',
                         'stock_picking_id':parent.id,
-                        'stock_picking_type': parent.picking_type_id}</attribute>
+                        'stock_picking_type': parent.picking_type_id}
+                    </attribute>
                 </xpath>
             </field>
         </record>

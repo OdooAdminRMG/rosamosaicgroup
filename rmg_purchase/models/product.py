@@ -23,8 +23,8 @@ class Product(models.Model):
             if picking_type_id and picking_type_id.code == "incoming":
                 product_ids = (
                     self.env["stock.picking"]
-                        .browse(self.env.context.get("stock_picking_id"))
-                        .move_ids_without_package.mapped("product_id")
+                    .browse(self.env.context.get("stock_picking_id"))
+                    .move_ids_without_package.mapped("product_id")
                 )
                 if product_ids: args += [("id", "in", product_ids.ids)]
         return super(Product, self)._name_search(

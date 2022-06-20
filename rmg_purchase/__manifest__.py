@@ -6,7 +6,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "purchase",
-    "version": "15.0.0.0.1",
+    "version": "15.0.0.0.2",
     "depends": [
         "stock",
     ],

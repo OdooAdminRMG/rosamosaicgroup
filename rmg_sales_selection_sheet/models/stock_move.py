@@ -8,9 +8,9 @@ class StockMoveLine(models.Model):
 
     def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
         """
-        This method will pass slab_tagged_id to delivery order If MO is created and internal transfer is triggered.
-        Return: Dictionary of values with lot_id
-        bom_line_id: Fetch record of bom product for product in sale order_line
+            This method will pass slab_tagged_id to delivery order If MO is created and internal transfer is triggered.
+            Return: Dictionary of values with lot_id
+            bom_line_id: Fetch record of bom product for product in sale order_line
         """
         rtn = super(StockMoveLine, self)._prepare_move_line_vals(
             quantity, reserved_quant
