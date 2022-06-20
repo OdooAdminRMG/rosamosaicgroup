@@ -9,10 +9,8 @@ class ReportAccountAgedPartner(models.AbstractModel):
 
     def _get_sql(self):
         rtn = super(ReportAccountAgedPartner, self)._get_sql()
-        miscellaneous_journal_id = self.env['account.journal'].search([('type', '=', 'general')]).ids
-        if 'JOIN account_journal journal ON journal.id = account_move_line.journal_id' in rtn:
-            query = rtn.split('JOIN account_journal journal ON journal.id = account_move_line.journal_id')
+        if 'JOIN account_move move ON account_move_line.move_id = move.id' in rtn:
+            query = rtn.split('JOIN account_move move ON account_move_line.move_id = move.id')
             query.insert(1,
-                       'JOIN account_journal journal ON journal.id = account_move_line.journal_id  AND journal.id NOT IN ' + str(
-                           tuple(miscellaneous_journal_id)))
+                         "JOIN account_move move ON account_move_line.move_id = move.id AND move.move_type IN ('in_invoice', 'out_invoice')")
         return ''.join(query)

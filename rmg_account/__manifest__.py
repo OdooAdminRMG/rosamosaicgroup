@@ -10,7 +10,7 @@
     "website": "https://www.sfour.io/",
     "category": "business",
     "version": "15.0.3.0.1",
-    "depends": ["stock_account"],
+    "depends": ["account_reports","stock_account"],
     "data": [
         "views/product_category_view.xml",
     ],
