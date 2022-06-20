@@ -23,6 +23,7 @@ class SaleOrder(models.Model):
         string=_("Readonly Attachments"),
         related="opportunity_id.readonly_attachments",
         invisible=True,
+        help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state",
     )
 
     @api.depends("opportunity_id.name")
@@ -42,6 +43,10 @@ class SaleOrder(models.Model):
             rec.opportunity_id.attachment_ids = rec.attachment_ids.ids
 
     def action_confirm(self):
+        """
+            -> While confirming the SO we have to create Replenish Source History for all SO Lines.
+            -> For SO Lines which update the existing PO, we'll pass SO Line id to create Replenish Source History.
+        """
         rtn = super(SaleOrder, self).action_confirm()
         for line in self.order_line:
             self._get_purchase_orders().filtered(
@@ -56,11 +61,21 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     def _purchase_service_prepare_line_values(self, purchase_order, quantity=False):
+        """
+            This method is triggered when the SO Line will directly create PO
+            and at that time we'll pass SO Line id to create Replenish Source History.
+        """
         rtn = super(SaleOrderLine, self)._purchase_service_prepare_line_values(self, purchase_order, quantity)
         rtn.update({'replenish_source_ids': [(0, 0, {'so_line_id': self.id})]})
         return rtn
 
     def create(self, vals):
+        """
+            Override the default method to create Replenish Source History.
+            -> When SO Line is created and the related SO is in 'sale' state
+                and due to this line any PO is updated,
+                we'll pass SO Line id to create Replenish Source History.
+        """
         rtn = super(SaleOrderLine, self).create(vals)
         for line in rtn:
             line.order_id._get_purchase_orders().filtered(

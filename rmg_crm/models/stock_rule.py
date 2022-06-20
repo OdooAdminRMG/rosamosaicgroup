@@ -4,8 +4,12 @@ from odoo import models
 class StockRule(models.Model):
     _inherit = 'stock.rule'
 
-
     def _run_buy(self, procurements):
+        """
+            This method is triggered when any MO try to create or edit PO.
+            When the PO is created or updated will pass
+            Origin, Product and Product QTY ot create Replenish Source History.
+        """
         super(StockRule, self)._run_buy(procurements)
         for procurement, rule in procurements:
             if not self.env['sale.order'].search(
