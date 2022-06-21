@@ -2,7 +2,7 @@
 {
     "name": "RMG Manufacturing Customizations",
     "description": """
-            User Stories: 5, 
+            User Stories: 5, 22, 48, 
     """,
     "category": "sales",
     "summary": "",
