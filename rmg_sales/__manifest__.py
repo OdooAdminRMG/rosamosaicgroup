@@ -3,7 +3,11 @@
 {
     "name": "RMG Sales",
     "summary": """RMG Sales""",
-    "description": """Manage Delivery Dates on Sale Order""",
+    "description": """
+            Manage Delivery Dates on Sale Order
+            
+            User Stories: 21, 24, 
+            """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
