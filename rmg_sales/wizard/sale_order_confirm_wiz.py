@@ -5,6 +5,7 @@ from odoo import api, fields, models
 
 class SaleOrderConfirmWiz(models.TransientModel):
     _name = "sale.order.confirm.wiz"
+    _description = "sale.order.confirm.wiz"
 
     sale_id = fields.Many2one("sale.order")
     message = fields.Html(string="Message")
