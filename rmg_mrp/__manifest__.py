@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     "name": "RMG Manufacturing Customizations",
-    "description": "",
+    "description": """
+            User Stories: 5, 
+    """,
     "category": "sales",
     "summary": "",
     "sequence": 20,
