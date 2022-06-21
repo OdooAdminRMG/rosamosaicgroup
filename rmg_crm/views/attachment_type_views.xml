@@ -3,7 +3,7 @@
     <data>
         <record id="attachment_form_view_inherit" model="ir.ui.view">
             <field name="name">attachment.form</field>
-            <field name="model">attachment.type</field>
+            <field name="model">ir.attachment.type</field>
             <field name="arch" type="xml">
                 <form>
                     <group>
@@ -25,7 +25,7 @@
         </record>
         <record id="action_attachment_type" model="ir.actions.act_window">
             <field name="name">attachment.type.action</field>
-            <field name="res_model">attachment.type</field>
+            <field name="res_model">ir.attachment.type</field>
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem
