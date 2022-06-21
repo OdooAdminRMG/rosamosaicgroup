@@ -4,7 +4,10 @@
 {
     "name": "RMG CRM",
     "summary": """RMG CRM""",
-    "description": """RMG CRM""",
+    "description": """
+            RMG CRM
+            User Stories: 11,  
+    """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
