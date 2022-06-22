@@ -16,7 +16,7 @@
         </record>
         <record id="attachment_type_tree_view" model="ir.ui.view">
             <field name="name">attachment.type.tree</field>
-            <field name="model">attachment.type</field>
+            <field name="model">ir.attachment.type</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
