@@ -9,7 +9,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.2.0.2",
+    "version": "15.0.3.0.2",
     "depends": [
         "sale_project",
         "calendar"
@@ -20,6 +20,10 @@
         "views/menu_view.xml",
         "views/project_stages.xml",
     ],
+    'assets': {
+        'web.assets_backend': [
+            'rmg_project/static/src/js/project_calendar.js',
+            ]},
     "installable": True,
     "application": True,
     "auto_install": False,
