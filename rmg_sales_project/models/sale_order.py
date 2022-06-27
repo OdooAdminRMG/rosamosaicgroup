@@ -134,10 +134,9 @@ class SaleOrder(models.Model):
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
-            This method will get the resource calendar and calculate working time and adjust dates accordingly
-            :param start_date: Task start date
-            :param end_date: Task end date
-            :return: adjusted start and end dates
+            The value of this filed will be True
+            if any Sale Order Line exist with product type 'Service',
+            'Create on Order' is not 'None' and  whose project doesn't exist else False.
         """
         start_date = start_date.replace(tzinfo=UTC)
         working_start_date, working_end_date = self.get_working_start_end_date(
@@ -148,15 +147,12 @@ class SaleOrder(models.Model):
             if start_date.date() == working_start_date.date():
                 last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
             else:
-                if start_date.weekday() not in list(map(int, all_attendance_ids.mapped('dayofweek'))):
-                    last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
-                else:
-                    last_day_start_date = start_date
-            hours = (working_start_date - start_date).seconds / 3600
-            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
-            start_date = working_end_date - relativedelta(hours=hours)
+                last_day_start_date = start_date
+        hours = (working_start_date - start_date).seconds / 3600
+        working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
+        start_date = working_end_date - relativedelta(hours=hours)
 
-        return start_date.replace(tzinfo=None)
+    return start_date.replace(tzinfo=None)
 
     def calculate_planned_dates(self, commitment_date):
         """
@@ -271,8 +267,12 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         """
-        Re-calculate planned dates on confirm of sales order
-        :return:
+        Recursion method to update all child tasks
+        :param final_task: Task in which start and end date should be placed
+        :param task_depend_on_dict: dependent tasks' dictionary
+        :param commitment_date: Deadline date
+        :param previous_task: previous task to get offset hours
+        :return: updated task
         """
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:

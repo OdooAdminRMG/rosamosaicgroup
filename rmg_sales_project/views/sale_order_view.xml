@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="sale_order_form_view_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_cancel']" position="before">
+                    <field name="is_project_product"
+                           invisible="0"
+                           help="The value of this filed will be True
+                           if any Sale Order Line exist with product type 'Service',
+                           'Create on Order' is not 'None' and  whose project doesn't exist else False."/>
+                    <button name="action_create_project_confirm" id="action_create_project_confirm" data-hotkey="p"
+                            string="Create Project"
+                            class="btn-primary" type="object" attrs="{'invisible':[('is_project_product','=',False)]}"
+                            help="This button will create project for all Sale Order Line with product type 'Service',
+                            'Create on Order' is not 'None' and  whose project doesn't exist."/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_order_form_sale_project_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_project.view_order_form_inherit_sale_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_view_project_ids']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('project_ids', '=', [])]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
