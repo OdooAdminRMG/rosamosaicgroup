@@ -6,9 +6,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_cancel']" position="before">
+                <xpath expr="//button[@name='action_confirm']" position="after">
                     <field name="is_project_product"
-                           invisible="0"
+                           invisible="1"
                            help="The value of this filed will be True
                            if any Sale Order Line exist with product type 'Service',
                            'Create on Order' is not 'None' and  whose project doesn't exist else False."/>
