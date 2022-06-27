@@ -93,7 +93,6 @@ class SaleOrder(models.Model):
 
     def get_working_start_end_date(self, start_date):
         """
-
         :param start_date: task start date
         :param end_date: task end date
         :return: working hour start date, end date, all week records
@@ -110,12 +109,6 @@ class SaleOrder(models.Model):
         return working_start_date, working_end_date
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
-        """
-            This method will get the resource calendar and calculate working time and adjust dates accordingly
-            :param start_date: Task start date
-            :param end_date: Task end date
-            :return: adjusted start and end dates
-        """
         start_date = start_date.replace(tzinfo=UTC)
         working_start_date, working_end_date = self.get_working_start_end_date(
             start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
@@ -125,13 +118,10 @@ class SaleOrder(models.Model):
             if start_date.date() == working_start_date.date():
                 last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
             else:
-                if start_date.weekday() not in list(map(int, all_attendance_ids.mapped('dayofweek'))):
-                    last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
-                else:
-                    last_day_start_date = start_date
-            hours = (working_start_date - start_date).seconds / 3600
-            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
-            start_date = working_end_date - relativedelta(hours=hours)
+                last_day_start_date = start_date
+        hours = (working_start_date - start_date).seconds / 3600
+        working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
+        start_date = working_end_date - relativedelta(hours=hours)
 
         return start_date.replace(tzinfo=None)
 
@@ -227,10 +217,6 @@ class SaleOrder(models.Model):
         return res
 
     def action_confirm(self):
-        """
-        Re-calculate planned dates on confirm of sales order
-        :return:
-        """
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
