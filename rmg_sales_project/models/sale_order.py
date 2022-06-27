@@ -146,13 +146,10 @@ class SaleOrder(models.Model):
             if start_date.date() == working_start_date.date():
                 last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
             else:
-                if start_date.weekday() not in list(map(int, all_attendance_ids.mapped('dayofweek'))):
-                    last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
-                else:
-                    last_day_start_date = start_date
-            hours = (working_start_date - start_date).seconds / 3600
-            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
-            start_date = working_end_date - relativedelta(hours=hours)
+                last_day_start_date = start_date
+        hours = (working_start_date - start_date).seconds / 3600
+        working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
+        start_date = working_end_date - relativedelta(hours=hours)
 
         return start_date.replace(tzinfo=None)
 
@@ -268,10 +265,6 @@ class SaleOrder(models.Model):
         return res
 
     def action_confirm(self):
-        """
-        Re-calculate planned dates on confirm of sales order
-        :return:
-        """
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
