@@ -9,8 +9,9 @@ class AccountReport(models.AbstractModel):
     def _get_options(self, previous_options=None):
         # OVERRIDE
         options = super(AccountReport, self)._get_options(previous_options=previous_options)
-        options['remove_unknown_partners'] = previous_options and previous_options.get(
-            'remove_unknown_partners') or False
+        if self._name == 'account.aged.receivable' or self._name == 'account.aged.payable':
+            options['remove_unknown_partners'] = previous_options and previous_options.get(
+                'remove_unknown_partners') or False
         return options
 
 
