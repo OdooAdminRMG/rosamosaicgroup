@@ -26,9 +26,9 @@ class ReportAccountAgedPartner(models.AbstractModel):
             ReportAccountAgedPartner,
             self
         )._get_sql()
-        if self._context.get(
-                'remove_unknown_partners',
-                False
+        if self._context.get('report_options', {}
+                             ).get(
+            'remove_unknown_partners', False
         ) and 'JOIN account_move move ON account_move_line.move_id = move.id' in rtn:
             query = rtn.split(
                 'JOIN account_move move ON account_move_line.move_id = move.id'
