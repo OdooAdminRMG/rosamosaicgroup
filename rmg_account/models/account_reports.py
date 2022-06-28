@@ -11,6 +11,11 @@ class ReportAccountAgedPartner(models.AbstractModel):
         rtn = super(ReportAccountAgedPartner, self)._get_sql()
         if 'JOIN account_move move ON account_move_line.move_id = move.id' in rtn:
             query = rtn.split('JOIN account_move move ON account_move_line.move_id = move.id')
-            query.insert(1,
-                         "JOIN account_move move ON account_move_line.move_id = move.id AND move.move_type IN ('in_invoice', 'out_invoice')")
-        return ''.join(query)
+            query.insert(
+                1,
+                "JOIN account_move move "
+                "ON account_move_line.move_id = move.id "
+                "AND move.move_type IN ('in_invoice', 'out_invoice', 'out_refund', 'in_refund')"
+            )
+            return ''.join(query)
+        return rtn
