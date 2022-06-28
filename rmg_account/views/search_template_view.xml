@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="search_template_extra_options_inherit" inherit_id="account_reports.search_template_extra_options">
+            <xpath expr="//div" position="inside">
+                <a role="menuitem" class="dropdown-item js_account_report_bool_filter"
+                   t-if="options.get('remove_unknown_partners') != None" title="Remove Unknown Partners" data-filter="remove_unknown_partners">Remove Unknown Partners
+                </a>
+            </xpath>
+        </template>
+    </data>
+</odoo>

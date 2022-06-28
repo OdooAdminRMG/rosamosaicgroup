@@ -12,6 +12,7 @@
     "version": "15.0.3.0.2",
     "depends": ["account_reports","stock_account"],
     "data": [
+        "views/search_template_view.xml",
         "views/product_category_view.xml",
     ],
     "installable": True,
