@@ -3,15 +3,25 @@
 from odoo import models, fields, api, _
 
 
-class AccountReport(models.AbstractModel):
-    _inherit = 'account.report'
+class ReportAccountAgedReceivable(models.Model):
+    _inherit = "account.aged.receivable"
 
     def _get_options(self, previous_options=None):
         # OVERRIDE
-        options = super(AccountReport, self)._get_options(previous_options=previous_options)
-        if self._name == 'account.aged.receivable' or self._name == 'account.aged.payable':
-            options['remove_unknown_partners'] = previous_options and previous_options.get(
-                'remove_unknown_partners') or False
+        options = super(ReportAccountAgedReceivable, self)._get_options(previous_options=previous_options)
+        options['display_unknown_partners'] = previous_options and previous_options.get(
+            'display_unknown_partners') or False
+        return options
+
+
+class ReportAccountAgedPayable(models.Model):
+    _inherit = "account.aged.payable"
+
+    def _get_options(self, previous_options=None):
+        # OVERRIDE
+        options = super(ReportAccountAgedPayable, self)._get_options(previous_options=previous_options)
+        options['display_unknown_partners'] = previous_options and previous_options.get(
+            'display_unknown_partners') or False
         return options
 
 
@@ -26,23 +36,16 @@ class ReportAccountAgedPartner(models.AbstractModel):
             ReportAccountAgedPartner,
             self
         )._get_sql()
-        if self._context.get('report_options', {}
-                             ).get(
-            'remove_unknown_partners', False
-        ) and 'JOIN account_move move ON account_move_line.move_id = move.id' in rtn:
+        if not self._context.get('report_options', {}
+                                 ).get(
+            'display_unknown_partners', False
+        ) and 'WHERE account.internal_type = ' in rtn:
             query = rtn.split(
-                'JOIN account_move move ON account_move_line.move_id = move.id'
+                'WHERE account.internal_type = '
             )
             query.insert(
                 1,
-                "JOIN account_move move "
-                "ON account_move_line.move_id = move.id "
-                "AND move.move_type IN ("
-                "'in_invoice', "
-                "'out_invoice', "
-                "'out_refund', "
-                "'in_refund'"
-                ")"
+                "WHERE account_move_line.partner_id IS NOT NULL AND account.internal_type = "
             )
             return ''.join(query)
         return rtn

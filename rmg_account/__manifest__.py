@@ -9,7 +9,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.3.1.3",
+    "version": "15.0.3.2.3",
     "depends": ["account_reports","stock_account"],
     "data": [
         "views/search_template_view.xml",
