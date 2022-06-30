@@ -3,7 +3,15 @@ from odoo import _, fields, models
 
 class QuantLocations(models.Model):
     _name = 'quant.location'
-    _description = "Create records for each location of respective lot."
+    _description = "Create records for each location of respective lot." \
+                   "" \
+                   "Important: Please runt scheduled action named " \
+                   "'create_records_for_existing_data' manually (Only One Time)" \
+                   "which will create records for those records " \
+                   "which are created before the installation of this module." \
+                   "" \
+                   "Note: Pass 'quant_id' and 'lot_id' while creating the records other fields are related " \
+                   "so, no need to worry about write operations"
     _rec_name = "name"
 
     lot_id = fields.Many2one('stock.production.lot', string=_('Lot/Serial Number'), domain=[('id', '=', False)],

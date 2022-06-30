@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 {
     "name": "RMG Manufacturing Customizations",
-    "description": "",
+    "description": """
+            User Stories: 5, 22, 48, 
+    """,
     "category": "sales",
     "summary": "",
     "sequence": 20,
-    "version": "15.0.2.7.1",
+    "version": "15.0.2.7.2",
     'author': "S4 Solutions, LLC",
     'website': "https://www.sfour.io/",
     "depends": ["stock", "sale_management", "mrp"],

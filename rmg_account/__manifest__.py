@@ -5,7 +5,11 @@
 {
     "name": "RMG Account",
     "summary": """RMG Account""",
-    "description": """Manage Account""",
+    "description": """
+            Manage Account
+            
+            User Stories: 27, 
+            """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",

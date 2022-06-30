@@ -30,6 +30,13 @@ class SaleOrder(models.Model):
         }
 
     def action_confirm(self):
+        """
+            At the time of confirming SO
+            it will check for multiple conditions one by one
+            and if any condition doesn't satisfy it will display one wizard
+            and on confirm of wizard it will again call 'action_confirm' method
+            but check from remaining conditions and all this flow is handled by context.
+        """
         if not self.partner_shipping_id:
             raise UserError(_("Delivery address is not set."))
         tz = self.env.context.get('tz') or self.env.user.tz or 'UTC'
@@ -37,27 +44,27 @@ class SaleOrder(models.Model):
         # Pass context from action_confirm button to open wizard for Delivery date confirmation
         copy_context = dict(self._context)
         if (
-            "so_action_confirm_warning" in copy_context
-            and copy_context.get("so_action_confirm_warning") == "warning_1"
+                "so_action_confirm_warning" in copy_context
+                and copy_context.get("so_action_confirm_warning") == "warning_1"
         ):
             copy_context.update({"so_action_confirm_warning": "warning_2"})
             if not any(
-                self.order_line.filtered(
-                    lambda line: line.product_id.service_tracking
-                    in ["task_in_project", "project_only"]
-                )
+                    self.order_line.filtered(
+                        lambda line: line.product_id.service_tracking
+                                     in ["task_in_project", "project_only"]
+                    )
             ):
                 return self.with_context(copy_context).open_message_wizard(
                     "There were no products added to this Sales Order which will result in the generation of a project. You may still save this order, but you will need to add such a product at a later date. Are you sure you want to proceed"
                 )
         if "so_action_confirm_warning" in copy_context and (
-            copy_context.get("so_action_confirm_warning") == "warning_2"
+                copy_context.get("so_action_confirm_warning") == "warning_2"
         ):
             copy_context.update({"so_action_confirm_warning": "end"})
             message = (
-                "This Sales Order’s Delivery Date is currently set to %s. "
-                "Please confirm this is correct before proceeding"
-                % format_datetime(self.env, self.commitment_date, tz=tz)
+                    "This Sales Order’s Delivery Date is currently set to %s. "
+                    "Please confirm this is correct before proceeding"
+                    % format_datetime(self.env, self.commitment_date, tz=tz)
             )
             return self.with_context(copy_context).open_message_wizard(message)
 
@@ -105,5 +112,6 @@ class SaleOrder(models.Model):
         if not self.env.context.get('not_self_saleperson') or not self.team_id:
             values['team_id'] = self.env['crm.team'].with_context(
                 default_team_id=self.partner_id.team_id.id
-            )._get_default_team_id(domain=['|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)], user_id=user_id)
+            )._get_default_team_id(domain=['|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)],
+                                   user_id=user_id)
         self.update(values)
