@@ -26,6 +26,12 @@ class SaleOrder(models.Model):
         help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state",
     )
 
+    def _prepare_invoice(self):
+        """Pass so_id from sale order to invoice."""
+        rtn = super(SaleOrder, self)._prepare_invoice()
+        rtn.update({'so_id': self.id})
+        return rtn
+
     @api.depends("opportunity_id.name")
     def _compute_job_name(self):
         for rec in self:
