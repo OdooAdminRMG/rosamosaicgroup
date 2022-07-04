@@ -6,4 +6,4 @@ class IrAttachmentType(models.Model):
     _description = "This model will define type of Attachments"
     _rec_name = "name"
 
-    name = fields.Char(string=_("Name"))
+    name = fields.Char(string=_("Name"), required=True)
