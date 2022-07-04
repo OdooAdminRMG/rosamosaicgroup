@@ -16,7 +16,7 @@
                             <field name="res_id" force_save="1" invisible="1"/>
                             <field name="type" invisible="1"/>
                             <field name="name"/>
-                            <field name="datas" filename="name"/>
+                            <field name="datas" filename="name" widget="binary"/>
                         </tree>
                     </field>
                 </page>
