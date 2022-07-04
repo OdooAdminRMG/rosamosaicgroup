@@ -152,7 +152,7 @@ class SaleOrder(models.Model):
         working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
         start_date = working_end_date - relativedelta(hours=hours)
 
-    return start_date.replace(tzinfo=None)
+        return start_date.replace(tzinfo=None)
 
     def calculate_planned_dates(self, commitment_date):
         """

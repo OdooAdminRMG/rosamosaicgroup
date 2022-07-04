@@ -39,11 +39,7 @@
     ],
     'data': [
         'data/ir_sequence_data.xml',
-<<<<<<< HEAD
         'views/sale_order_views.xml',
-=======
-        'views/sale_order_view.xml',
->>>>>>> [MOD]rmg_sales_project add new functionalities.
         'views/project_task_views.xml',
         'views/mrp_views.xml',
         'views/stock_picking_views.xml',
