@@ -5,19 +5,10 @@
         <field name="model">stock.valuation.layer</field>
         <field name="inherit_id" ref="stock_account.stock_valuation_layer_form"/>
         <field name="arch" type="xml">
-            <!--            <xpath expr="//form" position="attributes">-->
-            <!--                <attribute name="edit">1</attribute>-->
-            <!--            </xpath>-->
-            <!--            <xpath expr="//field[@name='quantity']" position="attributes">-->
-            <!--                <attribute name="readonly">0</attribute>-->
-            <!--            </xpath>-->
-            <!--            <xpath expr="//field[@name='unit_cost']" position="attributes">-->
-            <!--                <attribute name="readonly">0</attribute>-->
-            <!--            </xpath>-->
-            <xpath expr="//field[@name='value']" position="attributes">
+            <xpath expr="//field[@name='unit_cost']" position="attributes">
                 <attribute name="readonly">0</attribute>
             </xpath>
-            <xpath expr="//field[@name='remaining_qty']" position="attributes">
+            <xpath expr="//field[@name='value']" position="attributes">
                 <attribute name="readonly">0</attribute>
             </xpath>
         </field>
