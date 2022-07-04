@@ -99,6 +99,7 @@ class SaleOrder(models.Model):
                 move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
                 move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
@@ -116,7 +117,6 @@ class SaleOrder(models.Model):
 
     def get_working_start_end_date(self, start_date):
         """
-
         :param start_date: task start date
         :param end_date: task end date
         :return: working hour start date, end date, all week records
@@ -147,10 +147,13 @@ class SaleOrder(models.Model):
             if start_date.date() == working_start_date.date():
                 last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
             else:
-                last_day_start_date = start_date
-        hours = (working_start_date - start_date).seconds / 3600
-        working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
-        start_date = working_end_date - relativedelta(hours=hours)
+                if start_date.weekday() not in list(map(int, all_attendance_ids.mapped('dayofweek'))):
+                    last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
+                else:
+                    last_day_start_date = start_date
+            hours = (working_start_date - start_date).seconds / 3600
+            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
+            start_date = working_end_date - relativedelta(hours=hours)
 
         return start_date.replace(tzinfo=None)
 
@@ -267,12 +270,8 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         """
-        Recursion method to update all child tasks
-        :param final_task: Task in which start and end date should be placed
-        :param task_depend_on_dict: dependent tasks' dictionary
-        :param commitment_date: Deadline date
-        :param previous_task: previous task to get offset hours
-        :return: updated task
+        Re-calculate planned dates on confirm of sales order
+        :return:
         """
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
