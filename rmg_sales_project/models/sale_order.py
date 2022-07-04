@@ -64,6 +64,13 @@ class SaleOrder(models.Model):
                 )._timesheet_service_generation(),
                 orders
             )
+        if self.commitment_date:
+            so_commitment_date = datetime.strptime(self.commitment_date, DTS)
+            # Clear all dates on Project task
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
+            self.calculate_planned_dates(so_commitment_date)
 
 def get_attendances(self, start_date):
     resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
