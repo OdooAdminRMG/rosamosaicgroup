@@ -7,7 +7,7 @@
 from . import (
     crm_lead,
     ir_attachment,
-    ir_attachment_type,
+    attachment_type,
     mrp_production,
     project_project,
     replenish_sources,
@@ -18,3 +18,4 @@ from . import (
     account_move,
     job_costing,
 )
+
