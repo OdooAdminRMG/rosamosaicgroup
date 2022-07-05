@@ -92,19 +92,34 @@ class RmgSale(models.Model):
             vals["status"] = "pre_release"
         return super().create(vals)
 
-    def get_all_child_ids(self, child_ids):
-        get_child_ids = list(
-            set(
-                [
-                    child_id
-                    for pc_child_id in map(lambda pc_child_ids: pc_child_ids.child_id.ids,
-                                           self.env[
-                                               "product.category"
-                                           ].browse(child_ids)
-                                           ) for child_id in pc_child_id
-                ] + child_ids)
-        )
-        return child_ids if get_child_ids.sort() == child_ids.sort() else self.get_all_child_ids(get_child_ids)
+    def get_all_child_ids(self, ele):
+        temp = ele
+        ele = self.env["product.category"].browse(ele)
+        for child in ele:
+            if child.child_id:
+                for i in child.child_id.ids:
+                    if i not in temp:
+                        temp.append(i)
+        if len(temp) != len(ele):
+            return self.get_all_child_ids(temp)
+        else:
+            return ele.ids
+
+    # def get_all_child_ids(self, child_ids):
+    #     get_child_ids = list(
+    #         set(
+    #             [
+    #                 child_id
+    #                 for pc_child_id in map(lambda pc_child_ids: pc_child_ids.child_id.ids,
+    #                                        self.env[
+    #                                            "product.category"
+    #                                        ].browse(child_ids)
+    #                                        ) for child_id in pc_child_id
+    #             ] + child_ids)
+    #     )
+    #     print("get_child_ids ",get_child_ids)
+    #     print("child_ids ",child_ids)
+    #     return child_ids if get_child_ids.sort() == child_ids.sort() else self.get_all_child_ids(get_child_ids)
 
     @api.depends("order_line_id")
     def compute_order_lines(self):
