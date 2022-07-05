@@ -99,7 +99,6 @@ class SaleOrder(models.Model):
                 move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
                 move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
-
     template_start_date = fields.Date(string='Template Start Date')
     template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
 
