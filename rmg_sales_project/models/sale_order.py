@@ -5,8 +5,8 @@ from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 from pytz import timezone, UTC
 
-
 import logging
+
 _logger = logging.getLogger(__name__)
 
 
@@ -19,7 +19,9 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
     :return: Date which is in working hours
     """
     if date.weekday() not in list(map(int, attendance_ids.mapped('dayofweek'))):
-        return get_next_or_last_working_days_count((date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids, recursive=True)
+        return get_next_or_last_working_days_count(
+            (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids,
+            recursive=True)
     if not recursive:
         date = (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1))
     return date
@@ -28,9 +30,13 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    template_start_date = fields.Date(string='Template Start Date')
+    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
-        attendances = resource_id.calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == str(start_date.weekday()))
+        attendances = resource_id.calendar_id.attendance_ids.filtered(
+            lambda a: a.dayofweek == str(start_date.weekday()))
         return resource_id, attendances, resource_id.calendar_id.attendance_ids
 
     def get_start_date(self, start_date, hours):
@@ -52,7 +58,8 @@ class SaleOrder(models.Model):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
         working_end_date = datetime.combine(start_date.date(), time.max).replace(tzinfo=UTC)
-        work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date, resources=resource_id)
+        work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date,
+                                                                             resources=resource_id)
         work_intervals = [(start, stop) for start, stop, dummy in work_intervals_batch.get(resource_id.id, False)]
         if work_intervals:
             working_start_date = work_intervals[0][0].astimezone(UTC)
@@ -67,7 +74,8 @@ class SaleOrder(models.Model):
             :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
-        working_start_date, working_end_date = self.get_working_start_end_date(start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
+        working_start_date, working_end_date = self.get_working_start_end_date(
+            start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
             resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -123,8 +131,28 @@ class SaleOrder(models.Model):
                 # Manage final task by which doesn't set as depended_task
                 final_task_ids = set(project.tasks) - set(depended_task_ids)
                 for index, final_task in enumerate(sorted(final_task_ids, key=lambda x: x.sequence)):
-                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, first_task=True)
+                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date,
+                                                                      first_task=True)
                     all_task_list.extend(final_task_depends_list)
+        self.update_tmpl_dates()
+
+    def update_tmpl_dates(self):
+        if self.template_start_date and self.template_end_date:
+            self.project_ids.filtered(
+                lambda project: self.env['project.task'].search(
+                    [
+                        ('project_id', 'in', project.ids),
+                        ('is_template_task', '=', True),
+                    ]
+                ).mapped(
+                    lambda task: task.write(
+                        {
+                            'planned_date_begin': self.template_start_date,
+                            'planned_date_end': self.template_end_date
+                        }
+                    )
+                )
+            )
 
     def write(self, vals):
         """
@@ -140,6 +168,10 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
+        if 'template_start_date' in vals and vals['template_start_date'] and 'template_end_date' in vals and vals[
+            'template_end_date']:
+            self.update_tmpl_dates()
+
         return res
 
     def action_confirm(self):
@@ -168,4 +200,6 @@ class SaleOrder(models.Model):
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
             move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
+        if self.template_start_date and self.template_end_date:
+            self.update_tmpl_dates()
         return res

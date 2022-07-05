@@ -15,6 +15,8 @@ class ProjectTask(models.Model):
     """
     _inherit = 'project.task'
 
+    is_template_task = fields.Boolean(
+        string=_("Is Template Task"))
     peg_to_manufacturing_order = fields.Boolean(
         string="Peg To Manufacturing", copy=True)
     peg_to_delivery_order = fields.Boolean(
