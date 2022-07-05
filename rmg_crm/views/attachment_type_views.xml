@@ -24,7 +24,7 @@
             </field>
         </record>
         <record id="action_attachment_type" model="ir.actions.act_window">
-            <field name="name">attachment.type</field>
+            <field name="name">Attachment Type</field>
             <field name="res_model">ir.attachment.type</field>
             <field name="view_mode">tree,form</field>
         </record>
