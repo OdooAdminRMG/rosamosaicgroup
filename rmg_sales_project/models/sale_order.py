@@ -71,6 +71,8 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
+        if self.template_start_date and self.template_end_date:
+            self.update_tmpl_dates()
 
     template_start_date = fields.Date(string='Template Start Date')
     template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
@@ -186,6 +188,8 @@ class SaleOrder(models.Model):
                     [
                         ('project_id', 'in', project.ids),
                         ('is_template_task', '=', True),
+                        ('planned_date_begin', '!=', self.template_start_date),
+                        ('planned_date_end', '!=', self.template_end_date),
                     ]
                 ).mapped(
                     lambda task: task.write(
