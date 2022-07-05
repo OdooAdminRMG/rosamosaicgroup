@@ -17,8 +17,8 @@
                to update replenish history of those POs which are created 
                before installation of this module. (only need to run it once 
                while deploying this module)
-        
-        RMG US: 11, 15, 26, 44,
+
+            User Stories: 11, 15, 26, 44,
         """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
