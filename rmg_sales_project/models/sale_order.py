@@ -30,6 +30,8 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    template_start_date = fields.Datetime(string='Template Start Date')
+    template_end_date = fields.Datetime(string='Template Start Date', index=True, tracking=True)
     is_project_product = fields.Boolean(string=_('is_project_product'), compute="_compute_is_project_product",
                                         store=True)
 
@@ -73,10 +75,6 @@ class SaleOrder(models.Model):
             self.calculate_planned_dates(so_commitment_date)
         if self.template_start_date and self.template_end_date:
             self.update_tmpl_dates()
-
-    template_start_date = fields.Date(string='Template Start Date')
-    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
-
 
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
@@ -215,6 +213,13 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
+        if 'order_line' in vals and self.commitment_date:
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
+            self.calculate_planned_dates(self.commitment_date)
+        if 'order_line' in vals and self.template_start_date and self.template_end_date:
+            self.update_tmpl_dates()
         if 'template_start_date' in vals and vals['template_start_date'] and 'template_end_date' in vals and vals[
             'template_end_date']:
             self.update_tmpl_dates()
