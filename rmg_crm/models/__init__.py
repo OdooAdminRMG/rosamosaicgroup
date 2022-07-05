@@ -18,4 +18,3 @@ from . import (
     account_move,
     job_costing,
 )
-
