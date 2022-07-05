@@ -4,7 +4,8 @@
         <template id="search_template_extra_options_inherit" inherit_id="account_reports.search_template_extra_options">
             <xpath expr="//div" position="inside">
                 <a role="menuitem" class="dropdown-item js_account_report_bool_filter"
-                   t-if="options.get('remove_unknown_partners') != None" title="Remove Unknown Partners" data-filter="remove_unknown_partners">Remove Unknown Partners
+                   t-if="options.get('display_unknown_partners') != None"
+                   title="Display Unknown Partners" data-filter="display_unknown_partners">Display Unknown Partners
                 </a>
             </xpath>
         </template>

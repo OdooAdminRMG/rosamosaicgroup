@@ -7,9 +7,8 @@ from odoo import _, api, fields, models
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
 
-    sale_order_line_ids = fields.One2many(
-        "sale.order.line", "mrp_order_id", string="Sale Order Lines"
-    )
+    sale_order_line_id = fields.Many2one("sale.order.line", string="Order Line",
+                                         compute="_compute_sale_order_line")
     rmg_ids = fields.One2many("rmg.sale", "mrp_order_id", string="Rmg Lines")
     rmg_id = fields.Many2one("rmg.sale", string="Rmg Id")
     edge_profiles_id = fields.Many2one("edge.profiles", string=_("Edge Profiles"), related="rmg_id.edge_profiles_id")
@@ -62,6 +61,17 @@ class MrpProduction(models.Model):
             }
         )
         return data
+
+    @api.depends("rmg_id")
+    def _compute_sale_order_line(self):
+        for rec in self:
+            rec.sale_order_line_id = False
+            # Here taking [0] in case someone has changed in product route after confirming SO.
+            if rec.rmg_id:
+                rec.sale_order_line_id = rec.rmg_id.order_line_ids.filtered(
+                    lambda order_line: self.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
+                              self.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
+                )[0].id
 
 
 class StockRule(models.Model):
