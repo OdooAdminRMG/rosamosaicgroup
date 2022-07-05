@@ -99,6 +99,9 @@ class SaleOrder(models.Model):
                 move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
                 move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
+    template_start_date = fields.Date(string='Template Start Date')
+    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
@@ -130,7 +133,6 @@ class SaleOrder(models.Model):
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
         return working_start_date, working_end_date
-
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """

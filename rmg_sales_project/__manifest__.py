@@ -39,6 +39,10 @@
     ],
     'data': [
         'data/ir_sequence_data.xml',
+<<<<<<< HEAD
+=======
+        'views/sale_order_view.xml',
+>>>>>>> [MOD]rmg_sales_project update tmpl dates
         'views/sale_order_views.xml',
         'views/project_task_views.xml',
         'views/mrp_views.xml',
