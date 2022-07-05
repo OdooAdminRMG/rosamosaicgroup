@@ -103,6 +103,7 @@ class SaleOrder(models.Model):
     template_start_date = fields.Date(string='Template Start Date')
     template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
 
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
