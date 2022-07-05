@@ -76,6 +76,9 @@ class SaleOrder(models.Model):
         if self.template_start_date and self.template_end_date:
             self.update_tmpl_dates()
 
+    template_start_date = fields.Date(string='Template Start Date')
+    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
@@ -107,7 +110,6 @@ class SaleOrder(models.Model):
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
         return working_start_date, working_end_date
-
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
@@ -213,13 +215,6 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
-        if 'order_line' in vals and self.commitment_date:
-            for project in self.project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
-            self.calculate_planned_dates(self.commitment_date)
-        if 'order_line' in vals and self.template_start_date and self.template_end_date:
-            self.update_tmpl_dates()
         if 'template_start_date' in vals and vals['template_start_date'] and 'template_end_date' in vals and vals[
             'template_end_date']:
             self.update_tmpl_dates()
