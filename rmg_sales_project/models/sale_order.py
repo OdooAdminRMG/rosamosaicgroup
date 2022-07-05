@@ -72,12 +72,14 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
 
+    template_start_date = fields.Date(string='Template Start Date')
+    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
             lambda a: a.dayofweek == str(start_date.weekday()))
         return resource_id, attendances, resource_id.calendar_id.attendance_ids
-
 
     def get_start_date(self, start_date, hours):
         resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -87,7 +89,6 @@ class SaleOrder(models.Model):
             return self.get_start_date(get_next_or_last_working_days_count(start_date, all_attendance_ids), hours)
         start_date = self.adjust_dates_in_user_working_time(start_date - relativedelta(hours=hours), hours=hours)
         return start_date.replace(tzinfo=None)
-
 
     def get_working_start_end_date(self, start_date):
         """
@@ -106,7 +107,6 @@ class SaleOrder(models.Model):
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
         return working_start_date, working_end_date
-
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
@@ -133,7 +133,6 @@ class SaleOrder(models.Model):
             start_date = working_end_date - relativedelta(hours=hours)
 
         return start_date.replace(tzinfo=None)
-
 
     def calculate_planned_dates(self, commitment_date):
         """
@@ -177,7 +176,25 @@ class SaleOrder(models.Model):
                     final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date,
                                                                       first_task=True)
                     all_task_list.extend(final_task_depends_list)
+        self.update_tmpl_dates()
 
+    def update_tmpl_dates(self):
+        if self.template_start_date and self.template_end_date:
+            self.project_ids.filtered(
+                lambda project: self.env['project.task'].search(
+                    [
+                        ('project_id', 'in', project.ids),
+                        ('is_template_task', '=', True),
+                    ]
+                ).mapped(
+                    lambda task: task.write(
+                        {
+                            'planned_date_begin': self.template_start_date,
+                            'planned_date_end': self.template_end_date
+                        }
+                    )
+                )
+            )
 
     def write(self, vals):
         """
@@ -193,8 +210,11 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
-        return res
+        if 'template_start_date' in vals and vals['template_start_date'] and 'template_end_date' in vals and vals[
+            'template_end_date']:
+            self.update_tmpl_dates()
 
+        return res
 
     def action_confirm(self):
         """
@@ -222,4 +242,6 @@ class SaleOrder(models.Model):
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
             move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
+        if self.template_start_date and self.template_end_date:
+            self.update_tmpl_dates()
         return res
