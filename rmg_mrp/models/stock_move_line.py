@@ -20,12 +20,16 @@ class StockMoveLine(models.Model):
 
     @api.onchange('quant_location_id')
     def _onchange_quant_location_id(self):
+        """
+            Updated the 'lot_id' field  and 'location' based on 'quant_location_id'.
+        """
         if not self.location_id:
             self.location_id = self.quant_location_id.location_id if self.quant_location_id.location_id else False
         self.lot_id = self.quant_location_id.lot_id if self.quant_location_id.location_id else False
 
     @api.onchange('location_id')
     def _onchange_location_id(self):
+        """This method will check if the location is equal to quant_location_id's location"""
         if self.location_id != self.quant_location_id.location_id: self.quant_location_id = False
 
     def assign_all_reserve_qty_lot(self, product_id, picking_type_id, lot_id):

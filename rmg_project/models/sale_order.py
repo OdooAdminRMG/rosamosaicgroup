@@ -6,9 +6,6 @@ from odoo import models
 
 
 class SaleOrder(models.Model):
-    """
-
-    """
     _inherit = "sale.order"
 
     def action_calendar_installation_view(self):

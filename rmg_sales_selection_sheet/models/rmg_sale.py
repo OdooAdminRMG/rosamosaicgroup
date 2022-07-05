@@ -39,10 +39,8 @@ class RmgSale(models.Model):
         res = self.env["ir.config_parameter"].sudo().get_param(
             "rmg_sales_selection_sheet.sink_by_bella_product_categories"
         )
-        res = literal_eval(res) if res else []
-        childs = self.rec_child(res)
 
-        return [("categ_id", "in", childs)]
+        return [("categ_id", "in", self.get_all_child_ids(literal_eval(res) if res else []))]
 
     # Do not allow creation of new values.Only allow products whose Product Category is tiered into(i.e.child of) one
     # or more of threading product categories maintained in Sales > Configuration > Sink By Bella Product Categories
@@ -94,18 +92,19 @@ class RmgSale(models.Model):
             vals["status"] = "pre_release"
         return super().create(vals)
 
-    def rec_child(self, ele):
-        temp = ele
-        ele = self.env["product.category"].browse(ele)
-        for child in ele:
-            if child.child_id:
-                for i in child.child_id.ids:
-                    if i not in temp:
-                        temp.append(i)
-        if len(temp) != len(ele):
-            return self.rec_child(temp)
-        else:
-            return ele.ids
+    def get_all_child_ids(self, child_ids):
+        get_child_ids = list(
+            set(
+                [
+                    child_id
+                    for pc_child_id in map(lambda pc_child_ids: pc_child_ids.child_id.ids,
+                                           self.env[
+                                               "product.category"
+                                           ].browse(child_ids)
+                                           ) for child_id in pc_child_id
+                ] + child_ids)
+        )
+        return child_ids if get_child_ids.sort() == child_ids.sort() else self.get_all_child_ids(get_child_ids)
 
     @api.depends("order_line_id")
     def compute_order_lines(self):
@@ -134,11 +133,11 @@ class RmgSale(models.Model):
 
     def save_data(self):
         """
-        - 'old_square_footage_estimate' field will contain old value of 'square_footage_estimate',
-        so that we can check if any changes occur in 'square_footage_estimate' field.
-        - Based on condition this method will pop up warning wizards.
-        - 'continue' button will again call this method
-        but will skip previous po or mo ids and again raise warning based on conditions.
+            - 'old_square_footage_estimate' field will contain old value of 'square_footage_estimate',
+            so that we can check if any changes occur in 'square_footage_estimate' field.
+            - Based on condition this method will pop up warning wizards.
+            - 'continue' button will again call this method
+            but will skip previous po or mo ids and again raise warning based on conditions.
         """
         if not self:
             self = self.env["rmg.sale"].browse(self.env.context.get("rmg_id", False))
