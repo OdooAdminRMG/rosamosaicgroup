@@ -100,6 +100,9 @@ class SaleOrder(models.Model):
                 move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
 
+    template_start_date = fields.Date(string='Template Start Date')
+    template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
@@ -296,4 +299,6 @@ class SaleOrder(models.Model):
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
             move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
+        if self.template_start_date and self.template_end_date:
+            self.update_tmpl_dates()
         return res
