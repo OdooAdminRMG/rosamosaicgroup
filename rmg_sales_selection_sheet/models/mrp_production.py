@@ -36,7 +36,7 @@ class MrpProduction(models.Model):
     square_footage_estimate = fields.Float(
         related="rmg_id.square_footage_estimate", string=_("Square Footage Estimate")
     )
-    installed_square_footage = fields.Float(related="rmg_id.square_footage_estimate",
+    installed_square_footage = fields.Float(related="rmg_id.installed_square_footage",
                                             string=_("Installed Square Footage"))
     templated_by_id = fields.Many2one(
         "hr.employee", related="rmg_id.templated_by_id", string=_("Templated by")
