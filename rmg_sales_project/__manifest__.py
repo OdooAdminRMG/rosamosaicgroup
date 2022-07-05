@@ -17,13 +17,15 @@
     'description': """
         RMG Sales Project module helps user to set Lead time on Task and calculated Planned Start date and 
         Planned End date for the Task
+        
+        User Stories: 1, 3, 9, 53, 52, 51, 
     """,
     'author': 'S4 Solutions, LLC',
     'website': 'https://www.sfour.io/',
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.3.2.2',
+    'version': '15.0.3.2.4',
     'depends': [
         'project',
         'project_enterprise',

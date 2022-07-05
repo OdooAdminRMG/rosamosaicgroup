@@ -5,7 +5,11 @@
 {
     "name": "RMG Project Enhancements",
     "summary": """RMG Project Enhancements""",
-    "description": """RMG Project Enhancements""",
+    "description": """
+            RMG Project Enhancements
+            
+            User Stories: 20, 41, 47, 
+            """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",

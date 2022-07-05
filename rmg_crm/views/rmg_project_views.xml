@@ -16,7 +16,7 @@
                     <page name="attachments" string="Attachments">
                         <field name="attachment_ids" widget="one2many">
                             <tree create="1" editable="bottom">
-                                <field name="datas" filename="name"/>
+                                <field name="datas" filename="name" widget="binary"/>
                                 <field name="name"/>
                                 <field name="type" invisible="1"/>
                                 <field name="create_uid" readonly="1"/>

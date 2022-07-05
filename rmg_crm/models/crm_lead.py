@@ -4,13 +4,16 @@ from odoo import _, api, fields, models
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
+    # To resolve the uploading issue we have created Many2many field.
     attachment_ids = fields.Many2many(
         "ir.attachment", "rmg_crm_attachments_rel", string=_("Attachments")
     )
+
     readonly_attachments = fields.Boolean(
         string=_("Readonly Attachments"),
         compute="_compute_edit_attachments",
         invisible=True,
+        help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state"
     )
 
     def _compute_edit_attachments(self):

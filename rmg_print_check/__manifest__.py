@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     "name": "RMG Print Check",
-    "description": "RMG Print Check",
+    "description": """
+            RMG Print Check
+            
+            User Stories: 42, 
+            """,
     "category": "Accounting/Localizations/Check",
     "summary": "RMG Print Check",
     "sequence": 20,
