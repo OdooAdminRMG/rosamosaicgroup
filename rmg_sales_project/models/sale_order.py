@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
@@ -32,12 +32,55 @@ class SaleOrder(models.Model):
 
     template_start_date = fields.Date(string='Template Start Date')
     template_end_date = fields.Date(string='Template Start Date', index=True, tracking=True)
+    is_project_product = fields.Boolean(string=_('is_project_product'), compute="_compute_is_project_product",
+                                        store=True)
+
+    @api.depends('order_line.product_id', 'order_line.project_id')
+    def _compute_is_project_product(self):
+        """
+            The value of this filed will be True
+            if any Sale Order Line exist with product type 'Service',
+            'Create on Order' is not 'None' and  whose project doesn't exist else False.
+        """
+        for order in self:
+            order.is_project_product = True if order.order_line.filtered(
+                lambda line: line.product_id.detailed_type == 'service'
+                             and line.product_id.service_tracking != 'no'
+                             and not line.project_id) else False
+
+    def action_create_project_confirm(self):
+        for order in self:
+            # All orders are in the same company
+            orders = order.order_line.filtered(
+                lambda line:
+                line.product_id.detailed_type == 'service'
+                and line.product_id.service_tracking != 'no'
+                and not line.project_id
+            )
+            # check if all orders are in the same company
+            # else Orders from different companies are confirmed together
+            orders.sudo().with_company(self.company_id)._timesheet_service_generation() if len(
+                self.company_id) == 1 else map(
+                lambda order: order.order_line.sudo().with_company(
+                    order.company_id
+                )._timesheet_service_generation(),
+                orders
+            )
+        if self.commitment_date:
+            so_commitment_date = datetime.strptime(str(self.commitment_date), DTS)
+            # Clear all dates on Project task
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
+            self.calculate_planned_dates(so_commitment_date)
+>>>>>>> rmg_us_57
 
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
             lambda a: a.dayofweek == str(start_date.weekday()))
         return resource_id, attendances, resource_id.calendar_id.attendance_ids
+
 
     def get_start_date(self, start_date, hours):
         resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -47,6 +90,7 @@ class SaleOrder(models.Model):
             return self.get_start_date(get_next_or_last_working_days_count(start_date, all_attendance_ids), hours)
         start_date = self.adjust_dates_in_user_working_time(start_date - relativedelta(hours=hours), hours=hours)
         return start_date.replace(tzinfo=None)
+
 
     def get_working_start_end_date(self, start_date):
         """
@@ -65,6 +109,7 @@ class SaleOrder(models.Model):
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
         return working_start_date, working_end_date
+
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
@@ -91,6 +136,7 @@ class SaleOrder(models.Model):
             start_date = working_end_date - relativedelta(hours=hours)
 
         return start_date.replace(tzinfo=None)
+
 
     def calculate_planned_dates(self, commitment_date):
         """
@@ -154,6 +200,7 @@ class SaleOrder(models.Model):
                 )
             )
 
+
     def write(self, vals):
         """
         Override to update commitment date If changed and re-calculate
@@ -173,6 +220,7 @@ class SaleOrder(models.Model):
             self.update_tmpl_dates()
 
         return res
+
 
     def action_confirm(self):
         """
