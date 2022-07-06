@@ -15,6 +15,8 @@ class ProjectTask(models.Model):
     """
     _inherit = 'project.task'
 
+    is_template_task = fields.Boolean(
+        string=_("Is Template Task"))
     peg_to_manufacturing_order = fields.Boolean(
         string="Peg To Manufacturing", copy=True)
     peg_to_delivery_order = fields.Boolean(
@@ -67,6 +69,10 @@ class ProjectTask(models.Model):
             if do_task and do_task.stock_picking_ids:
                 do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
                 do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
+        if 'is_template_task' in vals:
+            self.sale_order_id.calculate_planned_dates(
+                self.sale_order_id.commitment_date) if self.sale_order_id.commitment_date else self.sale_order_id.update_tmpl_dates()
+
         return res
 
     @property
