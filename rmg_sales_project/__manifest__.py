@@ -18,7 +18,11 @@
         RMG Sales Project module helps user to set Lead time on Task and calculated Planned Start date and 
         Planned End date for the Task.
         
+<<<<<<< HEAD
         User Stories: 1, 3, 9, 53, 52, 51, 57, 
+=======
+        User Stories: 57,
+>>>>>>> 05b8b316ef8185f1ed8b086084cd992e33db3345
     """,
     'author': 'S4 Solutions, LLC',
     'website': 'https://www.sfour.io/',
@@ -39,7 +43,6 @@
     ],
     'data': [
         'data/ir_sequence_data.xml',
-        'views/sale_order_view.xml',
         'views/sale_order_views.xml',
         'views/project_task_views.xml',
         'views/mrp_views.xml',

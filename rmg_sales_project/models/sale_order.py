@@ -30,10 +30,14 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    template_start_date = fields.Datetime(string='Template Start Date')
-    template_end_date = fields.Datetime(string='Template Start Date', index=True, tracking=True)
-    is_project_product = fields.Boolean(string=_('is_project_product'), compute="_compute_is_project_product",
-                                        store=True)
+    template_start_date = fields.Datetime(string=_('Template Start Date'))
+    template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True)
+    is_project_product = fields.Boolean(string=_('Is Project Product'),
+                                        compute="_compute_is_project_product",
+                                        store=True,
+                                        help="The value of this filed will be True"
+                                             "if any Sale Order Line exist with product type 'Service',"
+                                             "'Create on Order' is not 'None' and  whose project doesn't exist else False.")
 
     @api.depends('order_line.product_id', 'order_line.project_id')
     def _compute_is_project_product(self):
