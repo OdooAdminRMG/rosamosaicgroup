@@ -10,8 +10,10 @@
                        position="after">
                     <group string="Costing" name="budgeted_cost">
                         <group colspan="2" class="mt-0">
-                            <field name="budgeted_labor_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="budgeted_material_cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="budgeted_labor_cost" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="budgeted_material_cost" widget="monetary"
+                                   options="{'currency_field': 'currency_id'}"/>
                         </group>
                     </group>
                 </xpath>
@@ -33,6 +35,28 @@
                             </tree>
                         </field>
                     </page>
+                </xpath>
+            </field>
+        </record>
+        <record id="sale_order_view_search_job_name_inherit_quotation" model="ir.ui.view">
+            <field name="name">sale.order.search.job.name.inherit.quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/filter" position="after">
+                    <field name="job_name" string="Job Name"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+        <record id="sale_order_view_search_job_name_inherit_sale" model="ir.ui.view">
+            <field name="name">sale.order.search.job.name.inherit.sale</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/filter" position="after">
+                    <field name="job_name" string="Job Name"/>
+                    <separator/>
                 </xpath>
             </field>
         </record>
