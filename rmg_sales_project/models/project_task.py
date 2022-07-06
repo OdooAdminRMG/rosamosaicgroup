@@ -69,6 +69,7 @@ class ProjectTask(models.Model):
             if do_task and do_task.stock_picking_ids:
                 do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
                 do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
+        # If value of 'is_template_task' field is changed then we have to re calculate the planned dates.
         if 'is_template_task' in vals:
             self.sale_order_id.calculate_planned_dates(
                 self.sale_order_id.commitment_date) if self.sale_order_id.commitment_date else self.sale_order_id.update_tmpl_dates()

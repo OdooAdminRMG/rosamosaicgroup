@@ -49,6 +49,7 @@ class SaleOrder(models.Model):
                              and not line.project_id) else False
 
     def action_create_project_confirm(self):
+        # This method will create a project and calculate a planned dates.
         for order in self:
             # All orders are in the same company
             orders = order.order_line.filtered(
@@ -66,15 +67,15 @@ class SaleOrder(models.Model):
                 )._timesheet_service_generation(),
                 orders
             )
-        if self.commitment_date:
-            so_commitment_date = datetime.strptime(str(self.commitment_date), DTS)
-            # Clear all dates on Project task
-            for project in self.project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
-            self.calculate_planned_dates(so_commitment_date)
-        if self.template_start_date and self.template_end_date:
-            self.update_tmpl_dates()
+            if order.commitment_date:
+                so_commitment_date = datetime.strptime(str(order.commitment_date), DTS)
+                # Clear all dates on Project task
+                for project in order.project_ids:
+                    project.tasks.planned_date_begin = False
+                    project.tasks.planned_date_end = False
+                order.calculate_planned_dates(so_commitment_date)
+            if order.template_start_date and order.template_end_date:
+                order.update_tmpl_dates()
 
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
