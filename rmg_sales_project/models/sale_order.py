@@ -78,8 +78,6 @@ class SaleOrder(models.Model):
                     project.tasks.planned_date_begin = False
                     project.tasks.planned_date_end = False
                 order.calculate_planned_dates(so_commitment_date)
-            if order.template_start_date and order.template_end_date:
-                order.update_tmpl_dates()
 
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
@@ -214,21 +212,50 @@ class SaleOrder(models.Model):
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            for project in self.project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
+            self.project_ids.mapped(
+                lambda project: project.tasks.write(
+                    {
+                        'planned_date_begin': False,
+                        'planned_date_end': False,
+                    }
+                )
+            )
             self.calculate_planned_dates(so_commitment_date)
-        if 'order_line' in vals and self.commitment_date:
-            for project in self.project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
+        elif 'order_line' in vals and self.commitment_date:
+            self.project_ids.mapped(
+                lambda project: project.tasks.write(
+                    {
+                        'planned_date_begin': False,
+                        'planned_date_end': False,
+                    }
+                )
+            )
             self.calculate_planned_dates(self.commitment_date)
-        if 'order_line' in vals and self.template_start_date and self.template_end_date:
-            self.update_tmpl_dates()
-        if 'template_start_date' in vals and vals['template_start_date'] and 'template_end_date' in vals and vals[
-            'template_end_date']:
-            self.update_tmpl_dates()
-
+        elif ('template_start_date' in vals and 'template_end_date' in vals) or (
+                'order_line' in vals and not self.commitment_date):
+            if vals['template_start_date'] and vals[
+                'template_end_date']:
+                self.update_tmpl_dates()
+            else:
+                self.project_ids.filtered(
+                    lambda project: self.env['project.task'].search(
+                        [
+                            ('project_id', 'in', project.ids),
+                            ('is_template_task', '=', True),
+                        ]
+                    ).mapped(
+                        lambda task: task.write(
+                            {
+                                'planned_date_begin': False,
+                                'planned_date_end': False,
+                            }
+                        )
+                    )
+                )
+                self.calculate_planned_dates(
+                    self.commitment_date)
+        else:
+            pass
         return res
 
     def action_confirm(self):
@@ -257,6 +284,4 @@ class SaleOrder(models.Model):
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
             move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
-        if self.template_start_date and self.template_end_date:
-            self.update_tmpl_dates()
         return res
