@@ -55,6 +55,8 @@ class ProjectTask(models.Model):
         return result
 
     def write(self, vals):
+        if 'is_template_task' in vals and not vals.get('is_template_task', False):
+            vals.update({'planned_date_begin': False, 'planned_date_end': False})
         res = super(ProjectTask, self).write(vals)
         mo_task = self.filtered(lambda x: x.peg_to_manufacturing_order)
         do_task = self.filtered(lambda x: x.peg_to_delivery_order)
@@ -72,7 +74,8 @@ class ProjectTask(models.Model):
         # If value of 'is_template_task' field is changed then we have to re calculate the planned dates.
         if 'is_template_task' in vals:
             self.sale_order_id.calculate_planned_dates(
-                self.sale_order_id.commitment_date) if self.sale_order_id.commitment_date else self.sale_order_id.update_tmpl_dates()
+                self.sale_order_id.commitment_date
+            ) if self.sale_order_id.commitment_date else self.sale_order_id.update_tmpl_dates()
 
         return res
 
