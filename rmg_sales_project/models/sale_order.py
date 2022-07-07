@@ -231,9 +231,14 @@ class SaleOrder(models.Model):
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            for project in self.project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
+            self.project_ids.mapped(
+                lambda project: project.tasks.write(
+                    {
+                        'planned_date_begin': False,
+                        'planned_date_end': False,
+                    }
+                )
+            )
             self.calculate_planned_dates(so_commitment_date)
         elif 'order_line' in vals and self.commitment_date:
             for project in self.project_ids:
@@ -291,6 +296,4 @@ class SaleOrder(models.Model):
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
             move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
-        if self.template_start_date and self.template_end_date:
-            self.update_tmpl_dates()
         return res
