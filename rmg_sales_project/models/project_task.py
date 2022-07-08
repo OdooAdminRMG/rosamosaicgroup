@@ -55,9 +55,11 @@ class ProjectTask(models.Model):
         return result
 
     def write(self, vals):
-        if 'is_template_task' in vals and not vals.get('is_template_task', False):
-            vals.update({'planned_date_begin': False, 'planned_date_end': False})
+
         res = super(ProjectTask, self).write(vals)
+        if 'is_template_task' in vals and not vals.get('is_template_task', False):
+            self.planned_date_begin = False
+            self.planned_date_end = False
         mo_task = self.filtered(lambda x: x.peg_to_manufacturing_order)
         do_task = self.filtered(lambda x: x.peg_to_delivery_order)
         if 'planned_date_begin' in vals and vals['planned_date_begin']:
