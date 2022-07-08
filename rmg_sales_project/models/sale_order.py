@@ -253,8 +253,7 @@ class SaleOrder(models.Model):
             self.calculate_planned_dates(self.commitment_date)
         elif ('template_start_date' in vals and 'template_end_date' in vals) or (
                 'order_line' in vals and not self.commitment_date):
-            if vals['template_start_date'] and vals[
-                'template_end_date']:
+            if vals.get('template_start_date', False):
                 self.update_tmpl_dates()
             else:
                 self.project_ids.filtered(
@@ -286,6 +285,8 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
+        elif self.template_end_date and self.template_start_date:
+            self.update_tmpl_dates()
         project_task_mo = self.tasks_ids.filtered(
             lambda p: p.peg_to_manufacturing_order
         )
