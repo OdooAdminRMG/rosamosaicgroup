@@ -30,11 +30,12 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    template_start_date = fields.Datetime(string=_('Template Start Date'))
-    template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True)
+    template_start_date = fields.Datetime(string=_('Template Start Date'), copy=False)
+    template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True, copy=False)
     is_project_product = fields.Boolean(string=_('Is Project Product'),
                                         compute="_compute_is_project_product",
                                         store=True,
+                                        copy=False,
                                         help="The value of this filed will be True"
                                              "if any Sale Order Line exist with product type 'Service',"
                                              "'Create on Order' is not 'None' and  whose project doesn't exist else False.")
@@ -78,6 +79,25 @@ class SaleOrder(models.Model):
                     project.tasks.planned_date_begin = False
                     project.tasks.planned_date_end = False
                 order.calculate_planned_dates(so_commitment_date)
+            # functionalities of us 3.
+            project_task_mo = order.tasks_ids.filtered(
+                lambda p: p.peg_to_manufacturing_order
+            )
+            project_task_do = order.tasks_ids.filtered(
+                lambda p: p.peg_to_delivery_order
+            )
+            move_ids = order.env['procurement.group'].search([
+                ('sale_id', 'in', order.ids)
+            ]).stock_move_ids
+            move_ids.created_production_id.project_task_id = project_task_mo.id
+            picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+            picking_id.project_task_id = project_task_do.id
+            if project_task_do.planned_date_end and picking_id:
+                picking_id.scheduled_date = project_task_do.planned_date_end
+                picking_id.date_deadline = project_task_do.planned_date_end
+            if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
+                move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
+                move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
