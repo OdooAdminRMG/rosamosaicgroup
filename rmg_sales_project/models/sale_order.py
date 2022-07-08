@@ -228,33 +228,22 @@ class SaleOrder(models.Model):
         :return: Boolean
         """
         res = super(SaleOrder, self).write(vals)
+
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            self.project_ids.mapped(
-                lambda project: project.tasks.write(
-                    {
-                        'planned_date_begin': False,
-                        'planned_date_end': False,
-                    }
-                )
-            )
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
         elif 'order_line' in vals and self.commitment_date:
-            self.project_ids.mapped(
-                lambda project: project.tasks.write(
-                    {
-                        'planned_date_begin': False,
-                        'planned_date_end': False,
-                    }
-                )
-            )
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
             self.calculate_planned_dates(self.commitment_date)
-        elif ('template_start_date' in vals and 'template_end_date' in vals) or (
-                'order_line' in vals and not self.commitment_date):
-            if vals.get('template_start_date', False):
-                self.update_tmpl_dates()
-            else:
+        elif 'template_start_date' in vals and 'template_end_date' in vals and not vals['template_start_date'] and not \
+                vals['template_end_date']:
+            if self.commitment_date:
                 self.project_ids.filtered(
                     lambda project: self.env['project.task'].search(
                         [
@@ -272,8 +261,11 @@ class SaleOrder(models.Model):
                 )
                 self.calculate_planned_dates(
                     self.commitment_date)
-        else:
-            pass
+        elif 'template_start_date' in vals and 'template_end_date' in vals and vals['template_start_date'] and vals[
+            'template_end_date']:
+            self.update_tmpl_dates()
+        elif 'order_line' in vals and not self.commitment_date:
+            self.update_tmpl_dates()
         return res
 
     def action_confirm(self):
