@@ -128,7 +128,7 @@ class JobCosting(models.Model):
                         ]).mapped(
                         lambda task: sum(
                             task.timesheet_ids.mapped(
-                                lambda line: line.unit_amount * line.employee_id.timesheet_cost
+                                lambda line: line.unit_amount * line.employee_id.sudo().timesheet_cost
                             )
                         )
                     )
