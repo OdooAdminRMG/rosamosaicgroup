@@ -231,14 +231,9 @@ class SaleOrder(models.Model):
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            self.project_ids.mapped(
-                lambda project: project.tasks.write(
-                    {
-                        'planned_date_begin': False,
-                        'planned_date_end': False,
-                    }
-                )
-            )
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
         elif 'order_line' in vals and self.commitment_date:
             for project in self.project_ids:
