@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 from pytz import timezone, UTC
 
-
 import logging
+
 _logger = logging.getLogger(__name__)
 
 
@@ -19,7 +19,9 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
     :return: Date which is in working hours
     """
     if date.weekday() not in list(map(int, attendance_ids.mapped('dayofweek'))):
-        return get_next_or_last_working_days_count((date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids, recursive=True)
+        return get_next_or_last_working_days_count(
+            (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1)), attendance_ids,
+            recursive=True)
     if not recursive:
         date = (date - relativedelta(days=1)) if back_step else (date + relativedelta(days=1))
     return date
@@ -28,9 +30,79 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    template_start_date = fields.Datetime(string=_('Template Start Date'), copy=False)
+    template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True, copy=False)
+    is_project_product = fields.Boolean(string=_('Is Project Product'),
+                                        compute="_compute_is_project_product",
+                                        store=True,
+                                        copy=False,
+                                        help="The value of this filed will be True"
+                                             "if any Sale Order Line exist with product type 'Service',"
+                                             "'Create on Order' is not 'None' and  whose project doesn't exist else False.")
+
+    @api.depends('order_line.product_id', 'order_line.project_id')
+    def _compute_is_project_product(self):
+        """
+            The value of this filed will be True
+            if any Sale Order Line exist with product type 'Service',
+            'Create on Order' is not 'None' and  whose project doesn't exist else False.
+        """
+        for order in self:
+            order.is_project_product = True if order.order_line.filtered(
+                lambda line: line.product_id.detailed_type == 'service'
+                             and line.product_id.service_tracking != 'no'
+                             and not line.project_id) else False
+
+    def action_create_project_confirm(self):
+        # This method will create a project and calculate a planned dates.
+        for order in self:
+            # All orders are in the same company
+            orders = order.order_line.filtered(
+                lambda line:
+                line.product_id.detailed_type == 'service'
+                and line.product_id.service_tracking != 'no'
+                and not line.project_id
+            )
+            # check if all orders are in the same company
+            # else Orders from different companies are confirmed together
+            orders.sudo().with_company(self.company_id)._timesheet_service_generation() if len(
+                self.company_id) == 1 else map(
+                lambda order: order.order_line.sudo().with_company(
+                    order.company_id
+                )._timesheet_service_generation(),
+                orders
+            )
+            if order.commitment_date:
+                so_commitment_date = datetime.strptime(str(order.commitment_date), DTS)
+                # Clear all dates on Project task
+                for project in order.project_ids:
+                    project.tasks.planned_date_begin = False
+                    project.tasks.planned_date_end = False
+                order.calculate_planned_dates(so_commitment_date)
+            # functionalities of us 3.
+            project_task_mo = order.tasks_ids.filtered(
+                lambda p: p.peg_to_manufacturing_order
+            )
+            project_task_do = order.tasks_ids.filtered(
+                lambda p: p.peg_to_delivery_order
+            )
+            move_ids = order.env['procurement.group'].search([
+                ('sale_id', 'in', order.ids)
+            ]).stock_move_ids
+            move_ids.created_production_id.project_task_id = project_task_mo.id
+            picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+            picking_id.project_task_id = project_task_do.id
+            if project_task_do.planned_date_end and picking_id:
+                picking_id.scheduled_date = project_task_do.planned_date_end
+                picking_id.date_deadline = project_task_do.planned_date_end
+            if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
+                move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
+                move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
+
     def get_attendances(self, start_date):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
-        attendances = resource_id.calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == str(start_date.weekday()))
+        attendances = resource_id.calendar_id.attendance_ids.filtered(
+            lambda a: a.dayofweek == str(start_date.weekday()))
         return resource_id, attendances, resource_id.calendar_id.attendance_ids
 
     def get_start_date(self, start_date, hours):
@@ -52,7 +124,8 @@ class SaleOrder(models.Model):
         resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
         working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
         working_end_date = datetime.combine(start_date.date(), time.max).replace(tzinfo=UTC)
-        work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date, resources=resource_id)
+        work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date,
+                                                                             resources=resource_id)
         work_intervals = [(start, stop) for start, stop, dummy in work_intervals_batch.get(resource_id.id, False)]
         if work_intervals:
             working_start_date = work_intervals[0][0].astimezone(UTC)
@@ -67,7 +140,8 @@ class SaleOrder(models.Model):
             :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
-        working_start_date, working_end_date = self.get_working_start_end_date(start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
+        working_start_date, working_end_date = self.get_working_start_end_date(
+            start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
             resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -123,8 +197,30 @@ class SaleOrder(models.Model):
                 # Manage final task by which doesn't set as depended_task
                 final_task_ids = set(project.tasks) - set(depended_task_ids)
                 for index, final_task in enumerate(sorted(final_task_ids, key=lambda x: x.sequence)):
-                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date, first_task=True)
+                    final_task_depends_list = get_depend_on_task_list(final_task, task_depend_on_dict, commitment_date,
+                                                                      first_task=True)
                     all_task_list.extend(final_task_depends_list)
+        self.update_tmpl_dates()
+
+    def update_tmpl_dates(self):
+        if self.template_start_date and self.template_end_date:
+            self.project_ids.filtered(
+                lambda project: self.env['project.task'].search(
+                    [
+                        ('project_id', 'in', project.ids),
+                        ('is_template_task', '=', True),
+                        ('planned_date_begin', '!=', self.template_start_date),
+                        ('planned_date_end', '!=', self.template_end_date),
+                    ]
+                ).mapped(
+                    lambda task: task.write(
+                        {
+                            'planned_date_begin': self.template_start_date,
+                            'planned_date_end': self.template_end_date
+                        }
+                    )
+                )
+            )
 
     def write(self, vals):
         """
@@ -133,6 +229,7 @@ class SaleOrder(models.Model):
         :return: Boolean
         """
         res = super(SaleOrder, self).write(vals)
+
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
@@ -140,6 +237,36 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
+        elif 'order_line' in vals and self.commitment_date:
+            for project in self.project_ids:
+                project.tasks.planned_date_begin = False
+                project.tasks.planned_date_end = False
+            self.calculate_planned_dates(self.commitment_date)
+        elif 'template_start_date' in vals and 'template_end_date' in vals and not vals['template_start_date'] and not \
+                vals['template_end_date']:
+            if self.commitment_date:
+                self.project_ids.filtered(
+                    lambda project: self.env['project.task'].search(
+                        [
+                            ('project_id', 'in', project.ids),
+                            ('is_template_task', '=', True),
+                        ]
+                    ).mapped(
+                        lambda task: task.write(
+                            {
+                                'planned_date_begin': False,
+                                'planned_date_end': False,
+                            }
+                        )
+                    )
+                )
+                self.calculate_planned_dates(
+                    self.commitment_date)
+        elif 'template_start_date' in vals and 'template_end_date' in vals and vals['template_start_date'] and vals[
+            'template_end_date']:
+            self.update_tmpl_dates()
+        elif 'order_line' in vals and not self.commitment_date:
+            self.update_tmpl_dates()
         return res
 
     def action_confirm(self):
@@ -150,6 +277,8 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
+        elif self.template_end_date and self.template_start_date:
+            self.update_tmpl_dates()
         project_task_mo = self.tasks_ids.filtered(
             lambda p: p.peg_to_manufacturing_order
         )
