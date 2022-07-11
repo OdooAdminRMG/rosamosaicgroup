@@ -269,6 +269,10 @@ class SaleOrder(models.Model):
         return res
 
     def action_confirm(self):
+        """
+        Re-calculate planned dates on confirm of sales order
+        :return:
+        """
         res = super(SaleOrder, self).action_confirm()
         if self.commitment_date:
             self.calculate_planned_dates(commitment_date=self.commitment_date)
