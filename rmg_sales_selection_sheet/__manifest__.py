@@ -12,7 +12,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.2.5.3",
+    "version": "15.0.2.5.4",
     "depends": ["sale_management", "stock", "purchase", "mrp", "hr_recruitment"],
     "data": [
         "data/edge_profiles_data.xml",
