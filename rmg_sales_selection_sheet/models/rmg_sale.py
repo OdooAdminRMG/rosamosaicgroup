@@ -104,7 +104,9 @@ class RmgSale(models.Model):
                                            ) for child_id in pc_child_id
                 ] + child_ids)
         )
-        return child_ids if get_child_ids.sort() == child_ids.sort() else self.get_all_child_ids(get_child_ids)
+        get_child_ids.sort()
+        child_ids.sort()
+        return child_ids if get_child_ids == child_ids else self.get_all_child_ids(get_child_ids)
 
     @api.depends("order_line_id")
     def compute_order_lines(self):

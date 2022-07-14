@@ -18,6 +18,22 @@
                             help="This button will create project for all Sale Order Line with product type 'Service',
                             'Create on Order' is not 'None' and  whose project doesn't exist."/>
                 </xpath>
+                <xpath expr="//label[@for='pricelist_id']" position="before">
+                    <label for="template_start_date" string="Template Planned Dates"/>
+                    <div name="tmpl_planned_dates" class="o_row">
+                        <field name="template_start_date" widget="daterange"
+                               options="{&quot;related_end_date&quot;: &quot;template_end_date&quot;}"
+                               attrs="{'required': [('template_end_date', '!=', False)]}"
+                        />
+                        <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon" title="Arrow"/>
+                        <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon" title="Arrow"
+                           attrs="{'invisible': [('template_start_date', '=', False), ('template_end_date', '=', False)]}"/>
+                        <field name="template_end_date" widget="daterange"
+                               options="{&quot;related_start_date&quot;: &quot;template_start_date&quot;}"
+                               attrs="{'required': [('template_start_date', '!=', False)]}"
+                        />
+                    </div>
+                </xpath>
             </field>
         </record>
         <record id="view_order_form_sale_project_inherit" model="ir.ui.view">
@@ -32,3 +48,4 @@
         </record>
     </data>
 </odoo>
+

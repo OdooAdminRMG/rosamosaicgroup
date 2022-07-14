@@ -15,6 +15,8 @@ class ProjectTask(models.Model):
     """
     _inherit = 'project.task'
 
+    is_template_task = fields.Boolean(
+        string=_("Is Template Task"))
     peg_to_manufacturing_order = fields.Boolean(
         string="Peg To Manufacturing", copy=True)
     peg_to_delivery_order = fields.Boolean(
@@ -53,7 +55,11 @@ class ProjectTask(models.Model):
         return result
 
     def write(self, vals):
+
         res = super(ProjectTask, self).write(vals)
+        if 'is_template_task' in vals and not vals.get('is_template_task', False):
+            self.planned_date_begin = False
+            self.planned_date_end = False
         mo_task = self.filtered(lambda x: x.peg_to_manufacturing_order)
         do_task = self.filtered(lambda x: x.peg_to_delivery_order)
         if 'planned_date_begin' in vals and vals['planned_date_begin']:
@@ -67,6 +73,12 @@ class ProjectTask(models.Model):
             if do_task and do_task.stock_picking_ids:
                 do_task.stock_picking_ids.scheduled_date = do_task.planned_date_end
                 do_task.stock_picking_ids.date_deadline = do_task.planned_date_end
+        # If value of 'is_template_task' field is changed then we have to re calculate the planned dates.
+        if 'is_template_task' in vals:
+            self.sale_order_id.calculate_planned_dates(
+                self.sale_order_id.commitment_date
+            ) if self.sale_order_id.commitment_date else self.sale_order_id.update_tmpl_dates()
+
         return res
 
     @property
