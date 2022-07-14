@@ -116,7 +116,6 @@ class SaleOrder(models.Model):
 
     def get_working_start_end_date(self, start_date):
         """
-
         :param start_date: task start date
         :param end_date: task end date
         :return: working hour start date, end date, all week records
