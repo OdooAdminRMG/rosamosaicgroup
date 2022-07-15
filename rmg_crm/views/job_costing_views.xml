@@ -44,6 +44,7 @@
                 <search>
                     <field name="job_name"/>
                     <field name="sale_id"/>
+                    <!--Based on below filters we'll calculate filter_date.-->
                     <filter name="today" string="Today" domain="[('job_name','!=','RMG_custom_filter Today')]"/>
                     <filter name="end_of_last_month" string="End of Last Month"
                             domain="[('job_name','!=','RMG_custom_filter End of Last Month')]"/>
