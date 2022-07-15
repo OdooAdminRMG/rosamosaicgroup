@@ -5,18 +5,21 @@
             <field name="name">job.costing</field>
             <field name="model">job.costing</field>
             <field name="arch" type="xml">
-                <tree create="0" edit="0" delete="0">
+                <tree create="0" editable="bottom" delete="0">
+                    <field name="compute_all_fields" invisible="1"/>
+                    <field name="sale_id" readonly="1"/>
                     <field name="job_name"/>
-                    <field name="contract_amount" sum="Total Contract Amount"/>
-                    <field name="billings_to_date" sum="Total Billings To Date"/>
-                    <field name="remaining" sum="Total Remaining"/>
-                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" optional="show"/>
-                    <field name="total_cost_of_components" sum="Total Cost Of Components" optional="show"/>
-                    <field name="total_cost_of_purchase_timesheet" sum="Total " optional="show"/>
-                    <field name="actual" sum="Total Actual Cost"/>
-                    <field name="budget" sum="Total Budget Cost"/>
-                    <field name="pct" widget="percentage"/>
-                    <field name="overrun" sum="Total Overrun"/>
+                    <field name="filter_date" invisible="1"/>
+                    <field name="contract_amount" sum="Total Contract Amount" readonly="1"/>
+                    <field name="billings_to_date" sum="Total Billings To Date" readonly="1"/>
+                    <field name="remaining" sum="Total Remaining" readonly="1"/>
+                    <field name="total_cost_of_purchase" sum="Total Cost Of Purchase" optional="show" readonly="1"/>
+                    <field name="total_cost_of_components" sum="Total Cost Of Components" optional="show" readonly="1"/>
+                    <field name="total_cost_of_purchase_timesheet" sum="Total " optional="show" readonly="1"/>
+                    <field name="actual" sum="Total Actual Cost" readonly="1"/>
+                    <field name="budget" sum="Total Budget Cost" readonly="1"/>
+                    <field name="pct" widget="percentage" readonly="1"/>
+                    <field name="overrun" sum="Total Overrun" readonly="1"/>
                 </tree>
             </field>
         </record>
@@ -34,5 +37,22 @@
                   parent="job_costing_menu"
                   action="rmg_crm.act_job_costing"
                   sequence="1"/>
+        <record id="job_costing_search_view" model="ir.ui.view">
+            <field name="name">job.costing.view.search</field>
+            <field name="model">job.costing</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="job_name"/>
+                    <field name="sale_id"/>
+                    <filter name="today" string="Today" domain="[('job_name','!=','RMG_custom_filter Today')]"/>
+                    <filter name="end_of_last_month" string="End of Last Month"
+                            domain="[('job_name','!=','RMG_custom_filter End of Last Month')]"/>
+                    <filter name="end_of_last_quarter" string="End of Last Quarter"
+                            domain="[('job_name','!=','RMG_custom_filter End of Last Quarter')]"/>
+                    <filter name="end_of_last_financial_year" string="End of Last Financial Year"
+                            domain="[('job_name','!=','RMG_custom_filter End of Last Financial Year')]"/>
+                </search>
+            </field>
+        </record>
     </data>
 </odoo>
