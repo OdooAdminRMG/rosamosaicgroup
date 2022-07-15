@@ -264,7 +264,7 @@ class JobCostingReport(models.Model):
                 select
                 id, job_name
                 FROM sale_order
-                WHERE id NOT IN (SELECT sale_id FROM job_costing) AND job_name != ''
+                WHERE id NOT IN (SELECT sale_id FROM job_costing_report) AND job_name != ''
             """ % (
                     self._table
                 )
