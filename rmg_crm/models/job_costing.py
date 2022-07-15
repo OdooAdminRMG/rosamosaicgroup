@@ -26,12 +26,12 @@ class JobCostingReport(models.Model):
     contract_amount = fields.Float(
         string=_("Contract Amount"),
         help="Compute the sum of amount_total of all Sale Orders  based on 'Job Name' "
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     billings_to_date = fields.Float(
         string=_("Billings To Date"),
         help="Compute the sum of 'Amount Total' of all Invoices whose related Sale Orders has the same 'Job Name'."
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     remaining = fields.Float(
         string=_("Remaining"),
@@ -40,26 +40,27 @@ class JobCostingReport(models.Model):
     total_cost_of_purchase = fields.Float(
         string=_("Total Cost Of Purchase"),
         help="Compute the sum of (Product Uom Qty * Unit Price) of all Replenish Histories based on 'Job Name'."
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     total_cost_of_components = fields.Float(
         string=_("Total Cost Of Components"),
         help="Compute the sum of 'Total Cost' of all Manufacturing Orders based on Job name."
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     total_cost_of_purchase_timesheet = fields.Float(
         string=_("Total Cost Of Timesheet"),
         help="Compute the sum of (Unit Amount * Timesheet Cost of that employee) of all Tasks  based on 'Job Name'."
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     actual = fields.Float(
         string=_("Actual"),
         help="Compute the sum of 'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'",
     )
+
     budget = fields.Float(
         string=_("Budget"),
         help="Calculate the sum of 'Budgeted Labor Cost' and 'Budgeted Material Cost' based on 'Job Name'."
-        "and 'End Date'(if end date filter is selected).",
+             "and 'End Date'(if end date filter is selected).",
     )
     pct = fields.Float(
         string=_("Pct"), help="Calculate the percentage of 'Actual' divide by 'Budget'."
@@ -128,12 +129,12 @@ class JobCostingReport(models.Model):
             .mapped(
                 lambda move: move.amount_total
                 if (
-                    (
-                        filter_date
-                        and move.invoice_date
-                        and move.invoice_date <= filter_date.date()
-                    )
-                    or not filter_date
+                        (
+                                filter_date
+                                and move.invoice_date
+                                and move.invoice_date <= filter_date.date()
+                        )
+                        or not filter_date
                 )
                 else 0
             )
@@ -149,9 +150,9 @@ class JobCostingReport(models.Model):
         job_name = self.job_name
         total_cost_of_purchase = 0
         for po in (
-            self.env["replenish.sources"]
-            .search([("job_name", "=", job_name)])
-            .mapped("po_id")
+                self.env["replenish.sources"]
+                        .search([("job_name", "=", job_name)])
+                        .mapped("po_id")
         ):
             for prodict in list(set(po.replenish_source_ids.mapped("product_id.id"))):
                 product_done_qty = sum(
@@ -164,19 +165,19 @@ class JobCostingReport(models.Model):
                             )
                         )
                         if picking.state == "done"
-                        and (
-                            (
-                                picking.date_done
-                                and filter_date
-                                and picking.date_done <= filter_date
-                            )
-                            or not filter_date
-                        )
+                           and (
+                                   (
+                                           picking.date_done
+                                           and filter_date
+                                           and picking.date_done <= filter_date
+                                   )
+                                   or not filter_date
+                           )
                         else 0
                     )
                 )
                 for replenish_id in po.replenish_source_ids.filtered(
-                    lambda replenishment: replenishment.product_id.id == prodict
+                        lambda replenishment: replenishment.product_id.id == prodict
                 ):
                     if replenish_id.product_uom_qty <= product_done_qty:
                         done_qty = replenish_id.product_uom_qty
@@ -215,14 +216,14 @@ class JobCostingReport(models.Model):
                     lambda task: sum(
                         task.timesheet_ids.mapped(
                             lambda line: line.unit_amount
-                            * line.employee_id.sudo().timesheet_cost
+                                         * line.employee_id.sudo().timesheet_cost
                             if (
-                                (
-                                    filter_date
-                                    and line.date
-                                    and line.date <= filter_date.date()
-                                )
-                                or not filter_date
+                                    (
+                                            filter_date
+                                            and line.date
+                                            and line.date <= filter_date.date()
+                                    )
+                                    or not filter_date
                             )
                             else 0
                         )
@@ -285,7 +286,7 @@ class JobCostingReport(models.Model):
 
     @api.model
     def search_read(
-        self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs
+            self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs
     ):
         """
         This method will create or remove records on job_costing_report.
