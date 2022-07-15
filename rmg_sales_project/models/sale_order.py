@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 
 def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, recursive=False):
     """
-
     :param date: Date which we need to check If it's holiday than step back or up and get new date which is in working hours
     :param attendance_ids: Working Hours
     :param back_step: Check If it's true then it will go backward else go forward
@@ -79,6 +78,8 @@ class SaleOrder(models.Model):
                     project.tasks.planned_date_begin = False
                     project.tasks.planned_date_end = False
                 order.calculate_planned_dates(so_commitment_date)
+            else:
+                self.update_tmpl_dates()
             # functionalities of us 3.
             project_task_mo = order.tasks_ids.filtered(
                 lambda p: p.peg_to_manufacturing_order
