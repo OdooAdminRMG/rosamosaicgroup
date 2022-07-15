@@ -22,8 +22,8 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.5.17.5",
-    "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp", "timesheet_grid"],
+    "version": "15.0.5.18.5",
+    "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp", "timesheet_grid",],
     "data": [
         "security/ir.model.access.csv",
         "data/create_replenish_sources_history_for_existing_po.xml",
