@@ -3,7 +3,7 @@
     <data>
         <record id="job_costing_tree" model="ir.ui.view">
             <field name="name">job.costing</field>
-            <field name="model">job.costing</field>
+            <field name="model">job.costing.report</field>
             <field name="arch" type="xml">
                 <tree create="0" editable="bottom" delete="0">
                     <field name="compute_all_fields" invisible="1"/>
@@ -25,7 +25,7 @@
         </record>
         <record id="act_job_costing" model="ir.actions.act_window">
             <field name="name">Job Costing</field>
-            <field name="res_model">job.costing</field>
+            <field name="res_model">job.costing.report</field>
             <field name="view_mode">tree</field>
         </record>
         <menuitem id="job_costing_menu"
@@ -39,7 +39,7 @@
                   sequence="1"/>
         <record id="job_costing_search_view" model="ir.ui.view">
             <field name="name">job.costing.view.search</field>
-            <field name="model">job.costing</field>
+            <field name="model">job.costing.report</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="job_name"/>
