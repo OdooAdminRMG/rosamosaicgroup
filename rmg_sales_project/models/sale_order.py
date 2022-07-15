@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 
 def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, recursive=False):
     """
-
     :param date: Date which we need to check If it's holiday than step back or up and get new date which is in working hours
     :param attendance_ids: Working Hours
     :param back_step: Check If it's true then it will go backward else go forward
@@ -133,9 +132,10 @@ class SaleOrder(models.Model):
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
-            The value of this filed will be True
-            if any Sale Order Line exist with product type 'Service',
-            'Create on Order' is not 'None' and  whose project doesn't exist else False.
+            This method will get the resource calendar and calculate working time and adjust dates accordingly
+            :param start_date: Task start date
+            :param end_date: Task end date
+            :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
         working_start_date, working_end_date = self.get_working_start_end_date(
