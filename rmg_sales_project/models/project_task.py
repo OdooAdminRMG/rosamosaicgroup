@@ -55,7 +55,6 @@ class ProjectTask(models.Model):
         return result
 
     def write(self, vals):
-
         res = super(ProjectTask, self).write(vals)
         if 'is_template_task' in vals and not vals.get('is_template_task', False):
             self.planned_date_begin = False
