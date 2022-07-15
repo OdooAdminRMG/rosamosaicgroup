@@ -56,7 +56,6 @@ class JobCostingReport(models.Model):
         string=_("Actual"),
         help="Compute the sum of 'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'",
     )
-
     budget = fields.Float(
         string=_("Budget"),
         help="Calculate the sum of 'Budgeted Labor Cost' and 'Budgeted Material Cost' based on 'Job Name'."
@@ -82,7 +81,6 @@ class JobCostingReport(models.Model):
             if ((filter_date and so.create_date <= filter_date) or not filter_date)
             else (0, 0)
         )
-
     # code backup
     # If we get multiple sale orders with same job name then we can use below code.
 
