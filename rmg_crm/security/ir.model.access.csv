@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 rmg_crm.access_ir_attachment_type,access_ir_attachment_type,rmg_crm.model_ir_attachment_type,base.group_user,1,1,1,1
-rmg_crm.access_job_costing,access_job_costing,rmg_crm.model_job_costing,base.group_user,1,1,1,1
+rmg_crm.access_job_costing_report,access_job_costing_report,rmg_crm.model_job_costing_report,base.group_user,1,1,1,1
 rmg_crm.access_replenish_sources,access_replenish_sources,rmg_crm.model_replenish_sources,base.group_user,1,1,1,1
 

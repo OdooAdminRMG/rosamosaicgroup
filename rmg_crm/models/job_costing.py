@@ -4,8 +4,8 @@ from odoo import _, api, fields, models, tools
 import datetime
 
 
-class JobCosting(models.Model):
-    _name = "job.costing"
+class JobCostingReport(models.Model):
+    _name = "job.costing.report"
     _order = "pct desc"
     _description = """
         The records of this module will be created or removed by the query written in search_read method.
@@ -256,7 +256,7 @@ class JobCosting(models.Model):
 
     @api.model
     def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs):
-        if self._name == "job.costing":
+        if self._name == "job.costing.report":
             order = self._order
             self._cr.execute(
                 """
@@ -301,14 +301,14 @@ class JobCosting(models.Model):
                         self._table,
                     )
                 )
-        return super(JobCosting, self).search_read(domain, fields, offset, limit, order, **read_kwargs)
+        return super(JobCostingReport, self).search_read(domain, fields, offset, limit, order, **read_kwargs)
 
     @api.model
     def fields_get(self, fields=None):
         """
             function to hide field from default filter
         """
-        res = super(JobCosting, self).fields_get(fields)
+        res = super(JobCostingReport, self).fields_get(fields)
         fields_to_hide = ['create_date', 'filter_date']
         for field in fields_to_hide:
             if res.get(field):
