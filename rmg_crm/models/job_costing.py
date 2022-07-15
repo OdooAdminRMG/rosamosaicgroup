@@ -260,19 +260,19 @@ class JobCostingReport(models.Model):
             order = self._order
             self._cr.execute(
                 """
-                DELETE FROM %s
-                WHERE sale_id IS NULL
+                INSERT INTO %s (sale_id, job_name)
+                select
+                id, job_name
+                FROM sale_order
+                WHERE id NOT IN (SELECT sale_id FROM job_costing) AND job_name != ''
             """ % (
                     self._table
                 )
             )
             self._cr.execute(
                 """
-                INSERT INTO %s (sale_id, job_name)
-                select
-                id, job_name
-                FROM sale_order
-                WHERE id NOT IN (SELECT sale_id FROM job_costing) AND job_name != ''
+                DELETE FROM %s
+                WHERE sale_id IS NULL
             """ % (
                     self._table
                 )
