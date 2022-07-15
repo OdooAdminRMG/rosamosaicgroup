@@ -78,6 +78,8 @@ class SaleOrder(models.Model):
                     project.tasks.planned_date_begin = False
                     project.tasks.planned_date_end = False
                 order.calculate_planned_dates(so_commitment_date)
+            else:
+                self.update_tmpl_dates()
             # functionalities of us 3.
             project_task_mo = order.tasks_ids.filtered(
                 lambda p: p.peg_to_manufacturing_order
