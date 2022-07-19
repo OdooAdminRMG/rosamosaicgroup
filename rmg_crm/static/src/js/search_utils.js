@@ -1,7 +1,7 @@
 /* @odoo-module */
 
-odoo.define('rmg_crm.search_filter', function(require) {
-"use strict";
+//odoo.define('rmg_crm.rmg_custom_search_filter', function(require) {
+//"use strict";
 
     const { _lt, _t } = require('web.core');
     var {FIELD_OPERATORS} = require('web.searchUtils');
@@ -16,4 +16,4 @@ odoo.define('rmg_crm.search_filter', function(require) {
                 { symbol: "!=", description: _lt("is set"), value: false },
                 { symbol: "=", description: _lt("is not set"), value: false },
             ]
-});
+//});
