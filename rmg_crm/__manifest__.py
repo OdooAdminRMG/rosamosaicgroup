@@ -22,8 +22,17 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.5.18.8",
-    "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp", "timesheet_grid",],
+    "version": "15.0.5.19.8",
+    "depends": [
+        "sale_management",
+        "sale_crm",
+        "project",
+        "stock",
+        "purchase",
+        "mrp",
+        "timesheet_grid",
+        "web",
+    ],
     "data": [
         "security/ir.model.access.csv",
         "data/create_replenish_sources_history_for_existing_po.xml",
@@ -42,8 +51,10 @@
     ],
     "assets": {
         "web.assets_qweb": [
+            "rmg_crm/static/src/xml/filter_menu.xml"
             # 'rmg_crm/static/src/xml/web_calendar.xml',
         ],
+        "web.assets_backend": ["rmg_crm/static/src/js/search_utils.js"],
     },
     "installable": True,
     "application": True,
