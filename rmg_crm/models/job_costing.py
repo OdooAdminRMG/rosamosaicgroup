@@ -81,6 +81,7 @@ class JobCostingReport(models.Model):
             if ((filter_date and so.create_date <= filter_date) or not filter_date)
             else (0, 0)
         )
+
     # code backup
     # If we get multiple sale orders with same job name then we can use below code.
 
