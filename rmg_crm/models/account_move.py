@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
-    _description = 'Important: Run "Update Job Name In Existing Invoices" manually ' \
-                   'to update sale id in those invoices which are created ' \
-                   'before installation of this module'
+    _inherit = "account.move"
+    _description = (
+        'Important: Run "Update Job Name In Existing Invoices" manually '
+        "to update sale id in those invoices which are created "
+        "before installation of this module"
+    )
 
     so_id = fields.Many2one(
         "sale.order",
@@ -26,9 +28,10 @@ class AccountMove(models.Model):
 
     def update_job_name_in_existing_invoices(self):
         """
-            This scheduled action will update sale order id of all invoices.
+        This scheduled action will update sale order id of all invoices.
         """
-        self.env['sale.order'].search([]).mapped(
+        self.env["sale.order"].search([]).mapped(
             lambda so: so.order_line.invoice_lines.move_id.filtered(
-                lambda move: move.move_type in ('out_invoice', 'out_refund')
-            ).write({'so_id': so.id}))
+                lambda move: move.move_type in ("out_invoice", "out_refund")
+            ).write({"so_id": so.id})
+        )

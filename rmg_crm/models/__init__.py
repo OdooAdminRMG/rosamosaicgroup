@@ -4,17 +4,6 @@
     job_costing      -->     sale_order,replenish_sources
 """
 
-from . import (
-    crm_lead,
-    ir_attachment,
-    attachment_type,
-    mrp_production,
-    project_project,
-    replenish_sources,
-    purchase_order,
-    sale_order,
-    stock_picking,
-    stock_rule,
-    job_costing,
-    account_move,
-)
+from . import (account_move, attachment_type, crm_lead, ir_attachment,
+               job_costing, mrp_production, project_project, purchase_order,
+               replenish_sources, sale_order, stock_picking, stock_rule)
