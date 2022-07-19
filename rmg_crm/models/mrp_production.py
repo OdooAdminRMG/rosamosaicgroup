@@ -8,7 +8,7 @@ class MrpProduction(models.Model):
         string=_("Job Name"),
         compute="_compute_job_name",
         store=True,
-        help="Compute 'Job name' based on related Sale Order."
+        help="Compute 'Job name' based on related Sale Order.",
     )
 
     @api.depends(
