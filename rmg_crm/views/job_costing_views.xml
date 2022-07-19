@@ -44,14 +44,19 @@
                 <search>
                     <field name="job_name"/>
                     <field name="sale_id"/>
+                    <separator/>
                     <!--Based on below filters we'll calculate filter_date.-->
                     <filter name="today" string="Today" domain="[('job_name','!=','RMG_custom_filter Today')]"/>
+                    <separator/>
                     <filter name="end_of_last_month" string="End of Last Month"
                             domain="[('job_name','!=','RMG_custom_filter End of Last Month')]"/>
+                    <separator/>
                     <filter name="end_of_last_quarter" string="End of Last Quarter"
                             domain="[('job_name','!=','RMG_custom_filter End of Last Quarter')]"/>
+                    <separator/>
                     <filter name="end_of_last_financial_year" string="End of Last Financial Year"
                             domain="[('job_name','!=','RMG_custom_filter End of Last Financial Year')]"/>
+                    <separator/>
                 </search>
             </field>
         </record>
