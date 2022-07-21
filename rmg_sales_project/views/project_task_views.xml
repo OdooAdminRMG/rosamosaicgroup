@@ -56,7 +56,7 @@
                 <field name="peg_to_manufacturing_order"/>
                 <field name="peg_to_delivery_order"/>
             </field>
-            <field name="user_ids" position="after">
+            <field name="parent_id" position="after">
                 <field name="is_template_task"/>
             </field>
             <div name="button_box" position="inside">
