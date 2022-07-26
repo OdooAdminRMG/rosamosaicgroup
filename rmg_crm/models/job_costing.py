@@ -323,11 +323,11 @@ class JobCostingReport(models.Model):
         return rtn
 
     @api.model
-    def fields_get(self, fields=None):
+    def fields_get(self, allfields=None, attributes=None):
         """
         function to hide field from default filter
         """
-        res = super(JobCostingReport, self).fields_get(fields)
+        res = super(JobCostingReport, self).fields_get(allfields=allfields, attributes=attributes)
         fields_to_hide = ["create_date", "write_date"]
         for field in fields_to_hide:
             if res.get(field, False):
