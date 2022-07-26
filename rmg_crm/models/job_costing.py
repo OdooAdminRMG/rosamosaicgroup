@@ -294,6 +294,13 @@ class JobCostingReport(models.Model):
         if self._name == "job.costing.report":
             self._cr.execute(
                 """
+                DELETE FROM %s
+                
+            """
+                % self._table
+            )
+            self._cr.execute(
+                """
                 INSERT INTO %s (sale_id, job_name, so_create_date)
                 select
                 id, job_name, create_date
@@ -302,13 +309,7 @@ class JobCostingReport(models.Model):
             """
                 % self._table
             )
-            self._cr.execute(
-                """
-                DELETE FROM %s
-                WHERE sale_id IS NULL
-            """
-                % self._table
-            )
+
         order = self._order
         rtn = super(JobCostingReport, self).search_read(
             domain, fields, offset, limit, order=order, **read_kwargs
