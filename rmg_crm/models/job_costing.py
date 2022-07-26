@@ -295,7 +295,7 @@ class JobCostingReport(models.Model):
             self._cr.execute(
                 """
                 DELETE FROM %s
-                
+                WHERE sale_id IS NULL
             """
                 % self._table
             )
