@@ -22,7 +22,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.5.19.10",
+    "version": "15.0.5.19.11",
     "depends": [
         "sale_management",
         "sale_crm",
@@ -35,6 +35,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/job_costing_report_filter.xml",
         "data/create_replenish_sources_history_for_existing_po.xml",
         "data/update_job_name_in_existing_invoices.xml",
         "views/attachment_type_views.xml",
