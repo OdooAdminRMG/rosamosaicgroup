@@ -312,7 +312,7 @@ class JobCostingReport(models.Model):
 
         order = self._order
         rtn = super(JobCostingReport, self).search_read(
-            domain, fields, offset, limit, order=order, **read_kwargs
+            domain=domain, fields=fields, offset=offset, limit=limit, order=order
         )
         custom_filter_date = (
             self.calculate_filter_date_from_domain(domain) if domain else False
