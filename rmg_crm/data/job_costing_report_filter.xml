@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="True">
+        <record model="job.costing.report.filter" id="rmg_crm.filter_date">
+        </record>
+    </data>
+</odoo>

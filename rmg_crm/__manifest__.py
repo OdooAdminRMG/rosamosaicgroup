@@ -4,8 +4,7 @@
 {
     "name": "RMG CRM",
     "summary": """RMG CRM""",
-    "description":
-        """
+    "description": """
         RMG CRM
         
         Important: 
@@ -36,6 +35,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/job_costing_report_filter.xml",
         "data/create_replenish_sources_history_for_existing_po.xml",
         "data/update_job_name_in_existing_invoices.xml",
         "views/attachment_type_views.xml",

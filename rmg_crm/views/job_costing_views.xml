@@ -7,9 +7,10 @@
             <field name="arch" type="xml">
                 <tree create="0" editable="bottom" delete="0">
                     <field name="compute_all_fields" invisible="1"/>
+                    <field name="filter_id" invisible="0"/>
                     <field name="sale_id" readonly="1"/>
                     <field name="job_name"/>
-                    <field name="filter_date" invisible="1"/>
+                    <field name="so_create_date" invisible="0"/>
                     <field name="contract_amount" sum="Total Contract Amount" readonly="1"/>
                     <field name="billings_to_date" sum="Total Billings To Date" readonly="1"/>
                     <field name="remaining" sum="Total Remaining" readonly="1"/>
@@ -45,17 +46,28 @@
                     <field name="job_name"/>
                     <field name="sale_id"/>
                     <separator/>
-                    <!--Based on below filters we'll calculate filter_date.-->
-                    <filter name="today" string="Today" domain="[('job_name','!=','RMG_custom_filter Today')]"/>
+                    <filter string="Today" name="today"
+                            domain="[('so_create_date', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))]"/>
                     <separator/>
-                    <filter name="end_of_last_month" string="End of Last Month"
-                            domain="[('job_name','!=','RMG_custom_filter End of Last Month')]"/>
+                    <filter string="End of Last Month" name="end_of_last_month"
+                            domain="[
+                                ('so_create_date', '&lt;=',
+                                    (
+                                        datetime.date.today().replace(
+                    day=1
+                ) - datetime.timedelta(days=1)
+                                    ).strftime('%Y-%m-%d')
+                                )
+                            ]"/>
                     <separator/>
                     <filter name="end_of_last_quarter" string="End of Last Quarter"
-                            domain="[('job_name','!=','RMG_custom_filter End of Last Quarter')]"/>
+                            domain="[('so_create_date','&lt;',time.strftime('%%Y-01-01')
+                            if context_today().month &lt; 4 else (time.strftime('%%Y-03-31')
+                            if context_today().month &lt; 7 else (time.strftime('%%Y-06-30')
+                            if context_today().month &lt; 10 else time.strftime('%%Y-09-30'))))]"/>
                     <separator/>
                     <filter name="end_of_last_financial_year" string="End of Last Financial Year"
-                            domain="[('job_name','!=','RMG_custom_filter End of Last Financial Year')]"/>
+                            domain="[('so_create_date','&lt;=',datetime.date.today().replace(month=3, day=31).strftime('%%Y-%%m-%%d'))]"/>
                     <separator/>
                 </search>
             </field>

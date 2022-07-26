@@ -14,8 +14,9 @@ class JobCostingReport(models.Model):
     """
 
     sale_id = fields.Many2one("sale.order", string=_("Sale Order"), required=True)
+    filter_id = fields.Many2one("job.costing.report.filter", string=_("Filter Id"))
     job_name = fields.Char(string=_("Job Name"), related="sale_id.job_name", store=True)
-    filter_date = fields.Datetime(
+    so_create_date = fields.Datetime(
         string=_(" As Of Date"), help="This field will used to filter records"
     )
     compute_all_fields = fields.Char(
@@ -25,12 +26,12 @@ class JobCostingReport(models.Model):
     contract_amount = fields.Float(
         string=_("Contract Amount"),
         help="Compute the sum of amount_total of all Sale Orders  based on 'Job Name' "
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     billings_to_date = fields.Float(
         string=_("Billings To Date"),
         help="Compute the sum of 'Amount Total' of all Invoices whose related Sale Orders has the same 'Job Name'."
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     remaining = fields.Float(
         string=_("Remaining"),
@@ -39,17 +40,17 @@ class JobCostingReport(models.Model):
     total_cost_of_purchase = fields.Float(
         string=_("Total Cost Of Purchase"),
         help="Compute the sum of (Product Uom Qty * Unit Price) of all Replenish Histories based on 'Job Name'."
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     total_cost_of_components = fields.Float(
         string=_("Total Cost Of Components"),
         help="Compute the sum of 'Total Cost' of all Manufacturing Orders based on Job name."
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     total_cost_of_purchase_timesheet = fields.Float(
         string=_("Total Cost Of Timesheet"),
         help="Compute the sum of (Unit Amount * Timesheet Cost of that employee) of all Tasks  based on 'Job Name'."
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     actual = fields.Float(
         string=_("Actual"),
@@ -58,7 +59,7 @@ class JobCostingReport(models.Model):
     budget = fields.Float(
         string=_("Budget"),
         help="Calculate the sum of 'Budgeted Labor Cost' and 'Budgeted Material Cost' based on 'Job Name'."
-             "and 'End Date'(if end date filter is selected).",
+        "and 'End Date'(if end date filter is selected).",
     )
     pct = fields.Float(
         string=_("Pct"), help="Calculate the percentage of 'Actual' divide by 'Budget'."
@@ -72,7 +73,7 @@ class JobCostingReport(models.Model):
         This method will calculate values of fields which depends on sale order.
         """
         so = self.sale_id
-        filter_date = self.filter_date
+        filter_date = self.filter_id.filter_date
 
         # Compute the sum of amount_total of all Sale Orders  based on 'Job Name' and 'End Date'.
         self.contract_amount, self.budget = (
@@ -88,7 +89,7 @@ class JobCostingReport(models.Model):
     #     """
     #         This method will calculate values of fields which depends on sale order
     #     """
-    #     filter_date = self.filter_date
+    #     filter_date = self.filter_id.filter_date
     #     sale_orders = self.env['sale.order'].search(
     #         [
     #             ('job_name', '=', self.job_name)
@@ -120,18 +121,19 @@ class JobCostingReport(models.Model):
         """
         Return the sum of amount_total of all invoices related to sale order.
         """
+        filter_date = self.filter_id.filter_date
         return sum(
             self.env["account.move"]
             .search([("job_name", "=", self.job_name)])
             .mapped(
                 lambda move: move.amount_total
                 if (
-                        (
-                                self.filter_date
-                                and move.invoice_date
-                                and move.invoice_date <= self.filter_date.date()
-                        )
-                        or not self.filter_date
+                    (
+                        filter_date
+                        and move.invoice_date
+                        and move.invoice_date <= filter_date.date()
+                    )
+                    or not filter_date
                 )
                 else 0
             )
@@ -143,13 +145,13 @@ class JobCostingReport(models.Model):
         'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'
         based on 'job_name' and 'filter_date'.
         """
-        filter_date = self.filter_date
+        filter_date = self.filter_id.filter_date
         job_name = self.job_name
         total_cost_of_purchase = 0
         for po in (
-                self.env["replenish.sources"]
-                        .search([("job_name", "=", job_name)])
-                        .mapped("po_id")
+            self.env["replenish.sources"]
+            .search([("job_name", "=", job_name)])
+            .mapped("po_id")
         ):
             for prodict in list(set(po.replenish_source_ids.mapped("product_id.id"))):
                 product_done_qty = sum(
@@ -162,19 +164,19 @@ class JobCostingReport(models.Model):
                             )
                         )
                         if picking.state == "done"
-                           and (
-                                   (
-                                           picking.date_done
-                                           and filter_date
-                                           and picking.date_done <= filter_date
-                                   )
-                                   or not filter_date
-                           )
+                        and (
+                            (
+                                picking.date_done
+                                and filter_date
+                                and picking.date_done <= filter_date
+                            )
+                            or not filter_date
+                        )
                         else 0
                     )
                 )
                 for replenish_id in po.replenish_source_ids.filtered(
-                        lambda replenishment: replenishment.product_id.id == prodict
+                    lambda replenishment: replenishment.product_id.id == prodict
                 ):
                     if replenish_id.product_uom_qty <= product_done_qty:
                         done_qty = replenish_id.product_uom_qty
@@ -213,14 +215,14 @@ class JobCostingReport(models.Model):
                     lambda task: sum(
                         task.timesheet_ids.mapped(
                             lambda line: line.unit_amount
-                                         * line.employee_id.sudo().timesheet_cost
+                            * line.employee_id.sudo().timesheet_cost
                             if (
-                                    (
-                                            filter_date
-                                            and line.date
-                                            and line.date <= filter_date.date()
-                                    )
-                                    or not filter_date
+                                (
+                                    filter_date
+                                    and line.date
+                                    and line.date <= filter_date.date()
+                                )
+                                or not filter_date
                             )
                             else 0
                         )
@@ -233,12 +235,16 @@ class JobCostingReport(models.Model):
         self.total_cost_of_purchase_timesheet = cal_actual[1]
         return sum(cal_actual) + total_cost_of_purchase
 
-    @api.depends("filter_date", "job_name")
+    @api.depends("filter_id.filter_date", "job_name")
     def _compute_all_fields(self):
         """
         This method will calculate all fields based on 'job_name' and 'filter_date'.
         """
         for rec in self:
+            if not rec.filter_id:
+                rec.filter_id = self.env["job.costing.report.filter"].search(
+                    [], limit=1
+                )
             rec.calculate_values_from_sale_order()
             billings_to_date = rec.compute_billings_to_date()
             rec.remaining = rec.contract_amount - billings_to_date
@@ -252,48 +258,14 @@ class JobCostingReport(models.Model):
 
     def calculate_filter_date_from_domain(self, domain):
         """
-        If domain contains filter on 'job_name' and it's string starts with 'RMG_custom_filter *'
-        or 'filter_date' field
-        Then it will calculate the minimum date and return it.
+        Calculate and return minimum date from all the conditions from the domain with the field 'so_create_date'.
         """
         rtn_filter_date = False
 
-        # if 'job_name' field, and it's string starts with 'RMG_custom_filter *'..
-        display_line_filter_string = [
-            filter_val[2]
-            for filter_val in domain
-            if len(filter_val) == 3 and filter_val[0] == "job_name"
-        ]
-        if display_line_filter_string:
-            if (
-                    "RMG_custom_filter End of Last Financial Year"
-                    in display_line_filter_string
-            ):
-                rtn_filter_date = datetime.date.today().replace(
-                    month=1, day=1
-                ) - datetime.timedelta(days=1)
-            elif "RMG_custom_filter End of Last Month" in display_line_filter_string:
-                rtn_filter_date = datetime.date.today().replace(
-                    day=1
-                ) - datetime.timedelta(days=1)
-            elif "RMG_custom_filter End of Last Quarter" in display_line_filter_string:
-                today = datetime.date.today()
-                if today.month < 4:
-                    rtn_filter_date = datetime.date(today.year - 1, 12, 31)
-                elif today.month < 7:
-                    rtn_filter_date = datetime.date(today.year, 3, 31)
-                elif today.month < 10:
-                    rtn_filter_date = datetime.date(today.year, 6, 30)
-                else:
-                    rtn_filter_date = datetime.date(today.year, 9, 30)
-            elif "RMG_custom_filter Today" in display_line_filter_string:
-                rtn_filter_date = datetime.datetime.now()
-
-        # if 'filter_date' field is in domain..
         filter_date = [
             filter_val[2]
             for filter_val in domain
-            if len(filter_val) == 3 and filter_val[0] == "filter_date"
+            if len(filter_val) == 3 and filter_val[0] == "so_create_date"
         ]
         if filter_date:
             min_date = min(filter_date)
@@ -313,7 +285,7 @@ class JobCostingReport(models.Model):
 
     @api.model
     def search_read(
-            self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs
+        self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs
     ):
         """
         This method will create or remove records on job_costing_report.
@@ -322,42 +294,31 @@ class JobCostingReport(models.Model):
         if self._name == "job.costing.report":
             self._cr.execute(
                 """
-                INSERT INTO %s (sale_id, job_name)
+                INSERT INTO %s (sale_id, job_name, so_create_date)
                 select
-                id, job_name
+                id, job_name, create_date
                 FROM sale_order
                 WHERE id NOT IN (SELECT sale_id FROM job_costing_report) AND job_name != ''
             """
-                % (self._table)
+                % self._table
             )
             self._cr.execute(
                 """
                 DELETE FROM %s
                 WHERE sale_id IS NULL
             """
-                % (self._table)
+                % self._table
             )
         order = self._order
-        custom_filter_date = (
-            self.calculate_filter_date_from_domain(domain) if domain else False
-        )
-        if (
-                custom_filter_date
-                != self.env["job.costing.report"].search([], limit=1).filter_date
-        ):
-            self.env.cr.execute(
-                """UPDATE %s SET
-                filter_date = '%s'"""
-                % (self._table, custom_filter_date)
-            ) if custom_filter_date else self.env.cr.execute(
-                """UPDATE %s SET
-                filter_date = NULL"""
-                % (self._table)
-            )
-
         rtn = super(JobCostingReport, self).search_read(
             domain, fields, offset, limit, order=order, **read_kwargs
         )
+        custom_filter_date = (
+            self.calculate_filter_date_from_domain(domain) if domain else False
+        )
+        filter_id = self.env["job.costing.report.filter"].search([], limit=1)
+        if custom_filter_date != filter_id.filter_date:
+            filter_id.filter_date = custom_filter_date
         return rtn
 
     @api.model
