@@ -128,12 +128,12 @@ class JobCostingReport(models.Model):
             .mapped(
                 lambda move: move.amount_total
                 if (
-                        (
-                                filter_date
-                                and move.invoice_date
-                                and move.invoice_date <= filter_date.date()
-                        )
-                        or not filter_date
+                    (
+                        filter_date
+                        and move.invoice_date
+                        and move.invoice_date <= filter_date.date()
+                    )
+                    or not filter_date
                 )
                 else 0
             )
@@ -260,27 +260,13 @@ class JobCostingReport(models.Model):
         """
         Calculate and return minimum date from all the conditions from the domain with the field 'so_create_date'.
         """
-        rtn_filter_date = False
 
         filter_date = [
             filter_val[2]
             for filter_val in domain
             if len(filter_val) == 3 and filter_val[0] == "so_create_date"
         ]
-        if filter_date:
-            min_date = min(filter_date)
-            rtn_filter_date = (
-                min_date
-                if not rtn_filter_date
-                else min(
-                    [
-                        datetime.datetime.strptime(min_date, DTS),
-                        datetime.datetime.combine(
-                            rtn_filter_date, datetime.datetime.min.time()
-                        ),
-                    ]
-                )
-            )
+        rtn_filter_date = min(filter_date) if filter_date else False
         return rtn_filter_date
 
     @api.model
@@ -327,7 +313,9 @@ class JobCostingReport(models.Model):
         """
         function to hide field from default filter
         """
-        res = super(JobCostingReport, self).fields_get(allfields=allfields, attributes=attributes)
+        res = super(JobCostingReport, self).fields_get(
+            allfields=allfields, attributes=attributes
+        )
         fields_to_hide = ["create_date", "write_date"]
         for field in fields_to_hide:
             if res.get(field, False):
