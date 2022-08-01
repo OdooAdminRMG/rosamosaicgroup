@@ -65,13 +65,11 @@ class MrpProduction(models.Model):
     @api.depends("rmg_id")
     def _compute_sale_order_line(self):
         for rec in self:
-            rec.sale_order_line_id = False
             # Here taking [0] in case someone has changed in product route after confirming SO.
-            if rec.rmg_id:
-                rec.sale_order_line_id = rec.rmg_id.order_line_ids.filtered(
-                    lambda order_line: self.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
-                              self.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
-                )[0].id
+            rec.sale_order_line_id = rec.rmg_id.order_line_ids.filtered(
+                lambda order_line: self.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
+                                   self.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
+            )[0].id if rec.rmg_id else False
 
 
 class StockRule(models.Model):
@@ -101,7 +99,8 @@ class StockRule(models.Model):
             bom,
         )
         if values.get("move_dest_ids"):
-            # res['rmg_ids'] = [(4, x.sale_line_id.rmg_sale_id.id) for x in values['move_dest_ids']] if values['move_dest_ids'] else False
+            # res['rmg_ids'] = [(4, x.sale_line_id.rmg_sale_id.id)
+            # for x in values['move_dest_ids']] if values['move_dest_ids'] else False
             res["rmg_id"] = (
                 values["move_dest_ids"].sale_line_id.rmg_sale_id.id
                 if values["move_dest_ids"]
