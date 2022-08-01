@@ -118,11 +118,12 @@ class RmgSale(models.Model):
             rec.order_line_ids = rec.order_id.order_line.filtered(
                 lambda x: x.section_id.id == rec.order_line_id.id
             ).ids
-            # Here taking [0] in case someone has changed in product route after confirming SO.
-            rec.mo_line_id = rec.order_line_ids.filtered(
+            mo_ids = rec.order_line_ids.filtered(
                 lambda order_line: rec.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
                                    rec.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
-            )[0].id if rec.order_line_ids else False
+            ).ids if rec.order_line_ids else []
+            # Here taking [0] in case someone has changed in product route after confirming SO.
+            rec.mo_line_id = mo_ids[0] if mo_ids else False
 
     def open_warning_wizard(self, message):
         """
