@@ -10,7 +10,7 @@ class MrpProduction(models.Model):
     sale_order_line_id = fields.Many2one("sale.order.line", string="Order Line",
                                          compute="_compute_sale_order_line")
     rmg_ids = fields.One2many("rmg.sale", "mrp_order_id", string="Rmg Lines")
-    rmg_id = fields.Many2one("rmg.sale", string="Rmg Id")
+    rmg_id = fields.Many2one("rmg.sale", string=_("Order Line"))
     edge_profiles_id = fields.Many2one("edge.profiles", string=_("Edge Profiles"), related="rmg_id.edge_profiles_id")
     splash = fields.Text(string=_("Splash"), related="rmg_id.splash")
     slab_tagged_id = fields.Many2one(

@@ -7,7 +7,7 @@ class RmgSaleWarningWiz(models.TransientModel):
     _name = "rmg.sale.warning.wiz"
     _description = "RMG Sale Warning Wizard"
 
-    rmg_id = fields.Many2one("rmg.sale")
+    rmg_id = fields.Many2one("rmg.sale", string=_("Order Line"))
     message = fields.Html(string="Message", default="")
 
     def continue_rmg_sale(self):

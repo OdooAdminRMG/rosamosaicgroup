@@ -13,7 +13,7 @@ class RmgSale(models.Model):
     _rec_name = "order_line_id"
 
     order_id = fields.Many2one("sale.order", string=_("Order ID"), )
-    order_line_id = fields.Many2one("sale.order.line", string=_("Order Line Section"), )
+    order_line_id = fields.Many2one("sale.order.line", string=_("Order Line"), )
     mo_line_id = fields.Many2one(
         "sale.order.line", string=_("Order Line"), compute="compute_order_lines",
         help="Provide sale order line reference of manufacturing product with respect to section."
