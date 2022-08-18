@@ -49,8 +49,8 @@
                                 <field readonly="1" name="order_id"/>
                             </group>
                             <group>
-                                <field invisible="1" name="order_line_id"/>
-                                <field readonly="1" name="mo_line_id"/>
+                                <field readonly="1" name="order_line_id"/>
+                                <field invisible="1" name="mo_line_id"/>
                             </group>
                             <group>
                                 <field name="edge_profiles_id" options="{'no_create': True,}"/>
