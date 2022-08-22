@@ -91,7 +91,7 @@ class SaleOrder(models.Model):
                 ('sale_id', 'in', order.ids)
             ]).stock_move_ids
             move_ids.created_production_id.project_task_id = project_task_mo.id
-            picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+            picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
             picking_id.project_task_id = project_task_do.id
             if project_task_do.planned_date_end and picking_id:
                 picking_id.scheduled_date = project_task_do.planned_date_end
@@ -229,23 +229,23 @@ class SaleOrder(models.Model):
         :return: Boolean
         """
         res = super(SaleOrder, self).write(vals)
-
+        project_ids = self.project_ids
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            for project in self.project_ids:
+            for project in project_ids:
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
         elif 'order_line' in vals and self.commitment_date:
-            for project in self.project_ids:
+            for project in project_ids:
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(self.commitment_date)
         elif 'template_start_date' in vals and 'template_end_date' in vals and not vals['template_start_date'] and not \
                 vals['template_end_date']:
             if self.commitment_date:
-                self.project_ids.filtered(
+                project_ids.filtered(
                     lambda project: self.env['project.task'].search(
                         [
                             ('project_id', 'in', project.ids),
@@ -289,7 +289,7 @@ class SaleOrder(models.Model):
             ('sale_id', 'in', self.ids)
         ]).stock_move_ids
         move_ids.created_production_id.project_task_id = project_task_mo.id
-        picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+        picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
         picking_id.project_task_id = project_task_do.id
         if project_task_do.planned_date_end and picking_id:
             picking_id.scheduled_date = project_task_do.planned_date_end
