@@ -19,13 +19,15 @@
         Planned End date for the Task.
         
         User Stories: 1, 3, 9, 53, 52, 51, 57, 50, 
+        Tasks:
+            - Debug: User Error: You cannot change the date
     """,
     'author': 'S4 Solutions, LLC',
     'website': 'https://www.sfour.io/',
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.4.5.7',
+    'version': '15.0.4.4.8',
     'depends': [
         'project',
         'project_enterprise',
