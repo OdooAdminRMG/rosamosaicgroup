@@ -115,3 +115,14 @@ class SaleOrder(models.Model):
             )._get_default_team_id(domain=['|', ('company_id', '=', self.company_id.id), ('company_id', '=', False)],
                                    user_id=user_id)
         self.update(values)
+
+    def _create_upsell_activity(self):
+        is_suppress = self.env['ir.config_parameter'].sudo().get_param('rmg_sales.suppresss_upsell_notification') or False
+        if is_suppress:
+            for order in self:
+                if order.order_line.filtered(lambda line: line.product_id.service_tracking != 'no'):
+                    return
+        return super(SaleOrder, self)._create_upsell_activity()
+
+
+
