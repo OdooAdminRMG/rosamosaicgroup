@@ -17,7 +17,6 @@
         "security/ir.model.access.csv",
         "reports/rmg_delivery_slip.xml",
         "reports/rmg_sale_order_report.xml",
-        "views/inventory_configuration.xml",
         "views/product_template.xml",
         "views/res_configuration.xml",
         "views/sale_order_view.xml",
