@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_inherit_sale_management" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t[@t-if='not line.display_type']" position="attributes">
+            <attribute name="t-if">not line.display_type and not line.product_id.is_hide_from_sale_report</attribute>
+        </xpath>
+    </template>
+</odoo>
