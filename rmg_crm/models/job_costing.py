@@ -5,13 +5,12 @@ from odoo import _, api, fields, models, tools
 
 class JobCosting(models.Model):
     _name = "job.costing"
-    _description = """
-        Important: If you manually delete the record of this model then the related sale order will also be deleted.
-        This model will compute all the data from the job name field.
-    """
+    _description = "Job Costing"
     _auto = False
     _log_access = True  # Include magic fields
     _rec_name = 'job_name'
+    # Important: If you manually delete the record of this model then the related sale order will also be deleted.
+    # This model will compute all the data from the job name field.
 
     job_name = fields.Char(string=_("Job Name"))
 

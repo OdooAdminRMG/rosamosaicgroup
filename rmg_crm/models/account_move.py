@@ -5,9 +5,9 @@ from odoo import api, fields, models, _
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
-    _description = 'Important: Run "Update Job Name In Existing Invoices" manually ' \
-                   'to update sale id in those invoices which are created ' \
-                   'before installation of this module'
+    # Important: Run "Update Job Name In Existing Invoices" manually
+    # to update sale id in those invoices which are created
+    # before installation of this module
 
     so_id = fields.Many2one(
         "sale.order",

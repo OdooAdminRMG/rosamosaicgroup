@@ -8,7 +8,6 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 
 class MrpProduction(models.Model):
     _inherit = "stock.picking"
-    _description = "Stock Picking"
 
     def attach_pdf_file(self, data=None):
         """
