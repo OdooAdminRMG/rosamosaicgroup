@@ -16,14 +16,13 @@ class MrpProduction(models.Model):
         self.project_manager_id = False
         for MO in self:
             task_ids = self.env['project.task'].search([
-                ('job_name', '=', self.job_name), ('is_template_task', '=', True)])
-            if task_ids:
-                for task in task_ids:
-                    MO.write({
-                            'temp_user_ids': [(4, user.id) for user in task.user_ids],
-                        })
+                ('job_name', '=', MO.job_name), ('is_template_task', '=', True)])
+            for task in task_ids:
+                MO.write({
+                        'temp_user_ids': [(4, user.id) for user in task.user_ids],
+                    })
             project_id = self.env['project.project'].search([
-                ('job_name', '=', self.job_name)], limit=1)
+                ('job_name', '=', MO.job_name)], limit=1)
             if project_id:
                 MO.write({
                         'project_manager_id': project_id.user_id.id,
