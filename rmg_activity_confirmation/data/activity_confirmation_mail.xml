@@ -27,7 +27,7 @@
                                 <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
                                     <tr><td valign="top" style="font-size: 16px;">
                                         <div>
-                                            An activity you created and assigned to <t t-out="object.user_id.name"/> has been <t t-out="ctx['state'] or ''"/> Select the link below to be taken to the object against which the activity was created..
+                                            An activity you created and assigned to <t t-out="object.user_id.name"/> has been <t t-out="ctx['state'] or ''"/> Select the link below to be taken to the object against which the activity was created.
                                             <div style="margin: 16px 0px 16px 0px;">
                                                 <a t-att-href="ctx['url']"
                                                     style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; font-size:13px;">

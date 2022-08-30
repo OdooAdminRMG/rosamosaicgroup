@@ -11,7 +11,7 @@
     "category": "Productivity/Discuss",
     "summary": "",
     "sequence": 20,
-    "version": "15.0.0.0.0",
+    "version": "15.0.0.0.1",
     'author': "S4 Solutions, LLC",
     'website': "https://www.sfour.io/",
     "depends": ["mail"],
