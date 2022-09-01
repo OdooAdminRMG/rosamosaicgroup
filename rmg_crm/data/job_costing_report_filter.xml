@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--We only need to create record so that we can you this record in job.costing.report filter.         -->
+        <record model="job.costing.report.filter" id="rmg_crm.filter_date">
+        </record>
+    </data>
+</odoo>
