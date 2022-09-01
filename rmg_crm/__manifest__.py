@@ -4,8 +4,7 @@
 {
     "name": "RMG CRM",
     "summary": """RMG CRM""",
-    "description":
-        """
+    "description": """
         RMG CRM
         
         Important: 
@@ -23,10 +22,20 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.4.19.4",
-    "depends": ["sale_management", "sale_crm", "project", "stock", "purchase", "mrp", "timesheet_grid"],
+    "version": "15.0.5.21.12",
+    "depends": [
+        "sale_management",
+        "sale_crm",
+        "project",
+        "stock",
+        "purchase",
+        "mrp",
+        "timesheet_grid",
+        "web",
+    ],
     "data": [
         "security/ir.model.access.csv",
+        "data/job_costing_report_filter.xml",
         "data/create_replenish_sources_history_for_existing_po.xml",
         "data/update_job_name_in_existing_invoices.xml",
         "views/attachment_type_views.xml",
@@ -43,8 +52,10 @@
     ],
     "assets": {
         "web.assets_qweb": [
+            "rmg_crm/static/src/xml/filter_menu.xml"
             # 'rmg_crm/static/src/xml/web_calendar.xml',
         ],
+        "web.assets_backend": ["rmg_crm/static/src/js/search_utils.js"],
     },
     "installable": True,
     "application": True,

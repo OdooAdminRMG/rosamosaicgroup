@@ -12,8 +12,12 @@ class RmgSale(models.Model):
     _description = "rmg sale"
     _rec_name = "order_line_id"
 
-    order_id = fields.Many2one("sale.order")
-    order_line_id = fields.Many2one("sale.order.line")
+    order_id = fields.Many2one("sale.order", string=_("Order ID"), )
+    order_line_id = fields.Many2one("sale.order.line", string=_("Order Line"), )
+    mo_line_id = fields.Many2one(
+        "sale.order.line", string=_("Order Line"), compute="compute_order_lines",
+        help="Provide sale order line reference of manufacturing product with respect to section."
+    )
     mrp_order_id = fields.Many2one("mrp.production", string="MRP Order Id")
     # order_line_ids = fields.One2many("sale.order.line", 'rmg_sale_id', string=_("Order Lines"))
     order_line_ids = fields.Many2many(
@@ -108,11 +112,18 @@ class RmgSale(models.Model):
         child_ids.sort()
         return child_ids if get_child_ids == child_ids else self.get_all_child_ids(get_child_ids)
 
-    @api.depends("order_line_id")
+    @api.depends("order_id.order_line")
     def compute_order_lines(self):
-        self.order_line_ids = self.order_id.order_line.filtered(
-            lambda x: x.section_id.id == self.order_line_id.id
-        ).mapped("id")
+        for rec in self:
+            rec.order_line_ids = rec.order_id.order_line.filtered(
+                lambda x: x.section_id.id == rec.order_line_id.id
+            ).ids
+            mo_ids = rec.order_line_ids.filtered(
+                lambda order_line: rec.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
+                                   rec.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
+            ).ids if rec.order_line_ids else []
+            # Here taking [0] in case someone has changed in product route after confirming SO.
+            rec.mo_line_id = mo_ids[0] if mo_ids else False
 
     def open_warning_wizard(self, message):
         """

@@ -10,13 +10,13 @@
                     <page string="Selection Sheet" name="selection_sheet">
                         <group>
                             <group>
-                                <field name="rmg_id" invisible="True"/>
+                                <field name="rmg_id" readonly="1" invisible="0"/>
+                                <field name="sale_order_line_id" readonly="1" invisible="1"/>
                                 <field name="slab_tagged_id"/>
                                 <field name="slab_notes"/>
                                 <field name="sink_by_bella_id"/>
                                 <field name="customer_sink_types_id"/>
                                 <field name="edge_profiles_id"/>
-                                <field name="sale_order_line_id"/>
                             </group>
                             <group>
                                 <field name="customer_sink_model_number"/>
