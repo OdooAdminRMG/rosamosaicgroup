@@ -1,206 +1,334 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from odoo import _, api, fields, models, tools
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 
 
-class JobCosting(models.Model):
-    _name = "job.costing"
+class JobCostingReport(models.Model):
+    _name = "job.costing.report"
+    _order = "pct desc"
     _description = """
-        Important: If you manually delete the record of this model then the related sale order will also be deleted.
-        This model will compute all the data from the job name field.
+        The records of this module will be created or removed by the query written in search_read method.
     """
-    _auto = False
-    _log_access = True  # Include magic fields
-    _rec_name = 'job_name'
 
-    job_name = fields.Char(string=_("Job Name"))
-
-    total_cost_of_purchase = fields.Float(
-        string=_("Total Cost Of Purchase"),
-        compute="_compute_actual",
-        help="Compute the sum of (Product Uom Qty * Unit Price) of all Replenish Histories based on 'Job Name'."
+    sale_id = fields.Many2one(
+        "sale.order",
+        string=_("Sale Order"),
+        required=True
     )
-
-    total_cost_of_components = fields.Float(
-        string=_("Total Cost Of Components"),
-        compute="_compute_actual",
-        help="Compute the sum of 'Total Cost' of all Manufacturing Orders based on job_name."
+    filter_id = fields.Many2one(
+        "job.costing.report.filter",
+        string=_("Filter Id")
     )
-
-    total_cost_of_purchase_timesheet = fields.Float(
-        string=_("Total Cost Of Timesheet"),
-        compute="_compute_actual",
-        help="Compute the sum of (Unit Amount * Timesheet Cost of that employee) of all Tasks  based on 'Job Name'."
+    job_name = fields.Char(
+        string=_("Job Name"),
+        related="sale_id.job_name",
+        store=True
     )
-    # budgeted_labor_cost = fields.Float(
-    # compute='_compute_contract_amount',
-    # string=_("Budgeted Labor Cost")
-    # )
-    # budgeted_material_cost = fields.Float(
-    # compute='_compute_contract_amount',
-    # string=_("Budgeted Material Cost")
-    # )
-
+    so_create_date = fields.Datetime(
+        string=_(" As Of Date"), help="This field will used to filter records"
+    )
+    compute_all_fields = fields.Char(
+        compute="_compute_all_fields",
+        help="This field is used to calculate all the fields",
+    )
     contract_amount = fields.Float(
-        compute='_compute_contract_amount',
         string=_("Contract Amount"),
-        help="Compute the sum of amount_total of all Sale Orders  based on 'Job Name'."
+        help="Compute the sum of amount_total of all Sale Orders  based on 'Job Name' "
+             "and 'End Date'(if end date filter is selected).",
     )
-
     billings_to_date = fields.Float(
-        compute='_compute_billings_to_date',
         string=_("Billings To Date"),
         help="Compute the sum of 'Amount Total' of all Invoices whose related Sale Orders has the same 'Job Name'."
+             "and 'End Date'(if end date filter is selected).",
     )
-
     remaining = fields.Float(
-        compute='_compute_remaining',
         string=_("Remaining"),
-        help="Calculate the difference of 'Contract Amount' and 'Billings To Date'."
+        help="Calculate the difference of 'Contract Amount' and 'Billings To Date'.",
+    )
+    total_cost_of_purchase = fields.Float(
+        string=_("Total Cost Of Purchase"),
+        help="Compute the sum of (Product Uom Qty * Unit Price) of all Replenish Histories based on 'Job Name'."
+             "and 'End Date'(if end date filter is selected).",
+    )
+    total_cost_of_components = fields.Float(
+        string=_("Total Cost Of Components"),
+        help="Compute the sum of 'Total Cost' of all Manufacturing Orders based on Job name."
+             "and 'End Date'(if end date filter is selected).",
+    )
+    total_cost_of_purchase_timesheet = fields.Float(
+        string=_("Total Cost Of Timesheet"),
+        help="Compute the sum of (Unit Amount * Timesheet Cost of that employee) of all Tasks  based on 'Job Name'."
+             "and 'End Date'(if end date filter is selected).",
     )
     actual = fields.Float(
-        compute='_compute_actual',
         string=_("Actual"),
-        help="Compute the sum of 'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'"
+        help="Compute the sum of 'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'",
     )
     budget = fields.Float(
-        compute='_compute_budget',
         string=_("Budget"),
         help="Calculate the sum of 'Budgeted Labor Cost' and 'Budgeted Material Cost' based on 'Job Name'."
+             "and 'End Date'(if end date filter is selected).",
     )
     pct = fields.Float(
-        compute='_compute_pct',
-        string=_("Pct"),
-        help="Calculate the percentage of 'Actual' divide by 'Budget'."
+        string=_("Pct"), help="Calculate the percentage of 'Actual' divide by 'Budget'."
     )
     overrun = fields.Float(
-        compute='_compute_overrun',
-        string=_("Overrun"),
-        help="Calculate the difference of 'Actual' and 'Budget'."
+        string=_("Overrun"), help="Calculate the difference of 'Actual' and 'Budget'."
     )
 
-    def _compute_contract_amount(self):
-        for rec in self:
-            rec.contract_amount = sum(self.env['sale.order'].search(
-                [
-                    ('job_name', '=', rec.job_name)
-                ]).mapped(lambda so: so.amount_total))
+    def calculate_values_from_sale_order(self):
+        """
+        This method will calculate values of fields which depends on sale order.
+        """
+        so = self.sale_id
+        filter_date = self.filter_id.filter_date
 
-    def _compute_billings_to_date(self):
-        for rec in self:
-            rec.billings_to_date = sum(
-                self.env['sale.order'].search(
-                    [
-                        ('job_name', '=', rec.job_name)
-                    ]).mapped(
-                    lambda so: sum(
-                        so.order_line.invoice_lines.move_id.filtered(
-                            lambda r: r.move_type in ('out_invoice', 'out_refund')
-                        ).mapped('amount_total'))))
+        # Compute the sum of amount_total of all Sale Orders  based on 'Job Name' and 'End Date'.
+        self.contract_amount, self.budget = (
+            (so.amount_total, so.budgeted_labor_cost + so.budgeted_material_cost)
+            if ((filter_date and so.create_date <= filter_date) or not filter_date)
+            else (0, 0)
+        )
 
-    def _compute_remaining(self):
-        for rec in self:
-            rec.remaining = rec.contract_amount - rec.billings_to_date
+    # code backup
+    # If we get multiple sale orders with same job name then we can use below code.
 
-    def _compute_actual(self):
-        for rec in self:
-            cal_actual = [
-                sum(
-                    rec.env['replenish.sources'].search(
-                        [
-                            ('job_name', '=', rec.job_name)
-                        ]).mapped(lambda rs: rs.product_uom_qty * rs.price_unit)),
-                sum(
-                    map(
-                        lambda val: val.get('total_cost', 0),
-                        self.env['report.mrp_account_enterprise.mrp_cost_structure'].get_lines(
-                            self.env['mrp.production'].search(
-                                [
-                                    ('job_name', '=', rec.job_name),
-                                    ('state', '=', 'done')
-                                ]))
-                    )
-                ),
-                sum(
-                    self.env['project.task'].search(
-                        [
-                            ('job_name', '=', rec.job_name)
-                        ]).mapped(
-                        lambda task: sum(
-                            task.timesheet_ids.mapped(
-                                lambda line: line.unit_amount * line.employee_id.sudo().timesheet_cost
+    # def calculate_values_from_sale_order(self):
+    #     """
+    #         This method will calculate values of fields which depends on sale order
+    #     """
+    #     filter_date = self.filter_id.filter_date
+    #     sale_orders = self.env['sale.order'].search(
+    #         [
+    #             ('job_name', '=', self.job_name)
+    #         ]
+    #     )
+    #
+    #     # Compute the sum of amount_total of all Sale Orders  based on 'Job Name' and 'End Date'.
+    #     self.contract_amount = sum(
+    #         sale_orders.mapped(
+    #             lambda so: so.amount_total
+    #             if (
+    #                     (
+    #                             filter_date
+    #                             and so.create_date <= filter_date
+    #                     )
+    #                     or not filter_date
+    #             )
+    #             else 0
+    #         )
+    #     )
+    #
+    #     self.budget = sum(
+    #         sale_orders.mapped(
+    #             lambda so: so.budgeted_labor_cost + so.budgeted_material_cost
+    #         )
+    #     )
+
+    def compute_billings_to_date(self):
+        """
+        Return the sum of amount_total of all invoices related to sale order.
+        """
+        filter_date = self.filter_id.filter_date
+        return sum(
+            self.env["account.move"]
+            .search([("job_name", "=", self.job_name)])
+            .mapped(
+                lambda move: move.amount_total
+                if (
+                        (
+                                filter_date
+                                and move.invoice_date
+                                and move.invoice_date <= filter_date.date()
+                        )
+                        or not filter_date
+                )
+                else 0
+            )
+        )
+
+    def compute_actual(self):
+        """
+        This method will calculate and return sum of
+        'Total Cost Of Purchase', 'Total Cost Of Components' and 'Total Cost Of Timesheet'
+        based on 'job_name' and 'filter_date'.
+        """
+        filter_date = self.filter_id.filter_date
+        job_name = self.job_name
+        total_cost_of_purchase = 0
+        for po in (
+                self.env["replenish.sources"]
+                        .search([("job_name", "=", job_name)])
+                        .mapped("po_id")
+        ):
+            for prodict in list(set(po.replenish_source_ids.mapped("product_id.id"))):
+                product_done_qty = sum(
+                    po.picking_ids.mapped(
+                        lambda picking: sum(
+                            picking.move_ids_without_package.mapped(
+                                lambda move: move.quantity_done
+                                if move.product_id.id == prodict
+                                else 0
                             )
+                        )
+                        if picking.state == "done"
+                           and (
+                                   (
+                                           picking.date_done
+                                           and filter_date
+                                           and picking.date_done <= filter_date
+                                   )
+                                   or not filter_date
+                           )
+                        else 0
+                    )
+                )
+                for replenish_id in po.replenish_source_ids.filtered(
+                        lambda replenishment: replenishment.product_id.id == prodict
+                ):
+                    if replenish_id.product_uom_qty <= product_done_qty:
+                        done_qty = replenish_id.product_uom_qty
+                        product_done_qty -= replenish_id.product_uom_qty
+                    else:
+                        done_qty = product_done_qty
+                        product_done_qty = 0
+                    if replenish_id.job_name == job_name:
+                        total_cost_of_purchase += done_qty * replenish_id.price_unit
+        cal_actual = [
+            sum(
+                map(
+                    lambda val: val.get("total_cost", 0),
+                    self.env[
+                        "report.mrp_account_enterprise.mrp_cost_structure"
+                    ].get_lines(
+                        self.env["mrp.production"]
+                        .search(
+                            [
+                                ("job_name", "=", job_name),
+                                ("state", "=", "done"),
+                            ]
+                        )
+                        .filtered(
+                            lambda mo: mo.date_finished <= filter_date
+                            if filter_date and mo.date_finished
+                            else True
+                        )
+                    ),
+                )
+            ),
+            sum(
+                self.env["project.task"]
+                .search([("job_name", "=", job_name)])
+                .mapped(
+                    lambda task: sum(
+                        task.timesheet_ids.mapped(
+                            lambda line: line.unit_amount
+                                         * line.employee_id.sudo().timesheet_cost
+                            if (
+                                    (
+                                            filter_date
+                                            and line.date
+                                            and line.date <= filter_date.date()
+                                    )
+                                    or not filter_date
+                            )
+                            else 0
                         )
                     )
                 )
-            ]
-            rec.total_cost_of_purchase = cal_actual[0]
-            rec.total_cost_of_components = cal_actual[1]
-            rec.total_cost_of_purchase_timesheet = cal_actual[2]
-            rec.actual = sum(cal_actual)
+            ),
+        ]
+        self.total_cost_of_purchase = total_cost_of_purchase
+        self.total_cost_of_components = cal_actual[0]
+        self.total_cost_of_purchase_timesheet = cal_actual[1]
+        return sum(cal_actual) + total_cost_of_purchase
 
-    def _compute_budget(self):
+    @api.depends("filter_id.filter_date", "job_name")
+    def _compute_all_fields(self):
+        """
+        This method will calculate all fields based on 'job_name' and 'filter_date'.
+        """
         for rec in self:
-            rec.budget = sum(
-                [
-                    sum(
-                        self.env['sale.order'].search(
-                            [
-                                ('job_name', '=', rec.job_name)
-                            ]
-                        ).mapped('budgeted_labor_cost')
-                    ),
-                    sum(
-                        self.env['sale.order'].search(
-                            [
-                                ('job_name', '=', rec.job_name)
-                            ]
-                        ).mapped('budgeted_material_cost')
-                    ),
-                ]
-            )
-
-    def _compute_pct(self):
-        for rec in self:
+            if not rec.filter_id:
+                rec.filter_id = self.env["job.costing.report.filter"].search(
+                    [], limit=1
+                )
+            rec.calculate_values_from_sale_order()
+            billings_to_date = rec.compute_billings_to_date()
+            rec.remaining = rec.contract_amount - billings_to_date
+            actual = rec.compute_actual()
             budget = rec.budget
-            rec.pct = float(rec.actual / budget if budget else 0.0)
+            rec.pct = float(actual / budget if budget else 0.0)
+            rec.overrun = actual - budget
+            rec.billings_to_date = billings_to_date
+            rec.actual = actual
+            rec.compute_all_fields = ""
 
-    def _compute_overrun(self):
-        for rec in self:
-            rec.overrun = rec.actual - rec.budget
+    def calculate_filter_date_from_domain(self, domain):
+        """
+        Calculate and return minimum date from all the conditions from the domain with the field 'so_create_date'.
+        """
 
-    def init(self):
+        filter_date = [
+            filter_val[2]
+            for filter_val in domain
+            if len(filter_val) == 3 and filter_val[0] == "so_create_date"
+        ]
+        rtn_filter_date = min(filter_date) if filter_date else False
+        return rtn_filter_date
+
+    @api.model
+    def search_read(
+            self, domain=None, fields=None, offset=0, limit=None, order=None, **read_kwargs
+    ):
         """
-            This method will create or update record for job_costing table based on sale_order's job_name.
-            create_uid, create_date, write_date, write_uid are important fields to exporting the records
+        This method will create or remove records on job_costing_report.
+        This method will update 'filter_date' if user selects any custom filters of 'End Date'.
         """
-        tools.drop_view_if_exists(self._cr, self._table)
-        self._cr.execute(
+        if self._name == "job.costing.report":
+            self._cr.execute(
+                """
+                DELETE FROM %s
+                WHERE sale_id IS NULL
             """
-            CREATE or REPLACE VIEW %s AS
-            select 
-            create_uid,
-            create_date,
-            write_date,
-            write_uid,
-            id,
-            job_name  
-            FROM sale_order WHERE job_name != ''
-        """ % (
-                self._table
+                % self._table
             )
-        )
+            self._cr.execute(
+                """
+                INSERT INTO %s (sale_id, job_name, so_create_date)
+                select
+                id, job_name, create_date
+                FROM sale_order
+                WHERE id NOT IN (SELECT sale_id FROM job_costing_report) AND job_name != ''
+            """
+                % self._table
+            )
 
-        self.env.cr.execute(
-            """UPDATE %s SET 
-            create_uid = %s, 
-            create_date = '%s', 
-            write_date = '%s', 
-            write_uid = %s""" % (
-                self._table,
-                self.env.user.id,
-                fields.Datetime.now(),
-                fields.Datetime.now(),
-                self.env.user.id
-            )
+        order = self._order
+        rtn = super(JobCostingReport, self).search_read(
+            domain=domain, fields=fields, offset=offset, limit=limit, order=order
         )
+        custom_filter_date = (
+            self.calculate_filter_date_from_domain(domain) if domain else False
+        )
+        filter_id = self.env["job.costing.report.filter"].search([], limit=1)
+        if custom_filter_date != filter_id.filter_date:
+            filter_id.filter_date = custom_filter_date
+        return rtn
+
+    @api.model
+    def fields_get(self, allfields=None, attributes=None):
+        """
+        function to hide field from default filter
+        """
+        res = super(JobCostingReport, self).fields_get(
+            allfields=allfields, attributes=attributes
+        )
+        fields_to_hide = ["create_date", "write_date"]
+        for field in fields_to_hide:
+            if res.get(field, False):
+                res.get(field)["searchable"] = False  # hide from filter
+        return res

@@ -3,6 +3,7 @@ from odoo import api, fields, models, _
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
+from odoo.exceptions import ValidationError
 from pytz import timezone, UTC
 
 import logging
@@ -29,7 +30,7 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    template_start_date = fields.Datetime(string=_('Template Start Date'), copy=False)
+    template_start_date = fields.Datetime(string=_('Template Start Date'), index=True, tracking=True, copy=False)
     template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True, copy=False)
     is_project_product = fields.Boolean(string=_('Is Project Product'),
                                         compute="_compute_is_project_product",
@@ -38,6 +39,11 @@ class SaleOrder(models.Model):
                                         help="The value of this filed will be True"
                                              "if any Sale Order Line exist with product type 'Service',"
                                              "'Create on Order' is not 'None' and  whose project doesn't exist else False.")
+
+    @api.constrains('template_start_date', 'template_end_date')
+    def _check_template_planned_dates(self):
+        if self.template_start_date > self.template_end_date:
+            raise ValidationError(_("The template start date must be prior to the template end date."))
 
     @api.depends('order_line.product_id', 'order_line.project_id')
     def _compute_is_project_product(self):
@@ -209,6 +215,7 @@ class SaleOrder(models.Model):
                     [
                         ('project_id', 'in', project.ids),
                         ('is_template_task', '=', True),
+                        '|',
                         ('planned_date_begin', '!=', self.template_start_date),
                         ('planned_date_end', '!=', self.template_end_date),
                     ]
@@ -242,8 +249,9 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(self.commitment_date)
-        elif 'template_start_date' in vals and 'template_end_date' in vals and not vals['template_start_date'] and not \
-                vals['template_end_date']:
+        elif (
+                ('template_start_date' in vals and not vals['template_start_date']) or (
+                'template_end_date' in vals and not vals['template_end_date'])):
             if self.commitment_date:
                 project_ids.filtered(
                     lambda project: self.env['project.task'].search(
@@ -262,8 +270,12 @@ class SaleOrder(models.Model):
                 )
                 self.calculate_planned_dates(
                     self.commitment_date)
-        elif 'template_start_date' in vals and 'template_end_date' in vals and vals['template_start_date'] and vals[
-            'template_end_date']:
+        elif (
+                (
+                        ('template_start_date' in vals and vals['template_start_date']) or (
+                        'template_end_date' in vals and vals['template_end_date'])
+                )
+        ):
             self.update_tmpl_dates()
         elif 'order_line' in vals and not self.commitment_date:
             self.update_tmpl_dates()

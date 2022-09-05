@@ -13,7 +13,7 @@ class CrmLead(models.Model):
         string=_("Readonly Attachments"),
         compute="_compute_edit_attachments",
         invisible=True,
-        help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state"
+        help="Attachments will be readonly if any sale order related to opportunity will be in 'sale' state",
     )
 
     def _compute_edit_attachments(self):
