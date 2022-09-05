@@ -21,6 +21,7 @@
         User Stories: 1, 3, 9, 53, 52, 51, 57, 50, 
         Tasks: 
             - Error when accepting and signing a sales order
+            - Debug: User Error: You cannot change the date
     """,
     'author': 'S4 Solutions, LLC',
     'website': 'https://www.sfour.io/',
