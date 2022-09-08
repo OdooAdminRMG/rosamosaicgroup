@@ -5,7 +5,7 @@
             <field name="name">Activity Confirmation</field>
             <field name="model_id" ref="rmg_activity_confirmation.model_mail_activity"/>
             <field name="lang">{{ object.user_id.lang }}</field>
-             <field name="email_from">{{ (object.user_id.partner_id.email_formatted or user.email_formatted) }}</field>
+            <field name="email_from">{{ (object.user_id.partner_id.email_formatted or user.email_formatted or '') }}</field>
             <field name="auto_delete" eval="True"/>
             <field name="body_html" type="html">
                  <table border="0" cellpadding="0" cellspacing="0" width="590"
@@ -27,7 +27,7 @@
                                 <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
                                     <tr><td valign="top" style="font-size: 16px;">
                                         <div>
-                                            An activity you created and assigned to <t t-out="object.user_id.name"/> has been <t t-out="ctx['state'] or ''"/> Select the link below to be taken to the object against which the activity was created.
+                                            An activity you created and assigned to <b><t t-out="object.user_id.name"/></b> has been <b><t t-out="ctx['state'] or ''"/></b>. Select the link below to be taken to the object against which the activity was created.
                                             <div style="margin: 16px 0px 16px 0px;">
                                                 <a t-att-href="ctx['url']"
                                                     style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; font-size:13px;">
