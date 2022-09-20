@@ -6,4 +6,5 @@ from . import mrp_production
 from . import project
 from . import project_task
 from . import sale_order
+from . import sale_order_line
 from . import stock_picking
