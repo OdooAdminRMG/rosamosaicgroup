@@ -5,11 +5,11 @@ from odoo import _, api, fields, models
 
 class ReplenishSources(models.Model):
     _name = "replenish.sources"
-    _description = (
-        "The records of this model will be either created from Sale Order or from Manufacturing Order."
-        "Only need to pass 'so_line_id' or 'mo_origin' while creating the records"
-        "The other value will be computed based on it."
-    )
+    _description = "Replenish Sources"
+
+    # The records of this model will be either created from Sale Order or from Manufacturing Order.
+    # Only need to pass 'so_line_id' or 'mo_origin' while creating the records
+    # The other value will be computed based on it.
 
     po_id = fields.Many2one(
         "purchase.order",

@@ -9,7 +9,6 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 
 class MrpProduction(models.Model):
     _inherit = "mrp.production"
-    _description = "Manufacture Order"
 
     image_attachment_id = fields.Many2many("ir.attachment", string="Image Attachment")
 

@@ -6,13 +6,17 @@ from odoo import _, api, fields, models, tools
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 
 
-class JobCostingReport(models.Model):
-    _name = "job.costing.report"
-    _order = "pct desc"
-    _description = """
-        The records of this module will be created or removed by the query written in search_read method.
-    """
+class JobCosting(models.Model):
+    _name = "job.costing"
+    _description = "Job Costing"
+    _auto = False
+    _log_access = True  # Include magic fields
+    _rec_name = 'job_name'
+    
+    # Important: If you manually delete the record of this model then the related sale order will also be deleted.
+    # This model will compute all the data from the job name field.
 
+    job_name = fields.Char(string=_("Job Name"))
     sale_id = fields.Many2one(
         "sale.order",
         string=_("Sale Order"),
