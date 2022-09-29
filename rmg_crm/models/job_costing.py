@@ -8,10 +8,10 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTS
 
 class JobCostingReport(models.Model):
     _name = "job.costing.report"
-    _order = "pct desc"
     _description = """
         The records of this module will be created or removed by the query written in search_read method.
     """
+    _order = "pct desc"
 
     sale_id = fields.Many2one(
         "sale.order",
