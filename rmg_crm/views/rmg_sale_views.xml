@@ -27,9 +27,9 @@
                                attrs="{'readonly': ['|',('readonly_attachments', '=', True),('state','in','sale')]}"
                         context="{'default_res_model':'ir.attachment','default_res_id':id,'default_res_name':name}">
                             <tree create="1" editable="bottom">
-                                <field name="res_model" invisible="1"/>
-                                <field name="res_id" invisible="1"/>
-                                <field name="res_name" invisible="1"/>
+                                <field name="res_model" invisible="1" force_save="1"/>
+                                <field name="res_id" invisible="1" force_save="1"/>
+                                <field name="res_name" invisible="1" force_save="1"/>
                                 <field name="datas" filename="name"/>
                                 <field name="name"/>
                                 <field name="type" invisible="1"/>
