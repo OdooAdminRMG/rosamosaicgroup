@@ -16,9 +16,11 @@
                to update replenish history of those POs which are created 
                before installation of this module. (only need to run it once 
                while deploying this module)
-
-            User Stories: 11, 15, 26, 44,
-        """,
+            
+            User Stories: 11, 15, 26, 44, 
+            Task: 
+                1. Daniel Grider Project App Access
+    """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
@@ -35,6 +37,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/update_attachments.xml",
         "data/job_costing_report_filter.xml",
         "data/create_replenish_sources_history_for_existing_po.xml",
         "data/update_job_name_in_existing_invoices.xml",

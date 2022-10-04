@@ -1,0 +1,13 @@
+<odoo>
+    <!--    Scheduled Action    -->
+    <record id="update_attachments" model="ir.cron">
+        <field name="name">Update Attachments</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="state">code</field>
+        <field name="code">model.update_attachments()</field>
+        <field name="active" eval="False"/>
+        <field name='interval_number'>1</field>
+        <field name='interval_type'>days</field>
+        <field name="numbercall">-1</field>
+    </record>
+</odoo>
