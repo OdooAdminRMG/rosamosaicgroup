@@ -20,6 +20,7 @@
             User Stories: 11, 15, 26, 44, 
             Task: 
                 1. Daniel Grider Project App Access
+                2. User Access on new "Create Project" Project
     """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
