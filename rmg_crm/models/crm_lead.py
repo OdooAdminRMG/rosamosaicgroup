@@ -28,7 +28,13 @@ class CrmLead(models.Model):
         """
         for rec in self.env['project.project'].search([]):
             rec.attachment_ids.filtered(
-                lambda attachment: attachment.write({'res_model': 'purchase.order', 'res_id': rec.id, 'res_name': rec.name}))
+                lambda attachment: attachment.write(
+                    {'res_model': 'ir.attachments', 'res_id': rec.id, 'res_name': rec.name}
+                )
+            )
         for rec in self.search([]):
             rec.attachment_ids.filtered(
-                lambda attachment: attachment.write({'res_model': 'crm.lead', 'res_id': rec.id, 'res_name': rec.name}))
+                lambda attachment: attachment.write(
+                    {'res_model': 'ir.attachments', 'res_id': rec.id, 'res_name': rec.name}
+                )
+            )

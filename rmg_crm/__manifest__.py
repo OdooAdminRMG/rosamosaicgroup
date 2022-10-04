@@ -24,7 +24,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.5.21.12",
+    "version": "15.0.5.22.12",
     "depends": [
         "sale_management",
         "sale_crm",
