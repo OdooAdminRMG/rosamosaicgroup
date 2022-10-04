@@ -25,7 +25,7 @@
                         <field name="readonly_attachments" invisible="1"/>
                         <field name="attachment_ids" widget="one2many"
                                attrs="{'readonly': ['|',('readonly_attachments', '=', True),('state','in','sale')]}"
-                        context="{'default_res_model':'crm.lead','default_res_id':id,'default_res_name':name}">
+                        context="{'default_res_model':'ir.attachment','default_res_id':id,'default_res_name':name}">
                             <tree create="1" editable="bottom">
                                 <field name="res_model" invisible="1"/>
                                 <field name="res_id" invisible="1"/>
