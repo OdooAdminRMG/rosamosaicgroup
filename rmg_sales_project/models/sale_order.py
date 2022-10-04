@@ -97,7 +97,7 @@ class SaleOrder(models.Model):
                 ('sale_id', 'in', order.ids)
             ]).stock_move_ids
             move_ids.created_production_id.project_task_id = project_task_mo.id
-            picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+            picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
             picking_id.project_task_id = project_task_do.id
             if project_task_do.planned_date_end and picking_id:
                 picking_id.scheduled_date = project_task_do.planned_date_end
@@ -107,7 +107,11 @@ class SaleOrder(models.Model):
                 move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
 
     def get_attendances(self, start_date):
-        resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
+        # When user will access portal with access token,
+        # Odoo will set odoo_bot user in env.
+        # So, we have to replace it with salesperson user of related order.
+        user = self.env.user if self.env.user.id != 1 else self.user_id
+        resource_id = user.resource_ids[0] if user.resource_ids else self.env['resource.resource']
         attendances = resource_id.calendar_id.attendance_ids.filtered(
             lambda a: a.dayofweek == str(start_date.weekday()))
         return resource_id, attendances, resource_id.calendar_id.attendance_ids
@@ -127,7 +131,11 @@ class SaleOrder(models.Model):
         :param end_date: task end date
         :return: working hour start date, end date, all week records
         """
-        resource_id = self.env.user.resource_ids[0] if self.env.user.resource_ids else self.env['resource.resource']
+        # When user will access portal with access token,
+        # Odoo will set odoo_bot user in env.
+        # So, we have to replace it with salesperson user of related order.
+        user = self.env.user if self.env.user.id != 1 else self.user_id
+        resource_id = user.resource_ids[0] if user.resource_ids else self.env['resource.resource']
         working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
         working_end_date = datetime.combine(start_date.date(), time.max).replace(tzinfo=UTC)
         work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date,
@@ -146,8 +154,13 @@ class SaleOrder(models.Model):
             :return: adjusted start and end dates
         """
         start_date = start_date.replace(tzinfo=UTC)
+        # When user will access portal with access token,
+        # Odoo will set odoo_bot user in env.
+        # So, we have to replace it with salesperson user of related order.
+        user = self.env.user if self.env.user.id != 1 else self.user_id
+
         working_start_date, working_end_date = self.get_working_start_end_date(
-            start_date.astimezone(timezone(self.env.user.tz)).replace(tzinfo=None))
+            start_date.astimezone(timezone(user.tz)).replace(tzinfo=None))
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
             resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -236,16 +249,16 @@ class SaleOrder(models.Model):
         :return: Boolean
         """
         res = super(SaleOrder, self).write(vals)
-
+        project_ids = self.project_ids
         if 'commitment_date' in vals and vals['commitment_date']:
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
-            for project in self.project_ids:
+            for project in project_ids:
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
         elif 'order_line' in vals and self.commitment_date:
-            for project in self.project_ids:
+            for project in project_ids:
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(self.commitment_date)
@@ -253,7 +266,7 @@ class SaleOrder(models.Model):
                 ('template_start_date' in vals and not vals['template_start_date']) or (
                 'template_end_date' in vals and not vals['template_end_date'])):
             if self.commitment_date:
-                self.project_ids.filtered(
+                project_ids.filtered(
                     lambda project: self.env['project.task'].search(
                         [
                             ('project_id', 'in', project.ids),
@@ -301,7 +314,7 @@ class SaleOrder(models.Model):
             ('sale_id', 'in', self.ids)
         ]).stock_move_ids
         move_ids.created_production_id.project_task_id = project_task_mo.id
-        picking_id = move_ids.picking_id.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+        picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
         picking_id.project_task_id = project_task_do.id
         if project_task_do.planned_date_end and picking_id:
             picking_id.scheduled_date = project_task_do.planned_date_end

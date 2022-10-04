@@ -15,8 +15,8 @@ class MailActivity(models.Model):
         template_id = self.env.ref("rmg_activity_confirmation.activity_confirmation")
         email_values = {
             "subject": "Activity " + subject,
-            "email_from": self.create_uid.partner_id.email,
-            "email_to": self.user_id.partner_id.email,
+            "email_from": self.user_id.partner_id.email,
+            "email_to": self.create_uid.partner_id.email,
         }
         template_id.with_context(state=state, url=url).sudo().send_mail(
             self.id, force_send=True, email_values=email_values, notif_layout=False
@@ -25,11 +25,12 @@ class MailActivity(models.Model):
     def _action_done(self, feedback=False, attachment_ids=None):
         if self.is_req_email_confirm:
             self.sudo().send_activity_mail(state="Marked Done", subject="Completed")
-        return super(MailActivity, self.with_context(done_activity=True))._action_done(feedback=feedback, attachment_ids=attachment_ids)
+        return super(MailActivity, self.with_context(done_activity=True))._action_done(
+            feedback=feedback, attachment_ids=attachment_ids)
 
     def unlink(self):
         if self.is_req_email_confirm and not self._context.get('done_activity'):
-            self.sudo().send_activity_mail(state="Marked Done", subject="Cancelled")
+            self.sudo().send_activity_mail(state="Cancelled", subject="Cancelled")
         return super(MailActivity, self).unlink()
 
 
