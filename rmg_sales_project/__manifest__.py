@@ -18,7 +18,7 @@
         RMG Sales Project module helps user to set Lead time on Task and calculated Planned Start date and 
         Planned End date for the Task.
         
-        User Stories: 1, 3, 9, 53, 52, 51, 57, 50, 
+        User Stories: 1, 3, 9, 53, 52, 51, 57, 50, 62
         Tasks: 
             - Error when accepting and signing a sales order
             - Debug: User Error: You cannot change the date
@@ -28,7 +28,7 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.4.4.8',
+    'version': '15.0.5.4.8',
     'depends': [
         'project',
         'project_enterprise',

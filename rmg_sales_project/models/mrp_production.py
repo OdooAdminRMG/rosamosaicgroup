@@ -2,13 +2,23 @@
 # Part of Odoo, S4 Solutions, LLC.
 # See LICENSE file for full copyright & licensing details.
 
-from odoo import fields, models
+from odoo import _, fields, models
 
 
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
-    project_task_id = fields.Many2one('project.task', string="Tasks")
+    installation_date = fields.Datetime(string=_("Installation Date"), compute="_compute_installation_date")
+    project_task_id = fields.Many2one('project.task', string=_("Tasks"))
+
+    def _compute_installation_date(self):
+        for production in self:
+            production.installation_date = False
+            sale_order_ids = production.procurement_group_id.mrp_production_ids.move_dest_ids.group_id.sale_id
+            if sale_order_ids:
+                delivery_task_ids = sale_order_ids.tasks_ids.filtered('peg_to_delivery_order')
+                if delivery_task_ids:
+                    production.installation_date = delivery_task_ids[0].planned_date_begin
 
     def action_link_mo_with_task(self):
         """
