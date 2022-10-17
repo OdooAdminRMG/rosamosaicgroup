@@ -3,7 +3,7 @@
     "name": "Stock Unreserve Base",
     "description":
         """
-            Tasks: 'Update MO costing report source data', 
+            Tasks: 'Fix "Unable to Unreserve error"', 
             User Stories:
         """,
     "category": "stock",
