@@ -16,11 +16,11 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     is_template_task = fields.Boolean(
-        string=_("Is Template Task"))
+        string=_("Is Template Task"), copy=False)
     peg_to_manufacturing_order = fields.Boolean(
-        string="Peg To Manufacturing", copy=True)
+        string="Peg To Manufacturing", copy=False)
     peg_to_delivery_order = fields.Boolean(
-        string="Peg to Delivery Order", copy=True)
+        string="Peg to Delivery Order", copy=False)
     production_ids = fields.One2many(
         'mrp.production', 'project_task_id', string='MOs')
     mrp_production_count = fields.Integer(
