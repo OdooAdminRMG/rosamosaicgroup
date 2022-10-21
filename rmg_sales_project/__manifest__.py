@@ -22,13 +22,14 @@
         Tasks: 
             - Error when accepting and signing a sales order
             - Debug: User Error: You cannot change the date
+            - Update "Peg To" fields on project task
     """,
     'author': 'S4 Solutions, LLC',
     'website': 'https://www.sfour.io/',
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.4.4.8',
+    'version': '15.0.4.4.9',
     'depends': [
         'project',
         'project_enterprise',

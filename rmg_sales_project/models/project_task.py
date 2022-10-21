@@ -16,7 +16,7 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     is_template_task = fields.Boolean(
-        string=_("Is Template Task"))
+        string=_("Is Template Task"), copy=True)
     peg_to_manufacturing_order = fields.Boolean(
         string="Peg To Manufacturing", copy=True)
     peg_to_delivery_order = fields.Boolean(
@@ -46,6 +46,15 @@ class ProjectTask(models.Model):
             rec.overall_square_feet = sum(
                 rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.installed_square_footage'))
 
+    def copy(self, default=None):
+        "This method will prevent peg_to fields being copied if the project doesn't have associated sale order."
+        rtn = super(ProjectTask, self).copy(default)
+        if not rtn.project_id.sale_line_id.id and (
+                rtn.is_template_task or rtn.peg_to_manufacturing_order or rtn.peg_to_delivery_order
+        ):
+            rtn.is_template_task = rtn.peg_to_manufacturing_order = rtn.peg_to_delivery_order = False
+        return rtn
+
     @api.model
     def create(self, vals):
         # Created Task_id sequence to mapped depend_on_ids tasks
@@ -56,6 +65,7 @@ class ProjectTask(models.Model):
 
     def write(self, vals):
         res = super(ProjectTask, self).write(vals)
+
         if 'is_template_task' in vals and not vals.get('is_template_task', False):
             self.planned_date_begin = False
             self.planned_date_end = False
