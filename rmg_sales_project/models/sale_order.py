@@ -30,6 +30,7 @@ def get_next_or_last_working_days_count(date, attendance_ids, back_step=True, re
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    commitment_date = fields.Datetime(tracking=True)
     template_start_date = fields.Datetime(string=_('Template Start Date'), index=True, tracking=True, copy=False)
     template_end_date = fields.Datetime(string=_('Template End Date'), index=True, tracking=True, copy=False)
     is_project_product = fields.Boolean(string=_('Is Project Product'),
@@ -97,7 +98,8 @@ class SaleOrder(models.Model):
                 ('sale_id', 'in', order.ids)
             ]).stock_move_ids
             move_ids.created_production_id.project_task_id = project_task_mo.id
-            picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
+            picking_id = move_ids.picking_id.filtered(
+                lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
             picking_id.project_task_id = project_task_do.id
             if project_task_do.planned_date_end and picking_id:
                 picking_id.scheduled_date = project_task_do.planned_date_end
@@ -314,7 +316,8 @@ class SaleOrder(models.Model):
             ('sale_id', 'in', self.ids)
         ]).stock_move_ids
         move_ids.created_production_id.project_task_id = project_task_mo.id
-        picking_id = move_ids.picking_id.filtered(lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
+        picking_id = move_ids.picking_id.filtered(
+            lambda x: x.state not in ['done', 'cancel'] and x.picking_type_id.code == 'outgoing')
         picking_id.project_task_id = project_task_do.id
         if project_task_do.planned_date_end and picking_id:
             picking_id.scheduled_date = project_task_do.planned_date_end
