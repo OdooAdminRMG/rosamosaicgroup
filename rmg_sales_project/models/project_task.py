@@ -16,11 +16,11 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     is_template_task = fields.Boolean(
-        string=_("Is Template Task"), copy=True)
+        string=_("Is Template Task"), copy=False)
     peg_to_manufacturing_order = fields.Boolean(
-        string="Peg To Manufacturing", copy=True)
+        string="Peg To Manufacturing", copy=False)
     peg_to_delivery_order = fields.Boolean(
-        string="Peg to Delivery Order", copy=True)
+        string="Peg to Delivery Order", copy=False)
     production_ids = fields.One2many(
         'mrp.production', 'project_task_id', string='MOs')
     mrp_production_count = fields.Integer(
@@ -45,15 +45,6 @@ class ProjectTask(models.Model):
         for rec in self:
             rec.overall_square_feet = sum(
                 rec.project_id.sale_line_id.order_id.order_line.mapped('rmg_sale_id.installed_square_footage'))
-
-    def copy(self, default=None):
-        "This method will prevent peg_to fields being copied if the project doesn't have associated sale order."
-        rtn = super(ProjectTask, self).copy(default)
-        if not rtn.project_id.sale_line_id.id and (
-                rtn.is_template_task or rtn.peg_to_manufacturing_order or rtn.peg_to_delivery_order
-        ):
-            rtn.is_template_task = rtn.peg_to_manufacturing_order = rtn.peg_to_delivery_order = False
-        return rtn
 
     @api.model
     def create(self, vals):
