@@ -259,11 +259,11 @@ class SaleOrder(models.Model):
                 project.tasks.planned_date_begin = False
                 project.tasks.planned_date_end = False
             self.calculate_planned_dates(so_commitment_date)
-        elif 'order_line' in vals and self.commitment_date:
-            for project in project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
-            self.calculate_planned_dates(self.commitment_date)
+        # elif 'order_line' in vals and self.commitment_date:
+        #     for project in project_ids:
+        #         project.tasks.planned_date_begin = False
+        #         project.tasks.planned_date_end = False
+        #     self.calculate_planned_dates(self.commitment_date)
         elif (
                 ('template_start_date' in vals and not vals['template_start_date']) or (
                 'template_end_date' in vals and not vals['template_end_date'])):
