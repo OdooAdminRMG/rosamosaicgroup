@@ -21,6 +21,7 @@
         "data/faucets_data.xml",
         "data/range_types_data.xml",
         "security/ir.model.access.csv",
+        "views/add_product_views.xml",
         "views/selection_sheet_configuration.xml",
         "views/edge_profiles_views.xml",
         "views/mrp_production_views.xml",
