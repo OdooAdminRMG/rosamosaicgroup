@@ -21,6 +21,11 @@
                     <field name="rmg_sale_id" invisible="1"/>
                     <field name="mrp_order_id" invisible="1"/>
                 </xpath>
+                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+                    <field name="replace_rmg_product" invisible="1"/>
+                  <button name="replace_manufacture_product" class="fa fa-reply-all" type="object" attrs="{'invisible': ['|', ('replace_rmg_product', '=', False), ('parent.state', '!=', 'sale')]}">
+                </button>
+                </xpath>
             </field>
         </record>
 

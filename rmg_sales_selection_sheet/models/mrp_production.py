@@ -11,6 +11,7 @@ class MrpProduction(models.Model):
                                          compute="_compute_sale_order_line")
     rmg_ids = fields.One2many("rmg.sale", "mrp_order_id", string="Rmg Lines")
     rmg_id = fields.Many2one("rmg.sale", string=_("Order Line"))
+    rmg_order_line_id = fields.Many2one('sale.order.line',related="sale_order_line_id",store=True)
     edge_profiles_id = fields.Many2one("edge.profiles", string=_("Edge Profiles"), related="rmg_id.edge_profiles_id")
     splash = fields.Text(string=_("Splash"), related="rmg_id.splash")
     slab_tagged_id = fields.Many2one(
@@ -65,11 +66,16 @@ class MrpProduction(models.Model):
     @api.depends("rmg_id")
     def _compute_sale_order_line(self):
         for rec in self:
-            # Here taking [0] in case someone has changed in product route after confirming SO.
-            rec.sale_order_line_id = rec.rmg_id.order_line_ids.filtered(
-                lambda order_line: self.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
-                                   self.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
-            )[0].id if rec.rmg_id else False
+            rec.sale_order_line_id = False
+            if rec.rmg_id:
+                # Here taking [0] in case someone has changed in product route after confirming SO.
+                sale_order_lines = rec.rmg_id.order_line_ids.filtered(
+                    lambda order_line: self.env.ref("stock.route_warehouse0_mto") in order_line.product_id.route_ids and
+                                       self.env.ref("mrp.route_warehouse0_manufacture") in order_line.product_id.route_ids
+                )
+                if sale_order_lines:
+                    exact_order_line = sale_order_lines.filtered(lambda order: order.product_id.id == rec.product_id.id)
+                    rec.sale_order_line_id = exact_order_line and exact_order_line[0].id
 
 
 class StockRule(models.Model):
