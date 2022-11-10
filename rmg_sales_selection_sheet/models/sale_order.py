@@ -154,6 +154,34 @@ class SaleOrderLine(models.Model):
     )
     section_id = fields.Many2one("sale.order.line", string="Section Id", store=True)
     mrp_order_id = fields.Many2one("mrp.production", string="MRP Order Id")
+    replace_rmg_product = fields.Boolean('Manufacture routes',compute="_compute_replace_button")
+
+    @api.depends('product_id')
+    def _compute_replace_button(self):
+        for rec in self:
+            rec.replace_rmg_product = False
+            manufacture_route = self.env['stock.location.route'].search([('name', '=', 'Manufacture')])
+            if rec.product_id.route_ids:
+                if manufacture_route.id in rec.product_id.route_ids.ids:
+                    rec.replace_rmg_product = True
+
+    def replace_manufacture_product(self):
+        for rec in self:
+            view = self.env.ref('rmg_sales_selection_sheet.add_product_form_view')
+            return {
+                'name': _('Replace Product'),
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'add.product',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'target': 'new',
+                'context': dict(
+                    self.env.context,
+                    default_so_line_id=rec.id,
+                    
+                ),
+            }
 
     def compute_rmg_sale_id(self):
         section_id = False

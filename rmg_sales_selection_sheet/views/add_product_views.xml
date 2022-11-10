@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="add_product_form_view" model="ir.ui.view">
+        <field name="name">Add product Form View</field>
+        <field name="model">add.product</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                            <field name="product_id" required='1'/>
+                            <field name="so_line_id" readonly="1"/>
+                    </group>
+                    <footer>
+                            <button name="replace_product" string="Replace" type="object" class="oe_highlight"/>
+                            Or
+                            <button string="Cancel" special="cancel" class="oe_link"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>
