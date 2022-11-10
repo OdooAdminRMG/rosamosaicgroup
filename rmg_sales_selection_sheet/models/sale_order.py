@@ -169,7 +169,7 @@ class SaleOrderLine(models.Model):
         for rec in self:
             view = self.env.ref('rmg_sales_selection_sheet.add_product_form_view')
             return {
-                'name': _('Replace Product'),
+                'name': _('Replace or Cancel Product'),
                 'type': 'ir.actions.act_window',
                 'view_mode': 'form',
                 'res_model': 'add.product',

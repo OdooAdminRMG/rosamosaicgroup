@@ -8,20 +8,14 @@ class AddProduct(models.TransientModel):
     product_id = fields.Many2one('product.product', string="Add new Product")
     so_line_id = fields.Many2one('sale.order.line')
 
-    def replace_product(self):
-        # Create new sale order line
-        new_so_line = self.so_line_id.copy(default={'product_id':self.product_id.id,'order_id':self.so_line_id.order_id.id})
-        new_so_line.write({'product_id': self.product_id.id})
-
-        new_so_line.product_id_change()   #Call onchange for auto data fill
-
-        self.so_line_id.write({'product_uom_qty': 0}) # update qty to zero
+    def product_data_transfer(self):
+        self.so_line_id.write({'product_uom_qty': 0})  # update qty to zero
         self._cr.execute(f"""select id from stock_move where sale_line_id={self.so_line_id.id}""")
         picking_move_ids = list(map(lambda y: y[0], self._cr.fetchall()))
 
         procurement_groups = self.env['procurement.group'].search([('sale_id', 'in', self.so_line_id.order_id.ids)])
-        mrp_production_ids = set(procurement_groups.stock_move_ids.created_production_id.ids) |\
-            set(procurement_groups.mrp_production_ids.ids)
+        mrp_production_ids = set(procurement_groups.stock_move_ids.created_production_id.ids) | \
+                             set(procurement_groups.mrp_production_ids.ids)
 
         mrp_list = []
         for mrp_production_id in mrp_production_ids:
@@ -67,3 +61,14 @@ class AddProduct(models.TransientModel):
                     move.picking_id.action_cancel()
                 else:
                     move._action_cancel()
+
+    def replace_product(self):
+        # Create new sale order line
+        new_so_line = self.so_line_id.copy(default={'product_id':self.product_id.id,'order_id':self.so_line_id.order_id.id})
+        new_so_line.write({'product_id': self.product_id.id})
+
+        new_so_line.product_id_change()   #Call onchange for auto data fill
+        self.product_data_transfer()
+
+    def cancel_product(self):
+        self.product_data_transfer()

@@ -23,7 +23,7 @@
                 </xpath>
                  <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                     <field name="replace_rmg_product" invisible="1"/>
-                  <button name="replace_manufacture_product" class="fa fa-reply-all" type="object" attrs="{'invisible': ['|', ('replace_rmg_product', '=', False), ('parent.state', '!=', 'sale')]}">
+                  <button name="replace_manufacture_product" class="fa fa-reply-all" type="object" attrs="{'invisible': ['|', '|', '|', ('replace_rmg_product', '=', False), ('parent.state', '!=', 'sale'), ('product_uom_qty', '&lt;=', 0), ('qty_delivered', '!=', 0)]}">
                 </button>
                 </xpath>
             </field>

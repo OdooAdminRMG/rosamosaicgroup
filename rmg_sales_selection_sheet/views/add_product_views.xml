@@ -13,8 +13,8 @@
                     </group>
                     <footer>
                             <button name="replace_product" string="Replace" type="object" class="oe_highlight"/>
-                            Or
-                            <button string="Cancel" special="cancel" class="oe_link"/>
+                            <button name="cancel_product" string="Cancel" type="object" class="oe_highlight"/>
+                            <button string="Return to Sales Order" special="cancel" class="btn-secondary"/>
                     </footer>
                 </sheet>
             </form>
