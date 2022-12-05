@@ -26,6 +26,18 @@
                   <button name="replace_manufacture_product" class="fa fa-reply-all" type="object" attrs="{'invisible': ['|', ('replace_rmg_product', '=', False), ('parent.state', '!=', 'sale')]}">
                 </button>
                 </xpath>
+                <xpath expr="//field[@name='order_line']//kanban//templates/t[@t-name='kanban-box']/div/t[2]/div" position="replace">
+                    <div class="row">
+                        <div class="col-8">
+                            <t t-esc="record.name.value"/>
+                        </div>
+                        <div class="col-4">
+                            <button type="object" name="sol_selection_sheet" title="Open section" class="btn-primary">
+                                Selection Sheet
+                            </button>
+                        </div>
+                    </div>
+                </xpath>
             </field>
         </record>
 
