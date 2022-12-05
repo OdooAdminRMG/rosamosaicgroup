@@ -245,7 +245,7 @@ class SaleOrderLine(models.Model):
     def sol_selection_sheet(self):
         rmg_sale = self.env['rmg.sale'].search([
             ('order_line_id', '=', self.id)
-        ])
+        ]).ids
         action = {
             'type': 'ir.actions.act_window',
             'name': 'RMG Selection Sheet',
@@ -256,6 +256,7 @@ class SaleOrderLine(models.Model):
         }
         if rmg_sale:
             action['context'] = {'active_id': rmg_sale[0]}
+            action['res_id'] = rmg_sale[0]
         else:
             action['context'] = {
                 'default_order_id': self.order_id.id,
