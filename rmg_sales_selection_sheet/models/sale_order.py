@@ -197,7 +197,7 @@ class SaleOrderLine(models.Model):
                 lines = rec.env["rmg.sale"].search(
                     [("order_line_id", "=", rec.section_id.id)]
                 )
-            rec.rmg_sale_id = lines.id if lines else False
+            rec.rmg_sale_id = lines[0].id if lines else False
 
     @api.model_create_multi
     def create(self, vals_list):
