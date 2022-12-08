@@ -197,7 +197,7 @@ class SaleOrderLine(models.Model):
                 lines = rec.env["rmg.sale"].search(
                     [("order_line_id", "=", rec.section_id.id)]
                 )
-            rec.rmg_sale_id = lines.id if lines else False
+            rec.rmg_sale_id = lines[0].id if lines else False
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -241,3 +241,25 @@ class SaleOrderLine(models.Model):
             if rec.display_type == "line_section" and rec.rmg_sale_id:
                 rec.rmg_sale_id.sudo().unlink()
         return super(SaleOrderLine, self).unlink()
+    
+    def sol_selection_sheet(self):
+        rmg_sale = self.env['rmg.sale'].search([
+            ('order_line_id', '=', self.id)
+        ]).ids
+        action = {
+            'type': 'ir.actions.act_window',
+            'name': 'RMG Selection Sheet',
+            'res_model': 'rmg.sale',
+            'views': [[False, 'form']],
+            'target': 'new',
+            'flags': {'action_buttons': True}
+        }
+        if rmg_sale:
+            action['context'] = {'active_id': rmg_sale[0]}
+            action['res_id'] = rmg_sale[0]
+        else:
+            action['context'] = {
+                'default_order_id': self.order_id.id,
+                'default_order_line_id': self.id
+            }
+        return action
