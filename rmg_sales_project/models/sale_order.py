@@ -137,16 +137,21 @@ class SaleOrder(models.Model):
         # Odoo will set odoo_bot user in env.
         # So, we have to replace it with salesperson user of related order.
         user = self.env.user if self.env.user.id != 1 else self.user_id
+
         resource_id = user.resource_ids[0] if user.resource_ids else self.env['resource.resource']
         working_start_date = datetime.combine(start_date.date(), time.min).replace(tzinfo=UTC)
         working_end_date = datetime.combine(start_date.date(), time.max).replace(tzinfo=UTC)
         work_intervals_batch = resource_id.calendar_id._work_intervals_batch(working_start_date, working_end_date,
                                                                              resources=resource_id)
         work_intervals = [(start, stop) for start, stop, dummy in work_intervals_batch.get(resource_id.id, False)]
+        hour_to = False
+        hour_from = False
         if work_intervals:
             working_start_date = work_intervals[0][0].astimezone(UTC)
             working_end_date = work_intervals[-1][-1].astimezone(UTC)
-        return working_start_date, working_end_date
+            hour_to = work_intervals[0][-1].astimezone(UTC)
+            hour_from = work_intervals[-1][0].astimezone(UTC)
+        return working_start_date, working_end_date, hour_to, hour_from
 
     def adjust_dates_in_user_working_time(self, start_date, hours=0):
         """
@@ -161,8 +166,9 @@ class SaleOrder(models.Model):
         # So, we have to replace it with salesperson user of related order.
         user = self.env.user if self.env.user.id != 1 else self.user_id
 
-        working_start_date, working_end_date = self.get_working_start_end_date(
+        working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(
             start_date.astimezone(timezone(user.tz)).replace(tzinfo=None))
+
         # Custom logic to adjust start date and end date in working time
         if start_date < working_start_date:
             resource_id, attendances, all_attendance_ids = self.get_attendances(start_date)
@@ -173,9 +179,10 @@ class SaleOrder(models.Model):
                     last_day_start_date = get_next_or_last_working_days_count(start_date, all_attendance_ids)
                 else:
                     last_day_start_date = start_date
-            hours = (working_start_date - start_date).seconds / 3600
-            working_start_date, working_end_date = self.get_working_start_end_date(last_day_start_date)
-            start_date = working_end_date - relativedelta(hours=hours)
+            # hours = (working_start_date - start_date).seconds / 3600
+            working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(last_day_start_date)
+            # start_date = working_end_date - relativedelta(hours=hours)
+            start_date = working_end_date
 
         return start_date.replace(tzinfo=None)
 
@@ -199,12 +206,31 @@ class SaleOrder(models.Model):
             """
             index = [final_task]
             if final_task and final_task in task_depend_on_dict:
+                if first_task:
+                    working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(
+                        commitment_date)
+                    if hour_to and hour_from and \
+                            hour_to.replace(tzinfo=None) < commitment_date < hour_from.replace(tzinfo=None):
+                        commitment_date = hour_to.replace(tzinfo=None)
+                    elif working_end_date.replace(
+                            tzinfo=None) < commitment_date and commitment_date.date() == working_end_date.date():
+                        commitment_date = working_end_date.replace(tzinfo=None)
+
                 # Check again start and end date because it may be possible that after subtracting start date may go beyond working time so setting as per the working hours
                 date_end = self.get_start_date(commitment_date, final_task.offset_hours)
-                date_begin = self.get_start_date(date_end if not first_task else commitment_date, final_task.lead_time)
+                working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(
+                    date_end)
+
+                if hour_to and hour_from and \
+                        hour_to.replace(tzinfo=None) < date_end < hour_from.replace(tzinfo=None):
+                    date_end = hour_to.replace(tzinfo=None)
+                elif working_end_date.replace(
+                        tzinfo=None) < date_end and date_end.date() == working_end_date.date():
+                    date_end = working_end_date.replace(tzinfo=None)
+                date_begin = self.get_start_date(date_end, final_task.lead_time)
                 if not final_task.planned_date_begin or final_task.planned_date_begin > commitment_date:
                     final_task.planned_date_begin = date_begin
-                    final_task.planned_date_end = commitment_date if first_task else date_end
+                    final_task.planned_date_end =  date_end
                 for inner_elem in task_depend_on_dict.get(final_task):
                     index.extend(get_depend_on_task_list(inner_elem, task_depend_on_dict, date_begin, first_task=False))
             return index
