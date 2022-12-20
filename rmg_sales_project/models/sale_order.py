@@ -323,6 +323,7 @@ class SaleOrder(models.Model):
             picking_id.scheduled_date = project_task_do.planned_date_end
             picking_id.date_deadline = project_task_do.planned_date_end
         if move_ids.created_production_id and project_task_mo.planned_date_begin and project_task_mo.planned_date_end:
-            move_ids.created_production_id.date_planned_start = project_task_mo.planned_date_begin
+            move_ids.created_production_id.filtered(
+                lambda mo: mo.state not in ['done', 'cancel']).date_planned_start = project_task_mo.planned_date_begin
             move_ids.created_production_id.date_deadline = project_task_mo.planned_date_end
         return res
