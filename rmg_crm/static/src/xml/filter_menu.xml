@@ -3,7 +3,7 @@
    <!-- Owl Templates -->
     <t t-name="CustomFilterItems" t-inherit="web.CustomFilterItem" t-inherit-mode="extension" owl="1">
       <xpath expr="//Dropdown[hasclass('o_add_custom_filter_menu')]" position="replace">
-         <t t-if="model.config.modelName == 'job.costing.report'">
+         <t t-if="model and model.config.modelName == 'job.costing.report'">
             <div class="o_add_custom_filter_menu">
                 <h6 class="ml-4">Custom</h6>
                 <t t-foreach="conditions" t-as="condition" t-key="condition_index">
