@@ -1,0 +1,6 @@
+<odoo>
+    <record id="group_edit_stock_quant" model="res.groups">
+        <field name="name">Edit Stock Quant</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+</odoo>
