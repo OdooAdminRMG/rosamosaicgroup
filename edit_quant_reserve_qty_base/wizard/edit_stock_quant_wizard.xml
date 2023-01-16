@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_edit_stock_quant_wizard_form" model="ir.ui.view">
+        <field name="name">edit.stock.quant.wizard.form</field>
+        <field name="model">edit.stock.quant.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="reserved_qty"/>
+                </group>
+                <footer>
+                    <button name="action_apply_reserved_qty" string="Apply" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

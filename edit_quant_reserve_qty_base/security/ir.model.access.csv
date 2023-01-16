@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_edit_stock_quant_wizard,edit_stock_quant_wizard,model_edit_stock_quant_wizard,,1,1,1,1
