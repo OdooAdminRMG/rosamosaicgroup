@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_cancel_multi_order_wizard" model="ir.ui.view">
+        <field name="name">Cancel Multi Orders</field>
+        <field name="model">cancel.multi.order</field>
+        <field name="arch" type="xml">
+            <form string="Cancel Sales Order">
+                <p class="oe_grey">
+                    Are you sure you want to cancel selected orders ?
+                </p>
+                <footer> 
+                    <button name="action_cancel" string="Cancel Orders" type="object" class="btn-primary"/>
+                    <button string="Not Cancel Orders" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_view_cancel_multi_order" model="ir.actions.act_window">
+        <field name="name">Sale Order Cancel</field>
+        <field name="res_model">cancel.multi.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="sale.model_sale_order" />
+    </record>
+
+</odoo>
