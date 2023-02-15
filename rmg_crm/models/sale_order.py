@@ -9,7 +9,7 @@ class SaleOrder(models.Model):
     job_name = fields.Char(
         string=_("Job Name"),
         compute="_compute_job_name",
-        store=True,
+        store=True,compute_sudo=True
     )
     attachment_ids = fields.Many2many(
         "ir.attachment",
@@ -17,7 +17,7 @@ class SaleOrder(models.Model):
         compute="_compute_attachments",
         inverse="_inverse_attachments",
         readonly=False,
-        store=True,
+        store=True,compute_sudo=True
     )
     readonly_attachments = fields.Boolean(
         string=_("Readonly Attachments"),

@@ -22,7 +22,7 @@
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "sales",
-    "version": "15.0.5.22.0",
+    "version": "15.0.5.22.1",
     "depends": [
         "sale_management",
         "sale_crm",
