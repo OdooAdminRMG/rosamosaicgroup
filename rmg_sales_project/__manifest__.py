@@ -29,7 +29,7 @@
     'sequence': 10,
     'category': 'Custom',
     'license': 'AGPL-3',
-    'version': '15.0.4.4.9',
+    'version': '15.0.4.5.0',
     'depends': [
         'project',
         'project_enterprise',
@@ -40,6 +40,7 @@
         'resource',
         'mrp',
         'stock',
+        "rmg_mrp"
     ],
     'data': [
         'data/ir_sequence_data.xml',
@@ -48,6 +49,7 @@
         'views/mrp_views.xml',
         'views/stock_picking_views.xml',
         "reports/rmg_quotation_report.xml",
+        "reports/rmg_mrp_order_report.xml",
     ],
     'assets': {
         'web.assets_qweb': [
