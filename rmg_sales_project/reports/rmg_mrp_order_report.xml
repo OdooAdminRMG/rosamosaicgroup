@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="revised_mrp_production_template_inherited" inherit_id="rmg_mrp.revised_mrp_production_template">
+        <xpath expr="//div[@id='source_document']" position="after">
+            <div class="row mt32 mb32" id="installation_date">
+                <div class="col-3" t-if="o.installation_date">
+                    <strong>Installation Date:</strong>
+                    <br/>
+                    <span t-field="o.installation_date"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
