@@ -8,6 +8,7 @@
 			<field name="arch" type="xml">
 				<field name="name" position="after">
 					<field name="sort_by_date" />
+					<field name="sales_order_confirmed" />
 				</field>
 			</field>
 		</record>
