@@ -7,7 +7,7 @@
             Manage Delivery Dates on Sale Order
             
 
-            User Stories: 21, 24, 61, 58
+            User Stories: 21, 24, 61, 58, 64,
             """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
@@ -25,11 +25,15 @@
     ],
     "assets": {
         "web.assets_frontend": [
+
         ],
         "web.assets_backend": [
-            "rmg_sales/static/src/xml/dialog.xml",
+
         ],
         "web.assets_common": [
+        ],
+        "web.assets_qweb": [
+            "rmg_sales/static/src/xml/dialog.xml",
         ]
     },
     "installable": True,
