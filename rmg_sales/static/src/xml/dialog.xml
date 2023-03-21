@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+    <t t-name="rmg_sales.ActionDialog" t-inherit="web.Dialog" t-inherit-mode="extension" owl="1">
+        <xpath expr="//main[hasclass('modal-body')]/t" position="replace">
+            <t t-if="props.title == 'Confirmation'">
+                <h6>
+                    <t t-slot="default" close="data.close"/>
+                </h6>
+            </t>
+            <t t-else="">
+                <t t-slot="default" close="data.close"/>
+            </t>
+        </xpath>
+    </t>
+</templates>
