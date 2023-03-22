@@ -56,6 +56,7 @@ class Project(models.Model):
         res = super(Project, self).write(vals)
         for rec in self:
             if (
+                    'stage_id' in vals and
                     rec.stage_id.sales_order_confirmed and
                     rec.sale_order_id and
                     rec.sale_order_id.state in ['draft', 'sent']
