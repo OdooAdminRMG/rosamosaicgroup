@@ -23,21 +23,6 @@
         "views/sale_order_view.xml",
         "wizard/sale_order_confirm_wiz_view.xml",
     ],
-<<<<<<< Updated upstream
-    "assets": {
-        "web.assets_frontend": [
-
-        ],
-        "web.assets_backend": [
-
-        ],
-        "web.assets_common": [
-        ],
-        "web.assets_qweb": [
-            "rmg_sales/static/src/xml/dialog.xml",
-        ]
-    },
-=======
     # "assets": {
     #     "web.assets_frontend": [
     #     ],
@@ -47,7 +32,6 @@
     #     "web.assets_common": [
     #     ]
     # },
->>>>>>> Stashed changes
     "installable": True,
     "application": True,
     "auto_install": False,
