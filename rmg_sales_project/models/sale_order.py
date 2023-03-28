@@ -82,8 +82,10 @@ class SaleOrder(models.Model):
                 so_commitment_date = datetime.strptime(str(order.commitment_date), DTS)
                 # Clear all dates on Project task
                 for project in order.project_ids:
-                    project.tasks.planned_date_begin = False
-                    project.tasks.planned_date_end = False
+                    project.tasks.write({
+                        "planned_date_begin": False,
+                        "planned_date_end": False,
+                    })
                 order.calculate_planned_dates(so_commitment_date)
             else:
                 self.update_tmpl_dates()
@@ -180,7 +182,8 @@ class SaleOrder(models.Model):
                 else:
                     last_day_start_date = start_date
             # hours = (working_start_date - start_date).seconds / 3600
-            working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(last_day_start_date)
+            working_start_date, working_end_date, hour_to, hour_from = self.get_working_start_end_date(
+                last_day_start_date)
             # start_date = working_end_date - relativedelta(hours=hours)
             start_date = working_end_date
 
@@ -229,8 +232,10 @@ class SaleOrder(models.Model):
                     date_end = working_end_date.replace(tzinfo=None)
                 date_begin = self.get_start_date(date_end, final_task.lead_time)
                 if not final_task.planned_date_begin or final_task.planned_date_begin > commitment_date:
-                    final_task.planned_date_begin = date_begin
-                    final_task.planned_date_end =  date_end
+                    final_task.write({
+                        "planned_date_begin": date_begin,
+                        "planned_date_end": date_end,
+                    })
                 for inner_elem in task_depend_on_dict.get(final_task):
                     index.extend(get_depend_on_task_list(inner_elem, task_depend_on_dict, date_begin, first_task=False))
             return index
@@ -282,8 +287,10 @@ class SaleOrder(models.Model):
             so_commitment_date = datetime.strptime(vals['commitment_date'], DTS)
             # Clear all dates on Project task
             for project in project_ids:
-                project.tasks.planned_date_begin = False
-                project.tasks.planned_date_end = False
+                project.tasks.write({
+                    "planned_date_begin": False,
+                    "planned_date_end": False,
+                })
             self.calculate_planned_dates(so_commitment_date)
         # elif 'order_line' in vals and self.commitment_date:
         #     for project in project_ids:
