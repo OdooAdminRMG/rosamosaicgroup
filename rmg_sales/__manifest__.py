@@ -7,12 +7,12 @@
             Manage Delivery Dates on Sale Order
             
 
-            User Stories: 21, 24, 61, 58
+            User Stories: 21, 24, 61, 58, 64,
             """,
     "author": "S4 Solutions, LLC",
     "website": "https://www.sfour.io/",
     "category": "business",
-    "version": "15.0.2.0.3",
+    "version": "15.0.2.3.0",
     "depends": ["sale_management", "sale_stock", 'stock'],
     "data": [
         "security/ir.model.access.csv",
@@ -23,6 +23,15 @@
         "views/sale_order_view.xml",
         "wizard/sale_order_confirm_wiz_view.xml",
     ],
+    # "assets": {
+    #     "web.assets_frontend": [
+    #     ],
+    #     "web.assets_backend": [
+    #         "rmg_sales/static/src/xml/dialog.xml",
+    #     ],
+    #     "web.assets_common": [
+    #     ]
+    # },
     "installable": True,
     "application": True,
     "auto_install": False,

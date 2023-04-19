@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates>
+    <t t-name="rmg_sales.ActionDialog" t-inherit="web.Dialog" t-inherit-mode="extension" owl="1">
+        <!--                <xpath expr="//div[hasclass('o_legacy_dialog')]/div[hasclass('modal-dialog')]/div[hasclass('modal-content')]" position="inside">-->
+        <!--                </xpath>-->
+        <xpath expr="//main[hasclass('modal-body')]/t" position="replace">
+            <t t-if="props.title == 'Confirmation'">
+                <h1>
+                    <t t-call="{{ constructor.bodyTemplate }}"/>
+                </h1>
+            </t>
+            <t t-else="">
+                <t t-call="{{ constructor.bodyTemplate }}"/>
+            </t>
+        </xpath>
+    </t>
+</templates>
