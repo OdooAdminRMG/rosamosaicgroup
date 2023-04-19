@@ -5,6 +5,7 @@ class ProjectStages(models.Model):
 	_inherit = 'project.project.stage'
 
 	sort_by_date = fields.Boolean(string="Sort By Date")
+	sales_order_confirmed = fields.Boolean(string="Sales Order Confirmed")
 
 	@api.model_create_multi
 	def create(self, vals_list):
