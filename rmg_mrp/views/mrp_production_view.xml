@@ -23,4 +23,14 @@
             </xpath>
         </field>
     </record>
+    <record id="view_production_calendar_inherit_rmg_mrp" model="ir.ui.view">
+        <field name="name">mrp.production.calendar.view</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_production_calendar"/>
+        <field name="arch" type="xml">
+            <xpath expr="//calendar" position="attributes">
+                <attribute name="date_stop"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

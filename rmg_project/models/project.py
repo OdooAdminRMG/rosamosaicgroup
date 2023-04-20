@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import fields, models, api
+from odoo import _, fields, models, api
 from datetime import datetime
+from odoo.exceptions import ValidationError
 
 
 class Project(models.Model):
@@ -53,8 +54,19 @@ class Project(models.Model):
             Override write method to update sequence by stage's configuration
         """
         res = super(Project, self).write(vals)
-        if vals.get('stage_id', False) or vals.get('date', False) or vals.get('date_start', False):
-            self.set_sequence(stage_id=self.stage_id.id)
+        for rec in self:
+            if (
+                    'stage_id' in vals and
+                    rec.stage_id.sales_order_confirmed and
+                    rec.sale_order_id and
+                    rec.sale_order_id.state in ['draft', 'sent']
+            ):
+                raise ValidationError(_(
+                    "The Sales Order associated with this Project is not confirmed. "
+                    "Please confirm the Sales Order before attempting to move this Project to this stage."
+                ))
+            if vals.get('stage_id', False) or vals.get('date', False) or vals.get('date_start', False):
+                rec.set_sequence(stage_id=rec.stage_id.id)
         return res
 
 
@@ -72,7 +84,8 @@ class ProjectTask(models.Model):
         '''
         res = super(ProjectTask, self).create(vals_list)
         res.check_templating_installing()
-        if list(filter(lambda vals: vals.get('planned_date_begin', False) or vals.get('planned_date_end', False), vals_list)):
+        if list(filter(lambda vals: vals.get('planned_date_begin', False) or vals.get('planned_date_end', False),
+                       vals_list)):
             res.project_id.set_project_dates()
         return res
 
