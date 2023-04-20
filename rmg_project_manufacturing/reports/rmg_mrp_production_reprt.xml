@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="revised_mrp_production_template_inherit_rmg" inherit_id="rmg_mrp.revised_mrp_production_template">
+        <xpath expr="//div[@id='source_document']" position="inside">
+            <div class="col-3">
+                <strong>Templator:</strong>
+                <br/>
+                <span t-field="o.temp_user_ids"/>
+            </div>
+            <div class="col-3">
+                <strong>Project Manager:</strong>
+                <br/>
+                <span t-field="o.project_manager_id"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

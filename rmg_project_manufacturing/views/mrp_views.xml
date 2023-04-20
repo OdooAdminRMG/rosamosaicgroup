@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+       <record id="mrp_production_view_inherited" model="ir.ui.view">
+              <field name="name">mrp.production.view.form.rmg</field>
+              <field name="model">mrp.production</field>
+              <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+              <field name="arch" type="xml">
+                     <xpath expr="//page[@name='miscellaneous']//field[@name='location_dest_id']" position="after">
+                            <field name="temp_user_ids" widget="many2many_tags"/>
+                            <field name="project_manager_id"/>
+                   </xpath>
+              </field>
+       </record>
+</odoo>
