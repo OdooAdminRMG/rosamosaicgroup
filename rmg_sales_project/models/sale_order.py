@@ -69,15 +69,6 @@ class SaleOrder(models.Model):
                 and line.product_id.service_tracking != 'no'
                 and not line.project_id
             )
-            # check if all orders are in the same company
-            # else Orders from different companies are confirmed together
-            orders.sudo().with_company(self.company_id)._timesheet_service_generation() if len(
-                self.company_id) == 1 else map(
-                lambda order: order.order_line.sudo().with_company(
-                    order.company_id
-                )._timesheet_service_generation(),
-                orders
-            )
             if order.commitment_date:
                 so_commitment_date = datetime.strptime(str(order.commitment_date), DTS)
                 # Clear all dates on Project task
@@ -89,6 +80,15 @@ class SaleOrder(models.Model):
                 order.calculate_planned_dates(so_commitment_date)
             else:
                 self.update_tmpl_dates()
+            # check if all orders are in the same company
+            # else Orders from different companies are confirmed together
+            orders.sudo().with_company(self.company_id)._timesheet_service_generation() if len(
+                self.company_id) == 1 else map(
+                lambda order: order.order_line.sudo().with_company(
+                    order.company_id
+                )._timesheet_service_generation(),
+                orders
+            )
             # functionalities of us 3.
             project_task_mo = order.tasks_ids.filtered(
                 lambda p: p.peg_to_manufacturing_order
